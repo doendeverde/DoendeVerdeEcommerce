@@ -1,0 +1,146 @@
+"use client";
+
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { loginSchema, type LoginInput } from "@/schemas/auth.schema";
+import { z } from "zod";
+
+export function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
+  const [formData, setFormData] = useState<LoginInput>({
+    email: "",
+    password: "",
+  });
+  
+  const [errors, setErrors] = useState<Partial<Record<keyof LoginInput, string>>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [generalError, setGeneralError] = useState<string | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Limpar erro do campo quando usuário começar a digitar
+    if (errors[name as keyof LoginInput]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+    if (generalError) {
+      setGeneralError(null);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    setGeneralError(null);
+    setIsLoading(true);
+
+    try {
+      // Validar com Zod
+      const validatedData = loginSchema.parse(formData);
+
+      // Tentar login com NextAuth
+      const result = await signIn("credentials", {
+        email: validatedData.email,
+        password: validatedData.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setGeneralError("Email ou senha inválidos");
+      } else if (result?.ok) {
+        router.push(callbackUrl);
+        router.refresh();
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        // Erros de validação do Zod
+        const fieldErrors: Partial<Record<keyof LoginInput, string>> = {};
+        error.errors.forEach((err) => {
+          const field = err.path[0] as keyof LoginInput;
+          fieldErrors[field] = err.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        setGeneralError("Erro ao fazer login. Tente novamente.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
+      <h2 className="text-2xl font-bold text-center">Entrar</h2>
+
+      {generalError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          {generalError}
+        </div>
+      )}
+
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium mb-1">
+          Email
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+            errors.email
+              ? "border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:ring-blue-500"
+          }`}
+          disabled={isLoading}
+        />
+        {errors.email && (
+          <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+        )}
+      </div>
+
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium mb-1">
+          Senha
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          value={formData.password}
+          onChange={handleChange}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+            errors.password
+              ? "border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:ring-blue-500"
+          }`}
+          disabled={isLoading}
+        />
+        {errors.password && (
+          <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+        )}
+      </div>
+
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+      >
+        {isLoading ? "Entrando..." : "Entrar"}
+      </button>
+
+      <p className="text-center text-sm text-gray-600">
+        Não tem uma conta?{" "}
+        <a href="/register" className="text-blue-600 hover:underline">
+          Cadastre-se
+        </a>
+      </p>
+    </form>
+  );
+}
