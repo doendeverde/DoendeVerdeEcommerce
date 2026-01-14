@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export const metadata = {
   title: "Meus Pedidos | Headshop",
@@ -17,14 +17,14 @@ export default async function OrdersPage() {
     where: { userId: session.user.id },
     orderBy: { createdAt: "desc" },
     include: {
-      orderItems: {
+      items: {
         include: {
           product: true,
         },
       },
-      payment: true,
-      shipment: true,
-      address: true,
+      payments: true,
+      shipments: true,
+      addressSnapshot: true,
     },
   });
 
@@ -72,15 +72,14 @@ export default async function OrdersPage() {
                       R$ {order.totalAmount.toFixed(2)}
                     </p>
                     <span
-                      className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
-                        order.status === "DELIVERED"
-                          ? "bg-green-100 text-green-800"
-                          : order.status === "CANCELLED"
+                      className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${order.status === "DELIVERED"
+                        ? "bg-green-100 text-green-800"
+                        : order.status === "CANCELED"
                           ? "bg-red-100 text-red-800"
                           : order.status === "PENDING"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-blue-100 text-blue-800"
-                      }`}
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-blue-100 text-blue-800"
+                        }`}
                     >
                       {order.status}
                     </span>
@@ -92,7 +91,7 @@ export default async function OrdersPage() {
               <div className="p-6">
                 <h4 className="font-medium text-gray-900 mb-4">Itens do Pedido</h4>
                 <div className="space-y-3">
-                  {order.orderItems.map((item) => (
+                  {order.items.map((item) => (
                     <div
                       key={item.id}
                       className="flex justify-between items-center p-3 bg-gray-50 rounded"
@@ -107,7 +106,7 @@ export default async function OrdersPage() {
                         </p>
                       </div>
                       <p className="font-semibold text-gray-900">
-                        R$ {item.subtotal.toFixed(2)}
+                        R$ {item.totalPrice.toFixed(2)}
                       </p>
                     </div>
                   ))}
@@ -115,70 +114,67 @@ export default async function OrdersPage() {
               </div>
 
               {/* Informações de Pagamento */}
-              {order.payment && (
+              {order.payments && order.payments.length > 0 && (
                 <div className="px-6 py-4 border-t">
                   <h4 className="font-medium text-gray-900 mb-2">Pagamento</h4>
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-sm text-gray-600">
-                        Método: {order.payment.paymentMethod}
+                        Provedor: {order.payments[0].provider}
                       </p>
                       <p className="text-sm text-gray-600">
                         Status:{" "}
                         <span
-                          className={`font-medium ${
-                            order.payment.status === "PAID"
+                          className={`font-medium ${order.payments[0].status === "PAID"
                               ? "text-green-600"
-                              : order.payment.status === "FAILED"
-                              ? "text-red-600"
-                              : "text-yellow-600"
-                          }`}
+                              : order.payments[0].status === "FAILED"
+                                ? "text-red-600"
+                                : "text-yellow-600"
+                            }`}
                         >
-                          {order.payment.status}
+                          {order.payments[0].status}
                         </span>
                       </p>
                     </div>
-                    {order.payment.paidAt && (
-                      <p className="text-sm text-gray-600">
-                        Pago em{" "}
-                        {new Date(order.payment.paidAt).toLocaleDateString("pt-BR")}
-                      </p>
-                    )}
+                    <p className="text-sm text-gray-600">
+                      R$ {order.payments[0].amount.toFixed(2)}
+                    </p>
                   </div>
                 </div>
               )}
 
               {/* Informações de Entrega */}
-              {order.shipment && (
+              {order.shipments && order.shipments.length > 0 && (
                 <div className="px-6 py-4 border-t">
                   <h4 className="font-medium text-gray-900 mb-2">Entrega</h4>
                   <div className="space-y-1">
-                    <p className="text-sm text-gray-600">
-                      Método: {order.shipment.shippingMethod}
-                    </p>
+                    {order.shipments[0].carrier && (
+                      <p className="text-sm text-gray-600">
+                        Transportadora: {order.shipments[0].carrier}
+                      </p>
+                    )}
                     <p className="text-sm text-gray-600">
                       Status:{" "}
                       <span
-                        className={`font-medium ${
-                          order.shipment.status === "DELIVERED"
+                        className={`font-medium ${order.shipments[0].status === "DELIVERED"
                             ? "text-green-600"
-                            : order.shipment.status === "CANCELLED"
-                            ? "text-red-600"
-                            : "text-blue-600"
-                        }`}
+                            : order.shipments[0].status === "LOST" || order.shipments[0].status === "RETURNED"
+                              ? "text-red-600"
+                              : "text-blue-600"
+                          }`}
                       >
-                        {order.shipment.status}
+                        {order.shipments[0].status}
                       </span>
                     </p>
-                    {order.shipment.trackingCode && (
+                    {order.shipments[0].trackingCode && (
                       <p className="text-sm text-gray-600">
-                        Código de Rastreio: {order.shipment.trackingCode}
+                        Código de Rastreio: {order.shipments[0].trackingCode}
                       </p>
                     )}
-                    {order.shipment.deliveredAt && (
+                    {order.shipments[0].deliveredAt && (
                       <p className="text-sm text-gray-600">
                         Entregue em{" "}
-                        {new Date(order.shipment.deliveredAt).toLocaleDateString(
+                        {new Date(order.shipments[0].deliveredAt).toLocaleDateString(
                           "pt-BR"
                         )}
                       </p>
@@ -188,21 +184,21 @@ export default async function OrdersPage() {
               )}
 
               {/* Endereço de Entrega */}
-              {order.address && (
+              {order.addressSnapshot && (
                 <div className="px-6 py-4 border-t bg-gray-50">
                   <h4 className="font-medium text-gray-900 mb-2">
                     Endereço de Entrega
                   </h4>
                   <p className="text-sm text-gray-600">
-                    {order.address.street}, {order.address.number}
-                    {order.address.complement && ` - ${order.address.complement}`}
+                    {order.addressSnapshot.street}, {order.addressSnapshot.number}
+                    {order.addressSnapshot.complement && ` - ${order.addressSnapshot.complement}`}
                   </p>
                   <p className="text-sm text-gray-600">
-                    {order.address.neighborhood} - {order.address.city}/
-                    {order.address.state}
+                    {order.addressSnapshot.neighborhood} - {order.addressSnapshot.city}/
+                    {order.addressSnapshot.state}
                   </p>
                   <p className="text-sm text-gray-600">
-                    CEP: {order.address.zipCode}
+                    CEP: {order.addressSnapshot.zipCode}
                   </p>
                 </div>
               )}

@@ -5,9 +5,27 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { registerSchema, type RegisterInput } from "@/schemas/auth.schema";
 import { z } from "zod";
+import { useAuthModalStore } from "@/stores/authModal";
+import { OAuthButtons } from "./OAuthButtons";
 
-export function RegisterForm() {
+/**
+ * RegisterForm Props
+ * 
+ * Props opcionais permitem uso em dois contextos:
+ * 1. Modal mode: recebe callbacks via props
+ * 2. Standalone page mode: redireciona normalmente
+ */
+interface RegisterFormProps {
+  /** Callback após registro bem-sucedido (para fechar modal) */
+  onSuccess?: () => void;
+
+  /** Callback para trocar para view de login */
+  onSwitchView?: () => void;
+}
+
+export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}) {
   const router = useRouter();
+  const { setSubmitting } = useAuthModalStore();
 
   const [formData, setFormData] = useState<RegisterInput>({
     fullName: "",
@@ -18,19 +36,19 @@ export function RegisterForm() {
     whatsapp: "",
     acceptTerms: false,
   });
-  
+
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterInput, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [generalError, setGeneralError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    
+
     // Limpar erro do campo quando usuário começar a digitar
     if (errors[name as keyof RegisterInput]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
@@ -45,6 +63,9 @@ export function RegisterForm() {
     setErrors({});
     setGeneralError(null);
     setIsLoading(true);
+
+    // Bloqueia fechamento do modal durante submit
+    setSubmitting(true);
 
     try {
       // Validar com Zod
@@ -79,6 +100,10 @@ export function RegisterForm() {
       });
 
       if (signInResult?.ok) {
+        // Sucesso: chamar callback (modal) ou redirecionar (página)
+        if (onSuccess) {
+          onSuccess();
+        }
         router.push("/dashboard");
         router.refresh();
       } else {
@@ -89,7 +114,7 @@ export function RegisterForm() {
       if (error instanceof z.ZodError) {
         // Erros de validação do Zod
         const fieldErrors: Partial<Record<keyof RegisterInput, string>> = {};
-        error.errors.forEach((err) => {
+        error.issues.forEach((err) => {
           const field = err.path[0] as keyof RegisterInput;
           fieldErrors[field] = err.message;
         });
@@ -99,13 +124,12 @@ export function RegisterForm() {
       }
     } finally {
       setIsLoading(false);
+      setSubmitting(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
-      <h2 className="text-2xl font-bold text-center">Criar Conta</h2>
-
       {generalError && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
           {generalError}
@@ -122,11 +146,10 @@ export function RegisterForm() {
           type="text"
           value={formData.fullName}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-            errors.fullName
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:ring-blue-500"
-          }`}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.fullName
+            ? "border-red-500 focus:ring-red-500"
+            : "border-gray-300 focus:ring-blue-500"
+            }`}
           disabled={isLoading}
         />
         {errors.fullName && (
@@ -144,11 +167,10 @@ export function RegisterForm() {
           type="email"
           value={formData.email}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-            errors.email
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:ring-blue-500"
-          }`}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.email
+            ? "border-red-500 focus:ring-red-500"
+            : "border-gray-300 focus:ring-blue-500"
+            }`}
           disabled={isLoading}
         />
         {errors.email && (
@@ -166,11 +188,10 @@ export function RegisterForm() {
           type="date"
           value={formData.birthDate}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-            errors.birthDate
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:ring-blue-500"
-          }`}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.birthDate
+            ? "border-red-500 focus:ring-red-500"
+            : "border-gray-300 focus:ring-blue-500"
+            }`}
           disabled={isLoading}
         />
         {errors.birthDate && (
@@ -189,11 +210,10 @@ export function RegisterForm() {
           placeholder="(11) 99999-9999"
           value={formData.whatsapp}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-            errors.whatsapp
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:ring-blue-500"
-          }`}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.whatsapp
+            ? "border-red-500 focus:ring-red-500"
+            : "border-gray-300 focus:ring-blue-500"
+            }`}
           disabled={isLoading}
         />
         {errors.whatsapp && (
@@ -211,11 +231,10 @@ export function RegisterForm() {
           type="password"
           value={formData.password}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-            errors.password
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:ring-blue-500"
-          }`}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.password
+            ? "border-red-500 focus:ring-red-500"
+            : "border-gray-300 focus:ring-blue-500"
+            }`}
           disabled={isLoading}
         />
         <p className="text-xs text-gray-500 mt-1">
@@ -236,11 +255,10 @@ export function RegisterForm() {
           type="password"
           value={formData.confirmPassword}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-            errors.confirmPassword
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:ring-blue-500"
-          }`}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.confirmPassword
+            ? "border-red-500 focus:ring-red-500"
+            : "border-gray-300 focus:ring-blue-500"
+            }`}
           disabled={isLoading}
         />
         {errors.confirmPassword && (
@@ -255,9 +273,8 @@ export function RegisterForm() {
           type="checkbox"
           checked={formData.acceptTerms}
           onChange={handleChange}
-          className={`mt-1 h-4 w-4 rounded border-gray-300 ${
-            errors.acceptTerms ? "border-red-500" : ""
-          }`}
+          className={`mt-1 h-4 w-4 rounded border-gray-300 ${errors.acceptTerms ? "border-red-500" : ""
+            }`}
           disabled={isLoading}
         />
         <label htmlFor="acceptTerms" className="ml-2 text-sm">
@@ -279,16 +296,26 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+        className="w-full bg-primary-green text-white py-2 px-4 rounded-md hover:bg-primary-green-hover disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
       >
         {isLoading ? "Criando conta..." : "Criar Conta"}
       </button>
 
       <p className="text-center text-sm text-gray-600">
         Já tem uma conta?{" "}
-        <a href="/login" className="text-blue-600 hover:underline">
-          Entrar
-        </a>
+        {onSwitchView ? (
+          <button
+            type="button"
+            onClick={onSwitchView}
+            className="text-primary-green hover:text-primary-green-hover font-medium hover:underline"
+          >
+            Entrar
+          </button>
+        ) : (
+          <a href="/login" className="text-primary-green hover:text-primary-green-hover font-medium hover:underline">
+            Entrar
+          </a>
+        )}
       </p>
     </form>
   );

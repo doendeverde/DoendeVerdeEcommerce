@@ -33,7 +33,7 @@ export function Header({ className }: HeaderProps) {
 
         {/* Right Section: Cart + User */}
         <div className="flex items-center gap-1">
-          <CartButton itemCount={0} />
+          <CartButton />
           <UserDropdown />
         </div>
       </div>

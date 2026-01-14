@@ -12,6 +12,7 @@ import {
   Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuthModalStore } from "@/stores/authModal";
 
 interface UserDropdownProps {
   className?: string;
@@ -55,12 +56,12 @@ export function UserDropdown({ className }: UserDropdownProps) {
 
   if (!user) {
     return (
-      <Link
-        href="/login"
+      <button
+        onClick={() => useAuthModalStore.getState().open("login")}
         className="px-4 py-2 text-sm font-medium text-white bg-primary-green hover:bg-primary-green-hover rounded-lg transition-colors"
       >
         Entrar
-      </Link>
+      </button>
     );
   }
 

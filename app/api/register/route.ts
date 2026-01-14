@@ -11,10 +11,20 @@ export async function POST(request: NextRequest) {
     const result = registerSchema.safeParse(body);
 
     if (!result.success) {
+      // Transforma arrays de erro em strings únicas
+      const fieldErrors = result.error.flatten().fieldErrors;
+      const errors: Record<string, string> = {};
+      
+      Object.entries(fieldErrors).forEach(([key, value]) => {
+        if (value && value.length > 0) {
+          errors[key] = value[0]; // Pega primeira mensagem do array
+        }
+      });
+      
       return NextResponse.json(
         {
           success: false,
-          errors: result.error.flatten().fieldErrors,
+          errors,
         },
         { status: 400 }
       );
@@ -31,7 +41,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          errors: { email: ["Email já cadastrado"] },
+          errors: { email: "Email já cadastrado" },
         },
         { status: 400 }
       );
@@ -76,7 +86,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        errors: { _form: ["Erro ao criar conta. Tente novamente."] },
+        message: "Erro ao criar conta. Tente novamente.",
       },
       { status: 500 }
     );

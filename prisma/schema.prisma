@@ -310,10 +310,14 @@ model Product {
   slug        String @unique
   description String
 
-  basePrice Decimal   @db.Decimal(10, 2)
-  stock     Int       @default(0)
-  stockMode StockMode @default(SIMPLE)
-  active    Boolean   @default(true)
+  basePrice      Decimal        @db.Decimal(10, 2)
+  compareAtPrice Decimal?       @db.Decimal(10, 2) // Original price for discounts
+  loyaltyPoints  Int            @default(0) // Points earned on purchase
+  stock          Int            @default(0)
+  lowStockAlert  Int            @default(5) // Threshold for "últimas unidades"
+  stockMode      StockMode      @default(SIMPLE)
+  status         ProductStatus  @default(ACTIVE)
+  isPublished    Boolean        @default(true)
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
@@ -333,9 +337,9 @@ model Product {
 
   @@index([categoryId])
   @@index([slug])
-  @@index([active])
-  @@index([categoryId, active])
-  @@index([stockMode])
+  @@index([status])
+  @@index([isPublished])
+  @@index([categoryId, isPublished, status])
 }
 
 // =======================

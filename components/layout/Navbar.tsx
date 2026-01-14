@@ -6,9 +6,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/produtos", label: "Produtos" },
-  { href: "/marcas", label: "Marcas" },
   { href: "/assinaturas", label: "Assinaturas" },
-  { href: "/meus-pontos", label: "Meus Pontos" },
 ] as const;
 
 interface NavbarProps {

@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export const metadata = {
   title: "Meu Perfil | Headshop",
@@ -16,8 +16,8 @@ export default async function ProfilePage() {
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     include: {
-      userProfile: true,
-      userPreferences: true,
+      profile: true,
+      preferences: true,
       addresses: {
         orderBy: { isDefault: "desc" },
       },
@@ -53,12 +53,14 @@ export default async function ProfilePage() {
             <p className="text-gray-900 mt-1">{user.email}</p>
           </div>
 
-          <div>
-            <label className="text-sm font-medium text-gray-500">Data de Nascimento</label>
-            <p className="text-gray-900 mt-1">
-              {new Date(user.birthDate).toLocaleDateString("pt-BR")}
-            </p>
-          </div>
+          {user.birthDate && (
+            <div>
+              <label className="text-sm font-medium text-gray-500">Data de Nascimento</label>
+              <p className="text-gray-900 mt-1">
+                {new Date(user.birthDate).toLocaleDateString("pt-BR")}
+              </p>
+            </div>
+          )}
 
           {user.whatsapp && (
             <div>
@@ -71,13 +73,12 @@ export default async function ProfilePage() {
             <label className="text-sm font-medium text-gray-500">Status da Conta</label>
             <p className="text-gray-900 mt-1">
               <span
-                className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  user.status === "ACTIVE"
-                    ? "bg-green-100 text-green-800"
-                    : user.status === "BLOCKED"
+                className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.status === "ACTIVE"
+                  ? "bg-green-100 text-green-800"
+                  : user.status === "BLOCKED"
                     ? "bg-red-100 text-red-800"
                     : "bg-gray-100 text-gray-800"
-                }`}
+                  }`}
               >
                 {user.status}
               </span>
@@ -95,81 +96,16 @@ export default async function ProfilePage() {
         </div>
       </div>
 
-      {/* Perfil Adicional */}
-      {user.userProfile && (
-        <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Informações Adicionais
-            </h2>
-          </div>
-          <div className="p-6 space-y-4">
-            {user.userProfile.bio && (
-              <div>
-                <label className="text-sm font-medium text-gray-500">Bio</label>
-                <p className="text-gray-900 mt-1">{user.userProfile.bio}</p>
-              </div>
-            )}
-            {user.userProfile.avatarUrl && (
-              <div>
-                <label className="text-sm font-medium text-gray-500">Avatar</label>
-                <img
-                  src={user.userProfile.avatarUrl}
-                  alt="Avatar"
-                  className="mt-2 w-20 h-20 rounded-full"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Preferências */}
-      {user.userPreferences && (
+      {user.preferences && (
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b">
             <h2 className="text-lg font-semibold text-gray-900">
               Minhas Preferências
             </h2>
           </div>
-          <div className="p-6 space-y-4">
-            {user.userPreferences.favoriteCategories &&
-              user.userPreferences.favoriteCategories.length > 0 && (
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Categorias Favoritas
-                  </label>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {user.userPreferences.favoriteCategories.map((cat, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full"
-                      >
-                        {cat}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-            {user.userPreferences.productTypes &&
-              user.userPreferences.productTypes.length > 0 && (
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Tipos de Produto
-                  </label>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {user.userPreferences.productTypes.map((type, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex px-3 py-1 text-sm bg-green-100 text-green-800 rounded-full"
-                      >
-                        {type}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+          <div className="p-6">
+            <p className="text-sm text-gray-600">Preferências de consumo configuradas.</p>
           </div>
         </div>
       )}

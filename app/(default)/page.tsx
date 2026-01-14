@@ -1,228 +1,205 @@
-import { Search, SlidersHorizontal } from "lucide-react";
-
 /**
  * Home Page — Product Catalog
- * 
+ *
  * Features:
- * - Search bar
- * - Category filters
- * - Product grid
+ * - Hero section with value proposition
+ * - Featured products from database
+ * - Category quick links
+ * - Search CTA
  */
-export default function HomePage() {
-  return (
-    <div className="space-y-6">
-      {/* Search & Filters Bar */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        {/* Search Input */}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-muted" />
-          <input
-            type="text"
-            placeholder="Buscar produtos..."
-            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-border rounded-xl text-sm placeholder:text-gray-muted focus:outline-none focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green transition-colors"
-          />
-        </div>
 
-        {/* Filters Button */}
-        <button className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-border rounded-xl text-sm font-medium text-text-primary hover:bg-gray-bg transition-colors">
-          <SlidersHorizontal className="w-4 h-4" />
-          Filtros
-        </button>
-      </div>
+import Link from 'next/link';
+import { ArrowRight, Truck, Shield, Gift, Crown } from 'lucide-react';
+import { productService } from '@/services';
+import { categoryRepository } from '@/repositories';
+import { ProductGrid } from '@/components/products';
+import type { CategoryItem } from '@/types/product';
 
-      {/* Category Chips */}
-      <CategoryFilters />
+export default async function HomePage() {
+  // Fetch featured products and categories
+  const [featuredProducts, categoriesRaw] = await Promise.all([
+    productService.getFeaturedProducts(8),
+    categoryRepository.findActive(),
+  ]);
 
-      {/* Products Grid - Placeholder */}
-      <ProductsGrid />
-    </div>
-  );
-}
-
-/**
- * Category filter chips
- */
-function CategoryFilters() {
-  const categories = [
-    { id: "all", label: "Todos", active: true },
-    { id: "acessorios", label: "Acessórios", active: false },
-    { id: "piteiras", label: "Piteiras", active: false },
-    { id: "bongs", label: "Bongs", active: false },
-    { id: "sedas", label: "Sedas", active: false },
-    { id: "vaporizadores", label: "Vaporizadores", active: false },
-  ];
-
-  return (
-    <div className="flex flex-wrap gap-2">
-      {categories.map((cat) => (
-        <button
-          key={cat.id}
-          className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${cat.active
-              ? "bg-primary-green text-white"
-              : "bg-white border border-gray-border text-text-primary hover:bg-gray-bg"
-            }`}
-        >
-          {cat.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-/**
- * Products grid - placeholder cards
- */
-function ProductsGrid() {
-  // Placeholder products for layout demonstration
-  const placeholderProducts = [
-    {
-      id: "1",
-      name: "Dichavador Premium Metal",
-      description: "Dichavador de metal com 4 partes e filtro",
-      category: "Acessórios",
-      originalPrice: 89.90,
-      price: 71.92,
-      points: 90,
-      stock: 15,
-      image: null,
-    },
-    {
-      id: "2",
-      name: "Piteira de Vidro Artesanal",
-      description: "Piteira de vidro borossilicato artesanal",
-      category: "Piteiras",
-      originalPrice: 45.00,
-      price: 36.00,
-      points: 45,
-      stock: 8,
-      image: null,
-    },
-    {
-      id: "3",
-      name: "Bong de Vidro 30cm",
-      description: "Bong de vidro borossilicato com percolador",
-      category: "Bongs",
-      originalPrice: 159.90,
-      price: 127.92,
-      points: 160,
-      stock: 3,
-      image: null,
-      lowStock: true,
-    },
-  ];
-
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {placeholderProducts.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
-  );
-}
-
-interface ProductCardProps {
-  product: {
+  // Transform to CategoryItem type
+  const categories: CategoryItem[] = categoriesRaw.map((cat: {
     id: string;
     name: string;
-    description: string;
-    category: string;
-    originalPrice: number;
-    price: number;
-    points: number;
-    stock: number;
-    image: string | null;
-    lowStock?: boolean;
-  };
-}
-
-/**
- * Product card component
- */
-function ProductCard({ product }: ProductCardProps) {
-  const formatPrice = (value: number) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
+    slug: string;
+    description: string | null;
+    imageUrl: string | null;
+    _count: { products: number };
+  }) => ({
+    id: cat.id,
+    name: cat.name,
+    slug: cat.slug,
+    description: cat.description,
+    imageUrl: cat.imageUrl,
+    productCount: cat._count.products,
+  }));
 
   return (
-    <div className="group bg-white rounded-xl border border-gray-border overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
-      {/* Image Container */}
-      <div className="relative aspect-square bg-gray-bg">
-        {/* Placeholder for image */}
-        <div className="absolute inset-0 flex items-center justify-center text-gray-muted">
-          <span className="text-sm">Imagem do produto</span>
-        </div>
-
-        {/* Low Stock Badge */}
-        {product.lowStock && (
-          <span className="absolute top-3 right-3 px-2 py-1 text-xs font-medium text-white bg-primary-purple rounded-md">
-            Últimas unidades
+    <div className="space-y-16">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-purple to-purple-600 px-6 py-12 text-white sm:px-12 sm:py-16">
+        <div className="relative z-10 max-w-2xl">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 text-sm font-medium backdrop-blur-sm">
+            <Crown className="h-4 w-4" />
+            Programa de Pontos Ativo
           </span>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="p-4 space-y-3">
-        {/* Category & Stock */}
-        <div className="flex items-center gap-2 text-xs">
-          <span className="px-2 py-1 bg-primary-green-light text-primary-green font-medium rounded-md">
-            {product.category}
-          </span>
-          <span className="text-text-secondary">
-            ● {product.stock} em estoque
-          </span>
-        </div>
-
-        {/* Name & Description */}
-        <div>
-          <h3 className="font-semibold text-text-primary group-hover:text-primary-green transition-colors">
-            {product.name}
-          </h3>
-          <p className="text-sm text-text-secondary line-clamp-2 mt-1">
-            {product.description}
+          <h1 className="mt-6 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+            Sua experiência premium começa aqui
+          </h1>
+          <p className="mt-4 text-lg text-white/80">
+            Os melhores acessórios, piteiras, bongs e muito mais. Ganhe pontos a cada compra e acumule benefícios exclusivos.
           </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-base font-semibold text-primary-purple transition-all hover:bg-gray-100"
+            >
+              Ver Produtos
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/subscriptions"
+              className="inline-flex items-center gap-2 rounded-lg border-2 border-white/30 px-6 py-3 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10"
+            >
+              Conhecer Planos
+            </Link>
+          </div>
         </div>
+        {/* Decorative circles */}
+        <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-white/10" />
+        <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-white/5" />
+      </section>
 
-        {/* Points */}
-        <div className="flex items-center gap-1 text-sm text-primary-green">
-          <span>★</span>
-          <span>+{product.points} pontos</span>
-        </div>
-
-        {/* Price & Add to Cart */}
-        <div className="flex items-end justify-between pt-2">
+      {/* Benefits Bar */}
+      <section className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+            <Truck className="h-5 w-5 text-primary-green" />
+          </div>
           <div>
-            {product.originalPrice !== product.price && (
-              <p className="text-sm text-text-secondary line-through">
-                {formatPrice(product.originalPrice)}
-              </p>
-            )}
-            <p className="text-lg font-bold text-text-primary">
-              {formatPrice(product.price)}
+            <p className="text-sm font-semibold text-gray-900">Frete Grátis</p>
+            <p className="text-xs text-gray-500">Acima de R$ 150</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+            <Shield className="h-5 w-5 text-primary-green" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">Compra Segura</p>
+            <p className="text-xs text-gray-500">Garantia de 7 dias</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+            <Gift className="h-5 w-5 text-primary-purple" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">Ganhe Pontos</p>
+            <p className="text-xs text-gray-500">A cada compra</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+            <Crown className="h-5 w-5 text-primary-purple" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">Planos VIP</p>
+            <p className="text-xs text-gray-500">Descontos exclusivos</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories */}
+      {categories.length > 0 && (
+        <section>
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900">Categorias</h2>
+            <Link
+              href="/products"
+              className="text-sm font-medium text-primary-green hover:underline"
+            >
+              Ver todas
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {categories.slice(0, 6).map((category) => (
+              <Link
+                key={category.id}
+                href={`/products?category=${category.slug}`}
+                className="group flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-primary-green hover:shadow-md"
+              >
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-2xl transition-colors group-hover:bg-green-50">
+                  🌿
+                </div>
+                <span className="text-sm font-medium text-gray-700 group-hover:text-primary-green">
+                  {category.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Featured Products */}
+      <section>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Produtos em Destaque</h2>
+            <p className="mt-1 text-sm text-gray-500">
+              Os mais pedidos pelos nossos clientes
             </p>
           </div>
-
-          <button
-            className="p-3 bg-primary-green text-white rounded-xl hover:bg-primary-green-hover transition-colors"
-            aria-label="Adicionar ao carrinho"
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary-green hover:underline"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-          </button>
+            Ver todos
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
-      </div>
+        {featuredProducts.length > 0 ? (
+          <ProductGrid products={featuredProducts} />
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 py-16 text-center">
+            <p className="text-lg font-medium text-gray-600">
+              Nenhum produto cadastrado ainda
+            </p>
+            <p className="mt-2 text-sm text-gray-500">
+              Os produtos aparecerão aqui assim que forem adicionados.
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* CTA Section */}
+      <section className="rounded-2xl bg-gradient-to-r from-primary-green to-green-600 px-6 py-12 text-center text-white sm:px-12">
+        <h2 className="text-2xl font-bold sm:text-3xl">
+          Pronto para começar?
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-lg text-white/80">
+          Crie sua conta grátis e comece a acumular pontos hoje mesmo. Quanto mais você compra, mais benefícios você ganha!
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-base font-semibold text-primary-green transition-all hover:bg-gray-100"
+          >
+            Criar Conta Grátis
+          </Link>
+          <Link
+            href="/subscriptions"
+            className="inline-flex items-center gap-2 rounded-lg border-2 border-white/30 px-6 py-3 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10"
+          >
+            Ver Planos de Assinatura
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

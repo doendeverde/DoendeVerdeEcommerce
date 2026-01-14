@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export const metadata = {
   title: "Dashboard | Headshop",
@@ -20,7 +20,7 @@ export default async function DashboardPage() {
       _count: {
         select: {
           orders: true,
-          userSubscriptions: true,
+          subscriptions: true,
           addresses: true,
         },
       },
@@ -33,19 +33,19 @@ export default async function DashboardPage() {
     take: 5,
     orderBy: { createdAt: "desc" },
     include: {
-      payment: true,
-      shipment: true,
+      payments: true,
+      shipments: true,
     },
   });
 
   // Buscar assinaturas ativas
-  const activeSubscriptions = await prisma.userSubscription.findMany({
+  const activeSubscriptions = await prisma.subscription.findMany({
     where: {
       userId: session.user.id,
       status: "ACTIVE",
     },
     include: {
-      subscriptionPlan: true,
+      plan: true,
     },
   });
 
@@ -72,7 +72,7 @@ export default async function DashboardPage() {
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-sm font-medium text-gray-500">Assinaturas Ativas</h3>
           <p className="text-3xl font-bold text-gray-900 mt-2">
-            {user?._count.userSubscriptions || 0}
+            {user?._count.subscriptions || 0}
           </p>
         </div>
 
@@ -101,21 +101,21 @@ export default async function DashboardPage() {
                 >
                   <div>
                     <h3 className="font-medium text-gray-900">
-                      {subscription.subscriptionPlan.name}
+                      {subscription.plan.name}
                     </h3>
                     <p className="text-sm text-gray-500">
                       Próxima cobrança:{" "}
-                      {new Date(subscription.nextBillingDate).toLocaleDateString(
+                      {new Date(subscription.nextBillingAt).toLocaleDateString(
                         "pt-BR"
                       )}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-gray-900">
-                      R$ {subscription.subscriptionPlan.price.toFixed(2)}
+                      R$ {subscription.plan.price.toFixed(2)}
                     </p>
                     <p className="text-sm text-gray-500">
-                      /{subscription.subscriptionPlan.billingCycle === "MONTHLY" ? "mês" : "ano"}
+                      /{subscription.plan.billingCycle === "MONTHLY" ? "mês" : "ano"}
                     </p>
                   </div>
                 </div>
@@ -151,13 +151,12 @@ export default async function DashboardPage() {
                       R$ {order.totalAmount.toFixed(2)}
                     </p>
                     <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        order.status === "DELIVERED"
-                          ? "bg-green-100 text-green-800"
-                          : order.status === "CANCELLED"
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${order.status === "DELIVERED"
+                        ? "bg-green-100 text-green-800"
+                        : order.status === "CANCELED"
                           ? "bg-red-100 text-red-800"
                           : "bg-yellow-100 text-yellow-800"
-                      }`}
+                        }`}
                     >
                       {order.status}
                     </span>

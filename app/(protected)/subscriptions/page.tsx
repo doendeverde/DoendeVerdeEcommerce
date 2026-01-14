@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export const metadata = {
   title: "Minhas Assinaturas | Headshop",
@@ -13,13 +13,13 @@ export default async function SubscriptionsPage() {
     return null;
   }
 
-  const subscriptions = await prisma.userSubscription.findMany({
+  const subscriptions = await prisma.subscription.findMany({
     where: { userId: session.user.id },
     orderBy: { createdAt: "desc" },
     include: {
-      subscriptionPlan: {
+      plan: {
         include: {
-          subscriptionPlanItems: {
+          products: {
             include: {
               product: true,
             },
@@ -54,10 +54,10 @@ export default async function SubscriptionsPage() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-xl font-bold text-gray-900">
-                        {subscription.subscriptionPlan.name}
+                        {subscription.plan.name}
                       </h3>
                       <p className="text-gray-600 mt-1">
-                        {subscription.subscriptionPlan.description}
+                        {subscription.plan.description}
                       </p>
                     </div>
                     <span className="inline-flex px-3 py-1 text-sm font-semibold bg-green-100 text-green-800 rounded-full">
@@ -76,13 +76,13 @@ export default async function SubscriptionsPage() {
                       <div className="flex justify-between">
                         <span className="text-gray-600">Valor:</span>
                         <span className="font-semibold text-gray-900">
-                          R$ {subscription.subscriptionPlan.price.toFixed(2)}
+                          R$ {subscription.plan.price.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Ciclo:</span>
                         <span className="text-gray-900">
-                          {subscription.subscriptionPlan.billingCycle === "MONTHLY"
+                          {subscription.plan.billingCycle === "MONTHLY"
                             ? "Mensal"
                             : "Anual"}
                         </span>
@@ -90,13 +90,13 @@ export default async function SubscriptionsPage() {
                       <div className="flex justify-between">
                         <span className="text-gray-600">Início:</span>
                         <span className="text-gray-900">
-                          {new Date(subscription.startDate).toLocaleDateString("pt-BR")}
+                          {new Date(subscription.startedAt).toLocaleDateString("pt-BR")}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Próxima cobrança:</span>
                         <span className="font-medium text-blue-600">
-                          {new Date(subscription.nextBillingDate).toLocaleDateString(
+                          {new Date(subscription.nextBillingAt).toLocaleDateString(
                             "pt-BR"
                           )}
                         </span>
@@ -110,7 +110,7 @@ export default async function SubscriptionsPage() {
                       Produtos Inclusos
                     </h4>
                     <div className="space-y-2">
-                      {subscription.subscriptionPlan.subscriptionPlanItems.map(
+                      {subscription.plan.products.map(
                         (item) => (
                           <div
                             key={item.id}
@@ -159,23 +159,22 @@ export default async function SubscriptionsPage() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {subscription.subscriptionPlan.name}
+                        {subscription.plan.name}
                       </h3>
                       <p className="text-sm text-gray-600 mt-1">
-                        {new Date(subscription.startDate).toLocaleDateString("pt-BR")}{" "}
-                        - {subscription.endDate
-                          ? new Date(subscription.endDate).toLocaleDateString("pt-BR")
+                        {new Date(subscription.startedAt).toLocaleDateString("pt-BR")}{" "}
+                        - {subscription.canceledAt
+                          ? new Date(subscription.canceledAt).toLocaleDateString("pt-BR")
                           : "Ativa"}
                       </p>
                     </div>
                     <span
-                      className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
-                        subscription.status === "PAUSED"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : subscription.status === "CANCELED"
+                      className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${subscription.status === "PAUSED"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : subscription.status === "CANCELED"
                           ? "bg-red-100 text-red-800"
                           : "bg-gray-100 text-gray-800"
-                      }`}
+                        }`}
                     >
                       {subscription.status}
                     </span>
@@ -183,8 +182,8 @@ export default async function SubscriptionsPage() {
                 </div>
                 <div className="px-6 py-4">
                   <p className="text-sm text-gray-600">
-                    R$ {subscription.subscriptionPlan.price.toFixed(2)} /{" "}
-                    {subscription.subscriptionPlan.billingCycle === "MONTHLY"
+                    R$ {subscription.plan.price.toFixed(2)} /{" "}
+                    {subscription.plan.billingCycle === "MONTHLY"
                       ? "mês"
                       : "ano"}
                   </p>

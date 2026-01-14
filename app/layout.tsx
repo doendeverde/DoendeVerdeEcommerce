@@ -1,6 +1,10 @@
-import type { Metadata } from "next";
+"use client";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import { AuthModal } from "@/components/auth/AuthModal";
+import { CartDrawer } from "@/components/cart";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,12 +16,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-export const metadata: Metadata = {
-  title: "Doende HeadShop — E-commerce & Assinaturas",
-  description: "Headshop com produtos premium, assinaturas personalizadas e programa de pontos. Descubra acessórios, piteiras, bongs, sedas e muito mais.",
-  keywords: ["headshop", "acessórios", "piteiras", "bongs", "sedas", "vaporizadores", "assinatura"],
-};
 
 export default function RootLayout({
   children,
@@ -31,6 +29,9 @@ export default function RootLayout({
       >
         <SessionProvider>
           {children}
+          <AuthModal />
+          <CartDrawer />
+          <Toaster position="top-right" richColors />
         </SessionProvider>
       </body>
     </html>
