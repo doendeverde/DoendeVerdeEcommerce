@@ -24,7 +24,7 @@ export interface ProductListItem {
   description: string;
   basePrice: number;
   compareAtPrice: number | null;
-  loyaltyPoints: number;
+  // loyaltyPoints: number; // FEATURE DISABLED: Will be implemented in the future
   stock: number;
   lowStockAlert: number;
   status: string;
@@ -134,7 +134,7 @@ export function toProductListItem(
     description: product.description,
     basePrice,
     compareAtPrice,
-    loyaltyPoints: product.loyaltyPoints,
+    // loyaltyPoints: product.loyaltyPoints, // FEATURE DISABLED: Will be implemented in the future
     stock: product.stock,
     lowStockAlert: product.lowStockAlert,
     status: product.status,

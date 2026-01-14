@@ -94,7 +94,7 @@ async function main() {
       compareAtPrice: 119.90,
       stock: 25,
       lowStockAlert: 5,
-      loyaltyPoints: 90,
+      loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
       categorySlug: 'acessorios',
       images: [
         { url: 'https://images.unsplash.com/photo-1587556930799-8dca77f1d59a?w=500', isPrimary: true },
@@ -108,7 +108,7 @@ async function main() {
       compareAtPrice: 55.00,
       stock: 42,
       lowStockAlert: 10,
-      loyaltyPoints: 45,
+      loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
       categorySlug: 'piteiras',
       images: [
         { url: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=500', isPrimary: true },
@@ -122,7 +122,7 @@ async function main() {
       compareAtPrice: 249.90,
       stock: 8,
       lowStockAlert: 3,
-      loyaltyPoints: 190,
+      loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
       categorySlug: 'bongs',
       images: [
         { url: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=500', isPrimary: true },
@@ -136,7 +136,7 @@ async function main() {
       compareAtPrice: null,
       stock: 100,
       lowStockAlert: 20,
-      loyaltyPoints: 89,
+      loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
       categorySlug: 'sedas',
       images: [
         { url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500', isPrimary: true },
@@ -150,7 +150,7 @@ async function main() {
       compareAtPrice: 399.90,
       stock: 12,
       lowStockAlert: 3,
-      loyaltyPoints: 300,
+      loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
       categorySlug: 'vaporizadores',
       images: [
         { url: 'https://images.unsplash.com/photo-1559056199-5e9d42b5f99a?w=500', isPrimary: true },
@@ -164,7 +164,7 @@ async function main() {
       compareAtPrice: 179.90,
       stock: 15,
       lowStockAlert: 5,
-      loyaltyPoints: 130,
+      loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
       categorySlug: 'kits',
       images: [
         { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500', isPrimary: true },
@@ -178,7 +178,7 @@ async function main() {
       compareAtPrice: null,
       stock: 18,
       lowStockAlert: 5,
-      loyaltyPoints: 70,
+      loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
       categorySlug: 'acessorios',
       images: [
         { url: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=500', isPrimary: true },
@@ -192,7 +192,7 @@ async function main() {
       compareAtPrice: 99.90,
       stock: 2,
       lowStockAlert: 5,
-      loyaltyPoints: 80,
+      loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
       categorySlug: 'piteiras',
       images: [
         { url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500', isPrimary: true },

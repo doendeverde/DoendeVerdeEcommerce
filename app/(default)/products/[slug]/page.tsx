@@ -111,13 +111,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
               )}
             </div>
 
-            {/* Points */}
-            <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-purple-50 border border-purple-100 px-4 py-2 text-primary-purple">
+            {/* FEATURE DISABLED: Points will be implemented in the future */}
+            {/* <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-purple-50 border border-purple-100 px-4 py-2 text-primary-purple">
               <Package className="h-5 w-5" />
               <span className="font-medium">
                 Ganhe <strong>+{product.loyaltyPoints} pontos</strong> nesta compra
               </span>
-            </div>
+            </div> */}
 
             {/* Stock Status */}
             <div className="mt-4">

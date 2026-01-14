@@ -53,7 +53,7 @@ export interface CartItemDisplay {
     name: string;
     slug: string;
     stock: number;
-    loyaltyPoints: number;
+    // loyaltyPoints: number; // FEATURE DISABLED: Will be implemented in the future
     image: {
       url: string;
       altText: string | null;
@@ -72,7 +72,7 @@ export interface CartState {
   items: CartItemDisplay[];
   itemCount: number;
   subtotal: number;
-  loyaltyPointsTotal: number;
+  // loyaltyPointsTotal: number; // FEATURE DISABLED: Will be implemented in the future
   isEmpty: boolean;
   hasOutOfStockItems: boolean;
   hasPriceChangedItems: boolean;
@@ -118,7 +118,7 @@ export function toCartItemDisplay(item: CartItemWithProduct): CartItemDisplay {
       name: item.product.name,
       slug: item.product.slug,
       stock: item.product.stock,
-      loyaltyPoints: item.product.loyaltyPoints,
+      // loyaltyPoints: item.product.loyaltyPoints, // FEATURE DISABLED: Will be implemented in the future
       image: primaryImage
         ? { url: primaryImage.url, altText: primaryImage.altText }
         : null,
@@ -144,10 +144,10 @@ export function toCartState(cart: CartWithItems): CartState {
     items,
     itemCount: items.reduce((acc, item) => acc + item.quantity, 0),
     subtotal: items.reduce((acc, item) => acc + item.totalPrice, 0),
-    loyaltyPointsTotal: items.reduce(
-      (acc, item) => acc + item.product.loyaltyPoints * item.quantity,
-      0
-    ),
+    // loyaltyPointsTotal: items.reduce(
+    //   (acc, item) => acc + item.product.loyaltyPoints * item.quantity,
+    //   0
+    // ), // FEATURE DISABLED: Will be implemented in the future
     isEmpty: items.length === 0,
     hasOutOfStockItems: items.some((item) => item.isOutOfStock),
     hasPriceChangedItems: items.some((item) => item.priceChanged),

@@ -102,11 +102,11 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.name}
         </h3>
 
-        {/* Points */}
-        <div className="mt-2 flex items-center gap-1 text-xs text-primary-purple font-medium">
+        {/* FEATURE DISABLED: Points will be implemented in the future */}
+        {/* <div className="mt-2 flex items-center gap-1 text-xs text-primary-purple font-medium">
           <Package className="h-3.5 w-3.5" />
           <span>+{product.loyaltyPoints} pontos</span>
-        </div>
+        </div> */}
 
         {/* Price Section */}
         <div className="mt-auto pt-4 flex items-end justify-between gap-2">

@@ -1,7 +1,7 @@
 /**
  * CartSummary Component
  *
- * Resumo do carrinho com subtotal, pontos e botão de checkout.
+ * Resumo do carrinho com subtotal e botão de checkout.
  */
 
 'use client';
@@ -21,21 +21,21 @@ export function CartSummary({ onCheckout }: CartSummaryProps) {
   const subtotal = useMemo(() => cart?.subtotal ?? 0, [cart?.subtotal]);
   const itemCount = useMemo(() => cart?.itemCount ?? 0, [cart?.itemCount]);
 
-  // Calculate estimated points (10 points per R$1)
-  const estimatedPoints = Math.floor(subtotal * 10);
+  // FEATURE DISABLED: Points will be implemented in the future
+  // const estimatedPoints = Math.floor(subtotal * 10);
 
   // Check for issues
   const hasIssues = cart?.hasOutOfStockItems || cart?.hasPriceChangedItems;
 
   return (
     <div className="border-t border-gray-200 bg-gray-50 p-4">
-      {/* Points Badge */}
-      <div className="mb-4 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-primary-purple to-purple-600 px-4 py-2 text-white">
+      {/* FEATURE DISABLED: Points will be implemented in the future */}
+      {/* <div className="mb-4 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-primary-purple to-purple-600 px-4 py-2 text-white">
         <Sparkles className="h-4 w-4" />
         <span className="text-sm font-medium">
           Ganhe <strong>+{estimatedPoints} pontos</strong> nesta compra
         </span>
-      </div>
+      </div> */}
 
       {/* Summary */}
       <div className="space-y-2 text-sm">

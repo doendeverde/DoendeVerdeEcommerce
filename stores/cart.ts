@@ -235,7 +235,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
         isEmpty: optimisticItems.length === 0,
         hasOutOfStockItems: optimisticItems.some((item) => item.isOutOfStock),
         hasPriceChangedItems: optimisticItems.some((item) => item.priceChanged),
-        loyaltyPointsTotal: optimisticItems.reduce((sum, item) => sum + item.product.loyaltyPoints * item.quantity, 0),
+        // loyaltyPointsTotal: optimisticItems.reduce((sum, item) => sum + item.product.loyaltyPoints * item.quantity, 0), // FEATURE DISABLED
       },
       pendingOperations: new Set([...pendingOperations, operationId]),
       error: null,

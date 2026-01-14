@@ -9,18 +9,18 @@ interface UserStatusBannerProps {
   // TODO: These will come from user data/subscription
   planName?: string;
   discountPercent?: number;
-  points?: number;
+  // points?: number; // FEATURE DISABLED: Will be implemented in the future
 }
 
 /**
  * Purple gradient banner showing user's subscription status
- * Displays: current plan, discount, and available points
+ * Displays: current plan and discount
  */
 export function UserStatusBanner({
   className,
   planName = "Doende Prata",
   discountPercent = 20,
-  points = 2850,
+  // points = 2850, // FEATURE DISABLED: Will be implemented in the future
 }: UserStatusBannerProps) {
   const { data: session, status } = useSession();
 
@@ -60,8 +60,8 @@ export function UserStatusBanner({
           </div>
         </div>
 
-        {/* Right: Points */}
-        <div className="flex items-center gap-3 sm:text-right">
+        {/* FEATURE DISABLED: Points will be implemented in the future */}
+        {/* <div className="flex items-center gap-3 sm:text-right">
           <div className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-xl">
             <Star className="w-5 h-5 text-yellow-300 fill-yellow-300" />
             <div>
@@ -73,7 +73,7 @@ export function UserStatusBanner({
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
