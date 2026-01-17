@@ -1,12 +1,12 @@
 /**
  * Database Seed Script
  *
- * Populates the database with sample categories and products.
+ * Populates the database with sample categories, products, and subscription plans.
  * Run with: npx tsx prisma/seed.ts
  */
 
 import 'dotenv/config';
-import { PrismaClient, ProductStatus } from '@prisma/client';
+import { PrismaClient, ProductStatus, BillingCycle } from '@prisma/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
 
 // Create Prisma client with Neon adapter
@@ -27,6 +27,7 @@ async function main() {
   await prisma.productImage.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
+  await prisma.subscriptionPlan.deleteMany();
 
   // Create categories
   console.log('📂 Creating categories...');
@@ -236,7 +237,48 @@ async function main() {
     console.log(`  ✅ Created: ${product.name}`);
   }
 
-  console.log(`\n✅ Seed completed! Created ${products.length} products.`);
+  console.log(`\n✅ Created ${products.length} products.`);
+
+  // Create subscription plans
+  console.log('\n💳 Creating subscription plans...');
+  const subscriptionPlans = [
+    {
+      name: 'Doende X',
+      slug: 'doende-x',
+      description: 'Plano inicial com 5% de desconto permanente e 200 pontos mensais',
+      price: 29.90,
+      billingCycle: BillingCycle.MONTHLY,
+      active: true,
+    },
+    {
+      name: 'Doende Bronze',
+      slug: 'doende-bronze',
+      description: 'O plano mais popular! 15% de desconto e 350 pontos mensais',
+      price: 49.90,
+      billingCycle: BillingCycle.MONTHLY,
+      active: true,
+    },
+    {
+      name: 'Doende Prata',
+      slug: 'doende-prata',
+      description: 'Experiência premium com 20% de desconto e 500 pontos mensais',
+      price: 79.90,
+      billingCycle: BillingCycle.MONTHLY,
+      active: true,
+    },
+  ];
+
+  for (const planData of subscriptionPlans) {
+    await prisma.subscriptionPlan.create({
+      data: planData,
+    });
+    console.log(`  ✅ Created plan: ${planData.name}`);
+  }
+
+  console.log(`\n✅ Seed completed!`);
+  console.log(`   - ${categories.length} categories`);
+  console.log(`   - ${products.length} products`);
+  console.log(`   - ${subscriptionPlans.length} subscription plans`);
 }
 
 main()

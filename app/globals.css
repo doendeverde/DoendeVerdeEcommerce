@@ -105,3 +105,13 @@ body {
     padding-right: 2rem;
   }
 }
+
+/* ─── Hide Scrollbar Utility ─── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
