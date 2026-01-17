@@ -104,4 +104,127 @@ export const subscriptionRepository = {
       orderBy: { createdAt: "desc" },
     });
   },
+
+  /**
+   * Check if user has active subscription for a specific plan
+   */
+  async userHasActivePlanSubscription(userId: string, planId: string) {
+    const existing = await prisma.subscription.findFirst({
+      where: {
+        userId,
+        planId,
+        status: "ACTIVE",
+      },
+      select: { id: true },
+    });
+    return existing !== null;
+  },
+
+  /**
+   * Check if user has any active subscription
+   */
+  async userHasAnyActiveSubscription(userId: string) {
+    const existing = await prisma.subscription.findFirst({
+      where: {
+        userId,
+        status: "ACTIVE",
+      },
+      select: { id: true },
+    });
+    return existing !== null;
+  },
+
+  /**
+   * Create a new subscription
+   */
+  async createSubscription(data: {
+    userId: string;
+    planId: string;
+    provider?: "MERCADO_PAGO" | "STRIPE" | "MANUAL";
+    providerSubId?: string;
+  }) {
+    const now = new Date();
+    
+    // Calculate next billing date (first of next month or 30 days)
+    const nextBilling = new Date(now);
+    nextBilling.setMonth(nextBilling.getMonth() + 1);
+    nextBilling.setDate(1);
+    nextBilling.setHours(0, 0, 0, 0);
+
+    return prisma.subscription.create({
+      data: {
+        userId: data.userId,
+        planId: data.planId,
+        status: "ACTIVE",
+        startedAt: now,
+        nextBillingAt: nextBilling,
+        provider: data.provider,
+        providerSubId: data.providerSubId,
+      },
+      include: {
+        plan: true,
+      },
+    });
+  },
+
+  /**
+   * Create first subscription cycle
+   */
+  async createFirstCycle(data: {
+    subscriptionId: string;
+    amount: number;
+    paymentId?: string;
+  }) {
+    const now = new Date();
+    const cycleEnd = new Date(now);
+    cycleEnd.setMonth(cycleEnd.getMonth() + 1);
+
+    return prisma.subscriptionCycle.create({
+      data: {
+        subscriptionId: data.subscriptionId,
+        status: data.paymentId ? "PAID" : "PENDING",
+        cycleStart: now,
+        cycleEnd,
+        amount: data.amount,
+        paymentId: data.paymentId,
+      },
+    });
+  },
+
+  /**
+   * Cancel subscription
+   */
+  async cancelSubscription(subscriptionId: string) {
+    return prisma.subscription.update({
+      where: { id: subscriptionId },
+      data: {
+        status: "CANCELED",
+        canceledAt: new Date(),
+      },
+    });
+  },
+
+  /**
+   * Pause subscription
+   */
+  async pauseSubscription(subscriptionId: string) {
+    return prisma.subscription.update({
+      where: { id: subscriptionId },
+      data: {
+        status: "PAUSED",
+      },
+    });
+  },
+
+  /**
+   * Resume subscription
+   */
+  async resumeSubscription(subscriptionId: string) {
+    return prisma.subscription.update({
+      where: { id: subscriptionId },
+      data: {
+        status: "ACTIVE",
+      },
+    });
+  },
 };

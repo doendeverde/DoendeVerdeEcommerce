@@ -152,17 +152,21 @@ export function SubscriptionPlans({
   }, []);
 
   const handleSubscribe = (planSlug: string) => {
+    if (planSlug === "gratuito") {
+      // Free plan - no checkout needed
+      return;
+    }
+
     if (!isLoggedIn) {
-      // Redirect to login with return URL
+      // Redirect to login with callback to checkout
       window.location.href = `/login?callbackUrl=${encodeURIComponent(
-        `/subscriptions?subscribe=${planSlug}`
+        `/checkout/subscription/${planSlug}`
       )}`;
       return;
     }
 
-    // TODO: Implement subscription checkout flow
-    console.log("Subscribe to:", planSlug);
-    // Future: redirect to /checkout/subscription?plan=${planSlug}
+    // Redirect to subscription checkout
+    window.location.href = `/checkout/subscription/${planSlug}`;
   };
 
   return (
