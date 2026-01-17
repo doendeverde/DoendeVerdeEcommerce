@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/produtos", label: "Produtos" },
-  { href: "/assinaturas", label: "Assinaturas" },
+  { href: "/products", label: "Produtos" },
+  { href: "/subscriptions", label: "Assinaturas" },
 ] as const;
 
 interface NavbarProps {

@@ -2,18 +2,84 @@
  * Products Listing Page
  *
  * Catálogo de produtos com busca, filtros e paginação.
+ * Dados iniciais são buscados server-side para melhor SEO e performance.
  */
 
 import { Suspense } from 'react';
 import { Metadata } from 'next';
+import { productService } from '@/services';
 import { ProductCatalog } from './ProductCatalog';
+import type { ProductFilters } from '@/types/product';
 
 export const metadata: Metadata = {
   title: 'Produtos | Doende HeadShop',
   description: 'Explore nosso catálogo completo de acessórios, piteiras, bongs, sedas, vaporizadores e muito mais.',
 };
 
-export default function ProductsPage() {
+interface ProductsPageProps {
+  searchParams: Promise<{
+    search?: string;
+    category?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    inStock?: string;
+    sortBy?: string;
+    sortOrder?: string;
+    page?: string;
+  }>;
+}
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  // Await searchParams (Next.js 15+)
+  const params = await searchParams;
+
+  // Map URL params to service filters
+  const mapSortBy = (): ProductFilters['sortBy'] => {
+    const sortBy = params.sortBy;
+    const sortOrder = params.sortOrder;
+
+    if (!sortBy) return 'newest';
+
+    // Already in combined format
+    if (['relevance', 'price_asc', 'price_desc', 'newest'].includes(sortBy)) {
+      return sortBy as ProductFilters['sortBy'];
+    }
+
+    // Map from separate sortBy + sortOrder
+    switch (sortBy) {
+      case 'price':
+        return sortOrder === 'asc' ? 'price_asc' : 'price_desc';
+      case 'createdAt':
+        return 'newest';
+      default:
+        return 'relevance';
+    }
+  };
+
+  const filters: ProductFilters = {
+    search: params.search || undefined,
+    categorySlug: params.category || undefined,
+    minPrice: params.minPrice ? Number(params.minPrice) : undefined,
+    maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined,
+    inStock: params.inStock === 'true' ? true : undefined,
+    sortBy: mapSortBy(),
+    page: params.page ? Number(params.page) : 1,
+    limit: 12,
+  };
+
+  // Fetch initial data server-side
+  const result = await productService.getProductsWithCategories(filters);
+
+  // Transform pagination to match ProductCatalog expectations
+  const initialPagination = {
+    page: result.pagination.page,
+    pageSize: result.pagination.limit,
+    total: result.pagination.total,
+    totalPages: result.pagination.totalPages,
+    hasNext: result.pagination.hasMore,
+    hasPrev: result.pagination.page > 1,
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -27,9 +93,13 @@ export default function ProductsPage() {
           </p>
         </div>
 
-        {/* Catalog */}
+        {/* Catalog with initial data from server */}
         <Suspense fallback={<ProductCatalogSkeleton />}>
-          <ProductCatalog />
+          <ProductCatalog
+            initialProducts={result.products}
+            initialCategories={result.categories}
+            initialPagination={initialPagination}
+          />
         </Suspense>
       </div>
     </div>

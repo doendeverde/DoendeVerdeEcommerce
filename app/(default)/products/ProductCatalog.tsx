@@ -2,13 +2,14 @@
  * ProductCatalog Client Component
  *
  * Handles search, filters, and product listing with client-side state.
+ * Receives initial data from server for fast first render.
  */
 
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { ProductListItem, CategoryWithCount } from '@/types/product';
+import { ProductListItem, CategoryItem } from '@/types/product';
 import {
   ProductGrid,
   SearchBar,
@@ -16,37 +17,45 @@ import {
   ProductFilters,
 } from '@/components/products';
 
+interface PaginationState {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
 interface ProductsResponse {
   success: boolean;
   products: ProductListItem[];
-  categories: CategoryWithCount[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
+  categories: CategoryItem[];
+  pagination: PaginationState;
 }
 
-export function ProductCatalog() {
+interface ProductCatalogProps {
+  initialProducts: ProductListItem[];
+  initialCategories: CategoryItem[];
+  initialPagination: PaginationState;
+}
+
+export function ProductCatalog({
+  initialProducts,
+  initialCategories,
+  initialPagination,
+}: ProductCatalogProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // State
-  const [products, setProducts] = useState<ProductListItem[]>([]);
-  const [categories, setCategories] = useState<CategoryWithCount[]>([]);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    pageSize: 12,
-    total: 0,
-    totalPages: 0,
-    hasNext: false,
-    hasPrev: false,
-  });
-  const [isLoading, setIsLoading] = useState(true);
+  // Track if this is the initial render (to skip fetch on mount)
+  const isInitialMount = useRef(true);
+
+  // State - initialized with server data
+  const [products, setProducts] = useState<ProductListItem[]>(initialProducts);
+  const [categories, setCategories] = useState<CategoryItem[]>(initialCategories);
+  const [pagination, setPagination] = useState<PaginationState>(initialPagination);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Parse URL params
   const search = searchParams.get('search') || '';
@@ -85,8 +94,14 @@ export function ProductCatalog() {
     [searchParams, router, pathname]
   );
 
-  // Fetch products
+  // Fetch products on filter changes (skip initial mount - data comes from server)
   useEffect(() => {
+    // Skip fetch on initial mount - we already have data from server
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     const fetchProducts = async () => {
       setIsLoading(true);
 
@@ -226,8 +241,8 @@ export function ProductCatalog() {
                     key={p}
                     onClick={() => handlePageChange(p)}
                     className={`h-10 min-w-[2.5rem] rounded-lg text-sm font-medium transition-colors ${p === page
-                        ? 'bg-primary-green text-white'
-                        : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-primary-green text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
                       }`}
                   >
                     {p}

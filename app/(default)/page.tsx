@@ -11,9 +11,8 @@
 import Link from 'next/link';
 import { ArrowRight, Truck, Shield, Gift, Crown } from 'lucide-react';
 import { productService } from '@/services';
-import { categoryRepository } from '@/repositories';
-import { ProductGrid } from '@/components/products';
-import type { CategoryItem } from '@/types/product';
+import { ProductGrid, CategoryGrid, SearchBar, CategoryChips } from '@/components/products';
+import type { CategoryItem, ProductFilters } from '@/types/product';
 
 export default async function HomePage() {
   // Toggle hero section visibility
@@ -22,28 +21,15 @@ export default async function HomePage() {
   // Toggle benefits bar visibility
   const showBenefits = false;
 
-  // Fetch featured products and categories
-  const [featuredProducts, categoriesRaw] = await Promise.all([
-    productService.getFeaturedProducts(8),
-    categoryRepository.findActive(),
-  ]);
+  // Fetch products and categories using same service as products page
+  const filters: ProductFilters = {
+    sortBy: 'newest',
+    limit: 12,
+    page: 1,
+  };
 
-  // Transform to CategoryItem type
-  const categories: CategoryItem[] = categoriesRaw.map((cat: {
-    id: string;
-    name: string;
-    slug: string;
-    description: string | null;
-    imageUrl: string | null;
-    _count: { products: number };
-  }) => ({
-    id: cat.id,
-    name: cat.name,
-    slug: cat.slug,
-    description: cat.description,
-    imageUrl: cat.imageUrl,
-    productCount: cat._count.products,
-  }));
+  const result = await productService.getProductsWithCategories(filters);
+  const { products, categories } = result;
 
   return (
     <div className="space-y-16">
@@ -127,37 +113,21 @@ export default async function HomePage() {
       )}
 
       {/* Categories */}
-      {
-        categories.length > 0 && (
-          <section>
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Categorias</h2>
-              <Link
-                href="/products"
-                className="text-sm font-medium text-primary-green hover:underline"
-              >
-                Ver todas
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-              {categories.slice(0, 6).map((category) => (
-                <Link
-                  key={category.id}
-                  href={`/products?category=${category.slug}`}
-                  className="group flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-primary-green hover:shadow-md"
-                >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-2xl transition-colors group-hover:bg-green-50">
-                    🌿
-                  </div>
-                  <span className="text-sm font-medium text-gray-700 group-hover:text-primary-green">
-                    {category.name}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )
-      }
+      {/* {categories.length > 0 && ( */}
+      {false && (
+        <section>
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900">Categorias</h2>
+            <Link
+              href="/products"
+              className="text-sm font-medium text-primary-green hover:underline"
+            >
+              Ver todas
+            </Link>
+          </div>
+          <CategoryGrid categories={categories} maxDisplay={6} />
+        </section>
+      )}
 
       {/* Featured Products */}
       <section>
@@ -176,8 +146,8 @@ export default async function HomePage() {
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        {featuredProducts.length > 0 ? (
-          <ProductGrid products={featuredProducts} />
+        {products.length > 0 ? (
+          <ProductGrid products={products} />
         ) : (
           <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 py-16 text-center">
             <p className="text-lg font-medium text-gray-600">
