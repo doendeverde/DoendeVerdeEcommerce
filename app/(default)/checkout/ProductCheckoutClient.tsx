@@ -1,0 +1,389 @@
+/**
+ * Product Checkout Client Component
+ *
+ * Main checkout flow orchestrator for cart products with steps:
+ * 1. Address selection/creation
+ * 2. Payment method selection
+ * 3. PIX QR Code display (if PIX selected) or card processing
+ * 4. Confirmation
+ *
+ * This component manages state and coordinates between step components.
+ */
+
+"use client";
+
+import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  ShoppingBag,
+  MapPin,
+  CreditCard,
+  CheckCircle,
+} from "lucide-react";
+import type { Address } from "@prisma/client";
+import type {
+  PaymentMethod,
+  CartCheckoutData,
+  ProductCheckoutStepId,
+} from "@/types/checkout";
+
+// Reuse components from subscription checkout
+import {
+  AddressStep,
+  PaymentStep,
+  PixWaitingStep,
+  type CardPaymentData,
+  type PixPaymentData,
+} from "@/components/checkout/subscription";
+
+// Generic checkout components
+import {
+  CheckoutProgressGeneric,
+  ProcessingState,
+  GenericSuccessState,
+  GenericErrorState,
+} from "@/components/checkout";
+
+// Local components
+import { CheckoutCartSummary } from "./CheckoutCartSummary";
+
+// Types
+interface ProductCheckoutClientProps {
+  data: CartCheckoutData;
+}
+
+// Checkout steps configuration
+const CHECKOUT_STEPS = [
+  { id: "address", label: "Endereço", icon: MapPin },
+  { id: "payment", label: "Pagamento", icon: CreditCard },
+  { id: "success", label: "Confirmação", icon: CheckCircle },
+];
+
+// Step aliases for progress display
+const STEP_ALIASES: Record<string, string> = {
+  pix_waiting: "payment",
+};
+
+// Component
+export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
+  const router = useRouter();
+
+  // State
+  const [currentStep, setCurrentStep] =
+    useState<ProductCheckoutStepId>("address");
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
+    data.defaultAddressId
+  );
+  const [addresses, setAddresses] = useState(
+    data.addresses.map((a) => ({
+      ...a,
+      userId: "",
+      complement: null,
+      neighborhood: "",
+      zipCode: "",
+      country: "BR",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })) as Address[]
+  );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(
+    null
+  );
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
+
+  // PIX specific state
+  const [pixData, setPixData] = useState<PixPaymentData | null>(null);
+  const [isRegeneratingPix, setIsRegeneratingPix] = useState(false);
+
+  // Navigation Handlers
+  const goToPayment = useCallback(() => setCurrentStep("payment"), []);
+  const goBackToAddress = useCallback(() => setCurrentStep("address"), []);
+  const goBackToPayment = useCallback(() => {
+    setCurrentStep("payment");
+    setPixData(null);
+  }, []);
+
+  // Address Handlers
+  const handleAddressCreate = useCallback((address: Address) => {
+    setAddresses((prev) => [address, ...prev]);
+    setSelectedAddressId(address.id);
+  }, []);
+
+  const handleAddressSelect = useCallback((id: string) => {
+    setSelectedAddressId(id);
+  }, []);
+
+  /**
+   * Handler para pagamento PIX.
+   */
+  const handlePixCheckout = useCallback(async () => {
+    if (!selectedAddressId) {
+      setError("Selecione um endereço de entrega");
+      return;
+    }
+
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/checkout/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          addressId: selectedAddressId,
+          paymentData: { method: "pix" },
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        setError(result.error || "Erro ao gerar PIX");
+        return;
+      }
+
+      // Extract PIX data from response
+      if (result.data.paymentPreference) {
+        const pref = result.data.paymentPreference;
+        setPixData({
+          paymentId: pref.id,
+          qrCode: pref.qrCode || pref.pixCopyPaste || "",
+          qrCodeBase64: pref.qrCodeBase64 || "",
+          ticketUrl: pref.initPoint || "",
+          expirationDate: pref.expirationDate
+            ? new Date(pref.expirationDate)
+            : new Date(Date.now() + 30 * 60 * 1000),
+        });
+        setOrderId(result.data.orderId);
+        setCurrentStep("pix_waiting");
+      } else {
+        setError("Erro ao gerar QR Code PIX");
+      }
+    } catch {
+      setError("Erro ao processar pagamento. Tente novamente.");
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [selectedAddressId]);
+
+  /**
+   * Handler para regenerar PIX (quando expira).
+   */
+  const handleRegeneratePix = useCallback(async () => {
+    setIsRegeneratingPix(true);
+    await handlePixCheckout();
+    setIsRegeneratingPix(false);
+  }, [handlePixCheckout]);
+
+  /**
+   * Handler para pagamento com cartão.
+   */
+  const handleCardCheckout = useCallback(
+    async (cardData: CardPaymentData) => {
+      if (!selectedAddressId) {
+        setError("Selecione um endereço de entrega");
+        return;
+      }
+
+      if (!paymentMethod) {
+        setError("Selecione um método de pagamento");
+        return;
+      }
+
+      setIsProcessing(true);
+      setError(null);
+
+      try {
+        const response = await fetch("/api/checkout/cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            addressId: selectedAddressId,
+            paymentData: {
+              method: paymentMethod,
+              cardToken: cardData.token,
+              cardBrand: cardData.paymentMethodId,
+              installments: cardData.installments || 1,
+            },
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          setError(result.error || "Erro ao processar pagamento");
+          return;
+        }
+
+        setOrderId(result.data.orderId);
+        setCurrentStep("success");
+      } catch {
+        setError("Erro ao processar pagamento. Tente novamente.");
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [selectedAddressId, paymentMethod]
+  );
+
+  /**
+   * Handler para pagamento PIX confirmado.
+   */
+  const handlePixConfirmed = useCallback(() => {
+    setCurrentStep("success");
+  }, []);
+
+  /**
+   * Handler para pagamento PIX falhou.
+   */
+  const handlePixFailed = useCallback((errorMsg: string) => {
+    setError(errorMsg);
+    setCurrentStep("error");
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Render
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  // Processing state
+  if (isProcessing) {
+    return <ProcessingState message="Processando seu pedido..." />;
+  }
+
+  // Error state
+  if (currentStep === "error") {
+    return (
+      <GenericErrorState
+        title="Erro no Checkout"
+        message={error || "Ocorreu um erro ao processar seu pedido."}
+        onRetry={() => {
+          setError(null);
+          setCurrentStep("address");
+        }}
+        showBackButton
+        backHref="/cart"
+        backLabel="Voltar ao Carrinho"
+      />
+    );
+  }
+
+  // Success state
+  if (currentStep === "success") {
+    return (
+      <GenericSuccessState
+        title="Pedido Confirmado!"
+        message="Seu pedido foi realizado com sucesso. Você receberá um email com os detalhes."
+        orderId={orderId || undefined}
+        icon="package"
+        items={data.items.map((item) => `${item.quantity}x ${item.name}`)}
+        primaryAction={{
+          label: "Ver Meus Pedidos",
+          href: "/orders",
+        }}
+        secondaryAction={{
+          label: "Continuar Comprando",
+          href: "/products",
+        }}
+      />
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Left Column: Steps */}
+      <div className="lg:col-span-2 space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => router.push("/cart")}
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary-green/10 rounded-lg">
+              <ShoppingBag className="w-6 h-6 text-primary-green" />
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900">
+                Finalizar Compra
+              </h1>
+              <p className="text-sm text-gray-500">
+                {data.items.length}{" "}
+                {data.items.length === 1 ? "item" : "itens"} no carrinho
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress */}
+        <CheckoutProgressGeneric
+          steps={CHECKOUT_STEPS}
+          currentStep={currentStep}
+          stepAliases={STEP_ALIASES}
+        />
+
+        {/* Error Alert (non-blocking errors) */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* Step Content */}
+        {currentStep === "address" && (
+          <AddressStep
+            addresses={addresses}
+            selectedAddressId={selectedAddressId}
+            onAddressSelect={handleAddressSelect}
+            onAddressCreate={handleAddressCreate}
+            onBack={() => router.push("/cart")}
+            onContinue={goToPayment}
+          />
+        )}
+
+        {currentStep === "payment" && (
+          <PaymentStep
+            selectedMethod={paymentMethod}
+            onMethodSelect={setPaymentMethod}
+            onSubmit={handlePixCheckout}
+            onCardPaymentSubmit={handleCardCheckout}
+            onBack={goBackToAddress}
+            isProcessing={isProcessing}
+            amount={data.total}
+            isSubscription={false}
+          />
+        )}
+
+        {currentStep === "pix_waiting" && pixData && orderId && (
+          <PixWaitingStep
+            pixData={pixData}
+            amount={data.total}
+            orderId={orderId}
+            onPaymentConfirmed={handlePixConfirmed}
+            onPaymentFailed={handlePixFailed}
+            onRegeneratePix={handleRegeneratePix}
+            onBack={goBackToPayment}
+            isRegenerating={isRegeneratingPix}
+          />
+        )}
+      </div>
+
+      {/* Right Column: Order Summary */}
+      <div className="lg:col-span-1">
+        <div className="sticky top-24">
+          <CheckoutCartSummary
+            items={data.items}
+            subtotal={data.subtotal}
+            shipping={data.shipping}
+            discount={data.discount}
+            total={data.total}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

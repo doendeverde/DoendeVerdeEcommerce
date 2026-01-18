@@ -1,19 +1,23 @@
 /**
  * Checkout Service
  * 
- * Orchestrates the checkout flow for subscriptions.
+ * Orchestrates the checkout flow for subscriptions and products.
  * Handles validation, order creation, payment processing.
  */
 
 import { prisma } from "@/lib/prisma";
 import { subscriptionRepository } from "@/repositories/subscription.repository";
+import { cartRepository } from "@/repositories/cart.repository";
 import * as addressRepository from "@/repositories/address.repository";
 import * as orderRepository from "@/repositories/order.repository";
 import * as paymentRepository from "@/repositories/payment.repository";
 import { createSubscriptionPayment, createPixPaymentDirect } from "./payment.service";
+import { cartService } from "./cart.service";
 import type {
   SubscriptionCheckoutRequest,
   SubscriptionCheckoutResponse,
+  ProductCheckoutRequest,
+  ProductCheckoutResponse,
   PaymentPreference,
 } from "@/types/checkout";
 
@@ -378,6 +382,265 @@ async function handlePaymentWebhook(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Product Checkout Functions
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Validate product checkout data
+ */
+async function validateProductCheckout(
+  userId: string,
+  data: ProductCheckoutRequest
+): Promise<CheckoutValidationResult> {
+  // 1. Get and validate cart
+  const cart = await cartRepository.findOrCreateByUserId(userId);
+  if (!cart || cart.items.length === 0) {
+    return {
+      valid: false,
+      error: "Carrinho vazio",
+      errorCode: "EMPTY_CART",
+    };
+  }
+
+  // 2. Validate cart items (stock, availability)
+  const cartValidation = await cartService.validateCartForCheckout(userId);
+  if (!cartValidation.valid) {
+    const issueMessages = cartValidation.issues.map(
+      (i) => `${i.productName}: ${i.issue === "out_of_stock" ? "sem estoque" : i.details || i.issue}`
+    );
+    return {
+      valid: false,
+      error: `Problemas no carrinho: ${issueMessages.join(", ")}`,
+      errorCode: "CART_VALIDATION_FAILED",
+    };
+  }
+
+  // 3. Validate address exists and belongs to user
+  const address = await addressRepository.findAddressById(data.addressId, userId);
+  if (!address) {
+    return {
+      valid: false,
+      error: "Endereço não encontrado",
+      errorCode: "ADDRESS_NOT_FOUND",
+    };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Process product checkout from cart
+ * Creates order, payment, and handles stock
+ */
+async function processProductCheckout(
+  userId: string,
+  user: UserCheckoutData,
+  data: ProductCheckoutRequest
+): Promise<ProductCheckoutResponse> {
+  // 1. Validate checkout data
+  const validation = await validateProductCheckout(userId, data);
+  if (!validation.valid) {
+    return {
+      success: false,
+      error: validation.error,
+      errorCode: validation.errorCode,
+    };
+  }
+
+  // 2. Get cart and address details
+  const cart = await cartRepository.findOrCreateByUserId(userId);
+  const address = await addressRepository.findAddressById(data.addressId, userId);
+  if (!address) {
+    return { success: false, error: "Endereço não encontrado", errorCode: "ADDRESS_NOT_FOUND" };
+  }
+
+  // 3. Calculate totals
+  const subtotal = cart.items.reduce(
+    (sum, item) => sum + Number(item.unitPrice) * item.quantity,
+    0
+  );
+  const shipping = 0; // TODO: Calculate shipping based on address
+  const discount = 0; // TODO: Apply user subscription discount
+  const total = subtotal + shipping - discount;
+
+  try {
+    // 4. Create order with items and address snapshot
+    const orderItems = cart.items.map((item) => ({
+      productId: item.productId,
+      variantId: item.variantId || undefined,
+      title: item.product.name + (item.variant ? ` - ${item.variant.name}` : ""),
+      sku: item.variant?.sku,
+      quantity: item.quantity,
+      unitPrice: Number(item.unitPrice),
+      totalPrice: Number(item.unitPrice) * item.quantity,
+    }));
+
+    const order = await orderRepository.createOrder(
+      {
+        userId,
+        subtotalAmount: subtotal,
+        discountAmount: discount,
+        shippingAmount: shipping,
+        totalAmount: total,
+        notes: data.notes,
+      },
+      orderItems,
+      {
+        fullName: user.fullName,
+        whatsapp: user.whatsapp || "",
+        street: address.street,
+        number: address.number,
+        complement: address.complement || undefined,
+        neighborhood: address.neighborhood,
+        city: address.city,
+        state: address.state,
+        zipCode: address.zipCode,
+        country: address.country,
+      }
+    );
+
+    // 5. Create payment record
+    const payment = await paymentRepository.createPayment({
+      orderId: order.id,
+      provider: "MERCADO_PAGO",
+      amount: total,
+    });
+
+    // 6. Process payment based on method
+    let paymentPreference: PaymentPreference | undefined;
+
+    if (data.paymentData.method === "pix") {
+      // Generate PIX payment
+      paymentPreference = await createPixPayment(order.id, payment.id, total, user);
+      
+      // Return - user needs to pay
+      return {
+        success: true,
+        orderId: order.id,
+        paymentId: payment.id,
+        paymentPreference,
+      };
+    } else {
+      // Process card payment (credit/debit)
+      const cardResult = await processCardPayment(
+        order.id,
+        payment.id,
+        total,
+        data.paymentData,
+        user
+      );
+
+      if (!cardResult.success) {
+        // Mark payment as failed
+        await paymentRepository.markPaymentAsFailed(payment.id, { error: cardResult.error });
+        return {
+          success: false,
+          error: cardResult.error || "Falha ao processar pagamento",
+          errorCode: "PAYMENT_FAILED",
+        };
+      }
+
+      // Card payment approved - update payment
+      await paymentRepository.markPaymentAsPaid(
+        payment.id,
+        cardResult.transactionId,
+        cardResult.payload
+      );
+
+      // Mark order as paid
+      await orderRepository.markOrderAsPaid(order.id);
+
+      // Decrease stock for each item
+      await decreaseStock(cart.items);
+
+      // Clear cart
+      await cartRepository.clearCart(cart.id);
+
+      return {
+        success: true,
+        orderId: order.id,
+        paymentId: payment.id,
+      };
+    }
+  } catch (error) {
+    console.error("Product checkout error:", error);
+    return {
+      success: false,
+      error: "Erro ao processar pedido. Tente novamente.",
+      errorCode: "INTERNAL_ERROR",
+    };
+  }
+}
+
+/**
+ * Decrease product stock after successful payment
+ */
+async function decreaseStock(
+  items: Array<{
+    productId: string;
+    variantId: string | null;
+    quantity: number;
+  }>
+): Promise<void> {
+  for (const item of items) {
+    if (item.variantId) {
+      // Decrease variant stock
+      await prisma.productVariant.update({
+        where: { id: item.variantId },
+        data: { stock: { decrement: item.quantity } },
+      });
+    } else {
+      // Decrease product stock
+      await prisma.product.update({
+        where: { id: item.productId },
+        data: { stock: { decrement: item.quantity } },
+      });
+    }
+  }
+}
+
+/**
+ * Handle product payment confirmation (PIX webhook)
+ */
+async function handleProductPaymentConfirmation(
+  orderId: string,
+  paymentId: string,
+  transactionId: string,
+  payload: any
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Get order with items
+    const order = await orderRepository.findOrderById(orderId);
+    if (!order) {
+      return { success: false, error: "Pedido não encontrado" };
+    }
+
+    // Update payment as paid
+    await paymentRepository.markPaymentAsPaid(paymentId, transactionId, payload);
+
+    // Mark order as paid
+    await orderRepository.markOrderAsPaid(orderId);
+
+    // Decrease stock for each item
+    const stockItems = order.items.map((item) => ({
+      productId: item.productId,
+      variantId: item.variantId,
+      quantity: item.quantity,
+    }));
+    await decreaseStock(stockItems);
+
+    // Clear user's cart (find cart by userId)
+    const cart = await cartRepository.findOrCreateByUserId(order.userId);
+    await cartRepository.clearCart(cart.id);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Product payment confirmation error:", error);
+    return { success: false, error: "Erro ao confirmar pagamento" };
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Export
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -385,4 +648,8 @@ export const checkoutService = {
   validateSubscriptionCheckout,
   processSubscriptionCheckout,
   handlePaymentWebhook,
+  // Product checkout
+  validateProductCheckout,
+  processProductCheckout,
+  handleProductPaymentConfirmation,
 };

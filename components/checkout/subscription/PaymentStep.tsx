@@ -73,6 +73,8 @@ interface PaymentStepProps {
   amount: number;
   /** Email do pagador (pré-preenchido no Brick) */
   payerEmail?: string;
+  /** Se é checkout de assinatura (afeta descrições e parcelas) */
+  isSubscription?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -82,28 +84,34 @@ interface PaymentStepProps {
 interface PaymentOption {
   value: PaymentMethod;
   title: string;
-  description: string;
-  badge?: string;
+  subscriptionDescription: string;
+  productDescription: string;
+  subscriptionBadge?: string;
+  productBadge?: string;
 }
 
 const PAYMENT_OPTIONS: PaymentOption[] = [
   {
     value: "pix",
     title: "PIX",
-    description: "Pagamento instantâneo via QR Code",
-    badge: "Instantâneo",
+    subscriptionDescription: "Pagamento instantâneo via QR Code",
+    productDescription: "Pagamento instantâneo via QR Code",
+    productBadge: "Instantâneo",
+    subscriptionBadge: "Instantâneo",
   },
   {
     value: "credit_card",
     title: "Cartão de Crédito",
-    description: "Cobrança recorrente mensal",
-    badge: "Assinatura",
+    subscriptionDescription: "Cobrança recorrente mensal",
+    productDescription: "Pague em até 12x sem juros",
+    subscriptionBadge: "Assinatura",
   },
   {
     value: "debit_card",
     title: "Cartão de Débito",
-    description: "Débito mensal recorrente",
-    badge: "Assinatura",
+    subscriptionDescription: "Débito mensal recorrente",
+    productDescription: "Pagamento à vista no débito",
+    subscriptionBadge: "Assinatura",
   },
 ];
 
@@ -120,6 +128,7 @@ export function PaymentStep({
   isProcessing,
   amount,
   payerEmail,
+  isSubscription = true,
 }: PaymentStepProps) {
   // Estado local para controlar se o Brick já submeteu
   const [cardSubmitted, setCardSubmitted] = useState(false);
@@ -130,6 +139,9 @@ export function PaymentStep({
   // Pode submeter: PIX precisa apenas estar selecionado
   // Cartão precisa do Brick (o botão do Brick faz o submit)
   const canSubmitPix = selectedMethod === "pix";
+
+  // Max installments: 1 para assinatura, 12 para produtos
+  const maxInstallments = isSubscription ? 1 : 12;
 
   /**
    * Handler para quando o Brick do Mercado Pago retorna dados tokenizados.
@@ -200,6 +212,7 @@ export function PaymentStep({
               onMethodSelect(option.value);
             }}
             disabled={isProcessing || cardSubmitted}
+            isSubscription={isSubscription}
           />
         ))}
       </div>
@@ -238,7 +251,7 @@ export function PaymentStep({
             onSubmit={handleCardPaymentSubmit}
             onError={handleCardPaymentError}
             disabled={isProcessing || cardSubmitted}
-            maxInstallments={1}
+            maxInstallments={maxInstallments}
           />
         </div>
       )}
@@ -298,9 +311,13 @@ interface PaymentOptionCardProps {
   isSelected: boolean;
   onSelect: () => void;
   disabled?: boolean;
+  isSubscription: boolean;
 }
 
-function PaymentOptionCard({ option, isSelected, onSelect, disabled }: PaymentOptionCardProps) {
+function PaymentOptionCard({ option, isSelected, onSelect, disabled, isSubscription }: PaymentOptionCardProps) {
+  const description = isSubscription ? option.subscriptionDescription : option.productDescription;
+  const badge = isSubscription ? option.subscriptionBadge : option.productBadge;
+
   return (
     <label
       className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-colors ${disabled ? "opacity-50 cursor-not-allowed" : ""
@@ -320,11 +337,11 @@ function PaymentOptionCard({ option, isSelected, onSelect, disabled }: PaymentOp
       />
       <div className="flex-1">
         <span className="font-medium text-gray-900">{option.title}</span>
-        <p className="text-sm text-gray-500">{option.description}</p>
+        <p className="text-sm text-gray-500">{description}</p>
       </div>
-      {option.badge && (
+      {badge && (
         <div className="bg-green-100 text-primary-green text-xs px-2 py-1 rounded-full font-medium">
-          {option.badge}
+          {badge}
         </div>
       )}
     </label>

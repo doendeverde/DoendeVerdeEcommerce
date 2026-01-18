@@ -147,6 +147,56 @@ export interface SubscriptionCheckoutResponse {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Product Checkout Types (Cart)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface ProductCheckoutRequest {
+  addressId: string;
+  paymentData: PaymentFormData;
+  notes?: string;
+}
+
+export interface ProductCheckoutResponse {
+  success: boolean;
+  orderId?: string;
+  paymentId?: string;
+  // For PIX payments
+  paymentPreference?: PaymentPreference;
+  // Error handling
+  error?: string;
+  errorCode?: string;
+}
+
+export interface CartCheckoutData {
+  items: {
+    productId: string;
+    variantId?: string;
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+    image?: string;
+  }[];
+  subtotal: number;
+  shipping: number;
+  discount: number;
+  total: number;
+  hasAddress: boolean;
+  addresses: {
+    id: string;
+    label?: string;
+    street: string;
+    number: string;
+    city: string;
+    state: string;
+    isDefault: boolean;
+  }[];
+  defaultAddressId: string | null;
+}
+
+export type ProductCheckoutStepId = "address" | "payment" | "pix_waiting" | "success" | "error";
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Order Types (for subscription orders)
 // ─────────────────────────────────────────────────────────────────────────────
 

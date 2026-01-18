@@ -121,7 +121,7 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
 
             {/* Plan name with slide animation */}
             <div className="overflow-hidden">
-              <h3 
+              <h3
                 key={currentPlan.id}
                 className="text-lg sm:text-xl font-bold text-white animate-slideIn"
               >
