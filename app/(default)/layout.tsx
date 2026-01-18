@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Header, SubscriptionBanner } from "@/components/layout";
+import { Header, ConditionalSubscriptionBanner } from "@/components/layout";
 
 interface DefaultLayoutProps {
   children: ReactNode;
@@ -27,9 +27,9 @@ export default function DefaultLayout({ children }: DefaultLayoutProps) {
 
       {/* Main Content */}
       <main>
-        {/* Subscription Banner - Shows plan status or CTA carousel */}
+        {/* Subscription Banner - Shows plan status or CTA carousel (hidden on checkout) */}
         <div className="container-main py-4">
-          <SubscriptionBanner />
+          <ConditionalSubscriptionBanner />
         </div>
 
         {/* Page Content */}
