@@ -14,11 +14,11 @@
 "use client";
 
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { 
-  QrCode, 
-  Copy, 
-  Check, 
-  Clock, 
+import {
+  QrCode,
+  Copy,
+  Check,
+  Clock,
   AlertCircle,
   RefreshCw,
   ExternalLink
@@ -79,9 +79,9 @@ function useCountdown(expirationDate: Date, onExpire?: () => void) {
       const now = new Date().getTime();
       const expiration = new Date(expirationDate).getTime();
       const remaining = Math.max(0, Math.floor((expiration - now) / 1000));
-      
+
       setTimeLeft(remaining);
-      
+
       if (remaining <= 0) {
         clearInterval(interval);
         onExpire?.();
@@ -153,15 +153,15 @@ export function PixPaymentDisplay({
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
             <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
-          
+
           <h3 className="text-lg font-semibold text-gray-900">
             PIX Expirado
           </h3>
-          
+
           <p className="text-gray-600">
             O tempo para pagamento expirou. Gere um novo código PIX para continuar.
           </p>
-          
+
           {onRefresh && (
             <button
               onClick={onRefresh}
@@ -186,15 +186,14 @@ export function PixPaymentDisplay({
             Pagamento PIX
           </h3>
         </div>
-        
+
         {/* Countdown Timer */}
         <div className="flex items-center gap-2 text-sm">
           <Clock className="w-4 h-4 text-gray-500" />
-          <span className={`font-mono font-medium ${
-            parseInt(formattedTime.split(":")[0]) < 5 
-              ? "text-red-500" 
+          <span className={`font-mono font-medium ${parseInt(formattedTime.split(":")[0]) < 5
+              ? "text-red-500"
               : "text-gray-700"
-          }`}>
+            }`}>
             {formattedTime}
           </span>
         </div>
@@ -246,11 +245,10 @@ export function PixPaymentDisplay({
           />
           <button
             onClick={handleCopy}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
-              copied
+            className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${copied
                 ? "bg-green-100 text-green-700"
                 : "bg-primary-green text-white hover:bg-green-600"
-            }`}
+              }`}
           >
             {copied ? (
               <>

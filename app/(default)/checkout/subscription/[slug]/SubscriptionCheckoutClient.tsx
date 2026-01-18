@@ -59,7 +59,7 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // PIX specific state
   const [pixData, setPixData] = useState<PixPaymentData | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -126,8 +126,8 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
           qrCode: pref.qrCode || pref.pixCopyPaste || "",
           qrCodeBase64: pref.qrCodeBase64 || "",
           ticketUrl: pref.initPoint || "",
-          expirationDate: pref.expirationDate 
-            ? new Date(pref.expirationDate) 
+          expirationDate: pref.expirationDate
+            ? new Date(pref.expirationDate)
             : new Date(Date.now() + 30 * 60 * 1000),
         });
         setOrderId(result.data.orderId);

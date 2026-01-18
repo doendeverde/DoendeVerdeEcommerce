@@ -69,10 +69,10 @@ export function CheckoutProgress({ currentStep }: CheckoutProgressProps) {
               <div className="flex flex-col items-center">
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isPast
-                      ? "bg-primary-green text-white"
-                      : isActive
-                        ? "bg-primary-green/10 text-primary-green border-2 border-primary-green"
-                        : "bg-gray-100 text-gray-400"
+                    ? "bg-primary-green text-white"
+                    : isActive
+                      ? "bg-primary-green/10 text-primary-green border-2 border-primary-green"
+                      : "bg-gray-100 text-gray-400"
                     }`}
                 >
                   {isPast ? (

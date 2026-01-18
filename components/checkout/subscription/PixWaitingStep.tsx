@@ -71,14 +71,14 @@ function usePaymentPolling(
         const response = await fetch(
           `/api/checkout/payment-status/${paymentId}?orderId=${orderId}`
         );
-        
+
         if (!response.ok) {
           console.error("[PixWaitingStep] Poll error:", response.statusText);
           return;
         }
 
         const data = await response.json();
-        
+
         if (data.status === "approved") {
           setIsPolling(false);
           onStatusChange("approved");
@@ -98,7 +98,7 @@ function usePaymentPolling(
     // Set up interval
     const interval = setInterval(() => {
       pollCountRef.current += 1;
-      
+
       if (pollCountRef.current >= maxPolls) {
         clearInterval(interval);
         setIsPolling(false);
@@ -176,15 +176,15 @@ export function PixWaitingStep({
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
             <CheckCircle className="w-10 h-10 text-green-500" />
           </div>
-          
+
           <h3 className="text-xl font-semibold text-gray-900">
             Pagamento Confirmado!
           </h3>
-          
+
           <p className="text-gray-600">
             Seu pagamento foi aprovado. Aguarde enquanto finalizamos sua assinatura...
           </p>
-          
+
           <div className="flex items-center gap-2 text-primary-green">
             <Loader2 className="w-4 h-4 animate-spin" />
             <span className="text-sm">Processando...</span>
@@ -202,15 +202,15 @@ export function PixWaitingStep({
           <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center">
             <XCircle className="w-10 h-10 text-red-500" />
           </div>
-          
+
           <h3 className="text-xl font-semibold text-gray-900">
             Pagamento Não Aprovado
           </h3>
-          
+
           <p className="text-gray-600">
             Houve um problema com o pagamento. Por favor, tente novamente.
           </p>
-          
+
           <div className="flex gap-3">
             <button
               onClick={onBack}
