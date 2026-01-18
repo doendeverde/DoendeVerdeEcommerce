@@ -10,6 +10,7 @@ import { subscriptionRepository } from "@/repositories/subscription.repository";
 import * as addressRepository from "@/repositories/address.repository";
 import * as orderRepository from "@/repositories/order.repository";
 import * as paymentRepository from "@/repositories/payment.repository";
+import { createSubscriptionPayment, createPixPaymentDirect } from "./payment.service";
 import type {
   SubscriptionCheckoutRequest,
   SubscriptionCheckoutResponse,
@@ -222,8 +223,7 @@ async function processSubscriptionCheckout(
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Create PIX payment preference
- * TODO: Implement Mercado Pago SDK integration
+ * Create PIX payment preference using Mercado Pago SDK
  */
 async function createPixPayment(
   orderId: string,
@@ -231,25 +231,36 @@ async function createPixPayment(
   amount: number,
   user: UserCheckoutData
 ): Promise<PaymentPreference> {
-  // TODO: Integrate with Mercado Pago SDK
-  // const mp = new MercadoPago(process.env.MERCADO_PAGO_ACCESS_TOKEN);
-  // const payment = await mp.payment.create({
-  //   transaction_amount: amount,
-  //   payment_method_id: 'pix',
-  //   payer: { email: user.email },
-  //   external_reference: orderId,
-  // });
+  try {
+    const result = await createPixPaymentDirect({
+      amount,
+      description: `Pagamento pedido #${orderId}`,
+      email: user.email,
+      externalReference: orderId,
+    });
 
-  // Placeholder response - replace with actual MP integration
-  return {
-    id: `pix_${paymentId}`,
-    initPoint: `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=placeholder`,
-    externalReference: orderId,
-    qrCode: "00020126580014BR.GOV.BCB.PIX0136PLACEHOLDER_PIX_CODE",
-    qrCodeBase64: "", // Base64 encoded QR code image
-    pixCopyPaste: "00020126580014BR.GOV.BCB.PIX0136PLACEHOLDER_COPY_PASTE",
-    expirationDate: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes
-  };
+    return {
+      id: result.paymentId,
+      initPoint: result.ticketUrl || "",
+      externalReference: orderId,
+      qrCode: result.qrCode,
+      qrCodeBase64: result.qrCodeBase64,
+      pixCopyPaste: result.pixCopyPaste,
+      expirationDate: result.expirationDate,
+    };
+  } catch (error) {
+    console.error("Error creating PIX payment:", error);
+    // Return placeholder for error cases - frontend should handle this
+    return {
+      id: `pix_error_${paymentId}`,
+      initPoint: "",
+      externalReference: orderId,
+      qrCode: "",
+      qrCodeBase64: "",
+      pixCopyPaste: "",
+      expirationDate: new Date(Date.now() + 30 * 60 * 1000),
+    };
+  }
 }
 
 /**
