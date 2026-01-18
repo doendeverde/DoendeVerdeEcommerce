@@ -7,3 +7,5 @@ export { CartButton } from "./CartButton";
 export { UserDropdown } from "./UserDropdown";
 export { MobileMenu } from "./MobileMenu";
 export { UserStatusBanner } from "./UserStatusBanner";
+export { SubscriptionCTABanner } from "./SubscriptionCTABanner";
+export { SubscriptionBanner } from "./SubscriptionBanner";

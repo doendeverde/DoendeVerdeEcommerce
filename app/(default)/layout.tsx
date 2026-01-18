@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Header, UserStatusBanner } from "@/components/layout";
+import { Header, SubscriptionBanner } from "@/components/layout";
 
 interface DefaultLayoutProps {
   children: ReactNode;
@@ -16,7 +16,7 @@ interface DefaultLayoutProps {
  * 
  * Contains:
  * - Fixed Header with navigation
- * - User Status Banner (when logged in)
+ * - Subscription Banner (dynamic based on user status)
  * - Main content area
  */
 export default function DefaultLayout({ children }: DefaultLayoutProps) {
@@ -27,9 +27,9 @@ export default function DefaultLayout({ children }: DefaultLayoutProps) {
 
       {/* Main Content */}
       <main>
-        {/* User Status Banner - Shows subscription plan & points */}
+        {/* Subscription Banner - Shows plan status or CTA carousel */}
         <div className="container-main py-4">
-          <UserStatusBanner />
+          <SubscriptionBanner />
         </div>
 
         {/* Page Content */}

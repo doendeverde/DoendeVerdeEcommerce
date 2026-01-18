@@ -40,6 +40,9 @@ async function getPlans(): Promise<SubscriptionPlanItem[]> {
       benefits: config.benefits,
       badge: config.badge,
       order: config.order,
+      color: config.color,
+      colorDark: config.colorDark,
+      shortDescription: config.shortDescription,
     };
   });
 
@@ -60,6 +63,9 @@ async function getPlans(): Promise<SubscriptionPlanItem[]> {
       benefits: freeConfig.benefits,
       badge: freeConfig.badge,
       order: freeConfig.order,
+      color: freeConfig.color,
+      colorDark: freeConfig.colorDark,
+      shortDescription: freeConfig.shortDescription,
     });
   }
 
@@ -114,9 +120,77 @@ async function userHasPlan(userId: string, planSlug: string): Promise<boolean> {
   return currentSlug === planSlug;
 }
 
+/**
+ * Get plan display config (colors, discount, etc.)
+ * Used by API to return display data
+ */
+function getPlanDisplayConfig(slug: string) {
+  return getPlanConfig(slug);
+}
+
+/**
+ * Get all plans with color information for display
+ * Used by SubscriptionCTABanner carousel
+ */
+async function getPlansWithColors(): Promise<SubscriptionPlanItem[]> {
+  const dbPlans = await subscriptionRepository.findActivePlans();
+
+  // Transform database plans to display format with colors
+  const plans: SubscriptionPlanItem[] = dbPlans.map((plan) => {
+    const config = getPlanConfig(plan.slug);
+    return {
+      id: plan.id,
+      name: plan.name,
+      slug: plan.slug,
+      description: plan.description,
+      price: Number(plan.price),
+      billingCycle: plan.billingCycle,
+      active: plan.active,
+      discountPercent: config.discountPercent,
+      monthlyPoints: config.monthlyPoints,
+      benefits: config.benefits,
+      badge: config.badge,
+      order: config.order,
+      color: config.color,
+      colorDark: config.colorDark,
+      shortDescription: config.shortDescription,
+    };
+  });
+
+  // Add virtual "Free" plan if not in database
+  const hasFree = plans.some((p) => p.slug === "gratuito");
+  if (!hasFree) {
+    const freeConfig = getPlanConfig("gratuito");
+    plans.unshift({
+      id: "free",
+      name: "Gratuito",
+      slug: "gratuito",
+      description: "Acesso básico à plataforma",
+      price: 0,
+      billingCycle: "MONTHLY",
+      active: true,
+      discountPercent: freeConfig.discountPercent,
+      monthlyPoints: freeConfig.monthlyPoints,
+      benefits: freeConfig.benefits,
+      badge: freeConfig.badge,
+      order: freeConfig.order,
+      color: freeConfig.color,
+      colorDark: freeConfig.colorDark,
+      shortDescription: freeConfig.shortDescription,
+    });
+  }
+
+  // Sort by order and filter only paid plans (skip free for CTA)
+  return plans
+    .filter((p) => p.price > 0)
+    .sort((a, b) => a.order - b.order);
+}
+
 export const subscriptionService = {
   getPlans,
   getUserSubscription,
   getUserPlanSlug,
   userHasPlan,
+  getPlanDisplayConfig,
+  getPlansWithColors,
 };

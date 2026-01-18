@@ -1,40 +1,37 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { Award, Star } from "lucide-react";
+import { Award } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface UserStatusBannerProps {
   className?: string;
-  // TODO: These will come from user data/subscription
-  planName?: string;
-  discountPercent?: number;
-  // points?: number; // FEATURE DISABLED: Will be implemented in the future
+  planName: string;
+  discountPercent: number;
+  color: string;
+  colorDark: string;
 }
 
 /**
- * Purple gradient banner showing user's subscription status
- * Displays: current plan and discount
+ * Gradient banner showing user's active subscription status
+ * Displays: current plan name and discount percentage
+ * Colors are dynamic based on plan tier
  */
 export function UserStatusBanner({
   className,
-  planName = "Doende Prata",
-  discountPercent = 20,
-  // points = 2850, // FEATURE DISABLED: Will be implemented in the future
+  planName,
+  discountPercent,
+  color,
+  colorDark,
 }: UserStatusBannerProps) {
-  const { data: session, status } = useSession();
-
-  // Don't show banner if not logged in or loading
-  if (status === "loading" || !session?.user) {
-    return null;
-  }
-
   return (
     <div
       className={cn(
-        "w-full bg-gradient-to-r from-primary-purple-dark to-primary-purple rounded-xl p-4 sm:p-6",
+        "w-full rounded-xl p-4 sm:p-6 transition-all duration-300",
         className
       )}
+      style={{
+        background: `linear-gradient(135deg, ${colorDark} 0%, ${color} 100%)`,
+      }}
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         {/* Left: Plan Info */}
@@ -50,30 +47,21 @@ export function UserStatusBanner({
               <h3 className="text-lg font-semibold text-white">
                 {planName}
               </h3>
-              <span className="px-2 py-0.5 text-xs font-medium text-primary-purple bg-white rounded-full">
-                {discountPercent}% de desconto
-              </span>
+              {discountPercent > 0 && (
+                <span className="px-2 py-0.5 text-xs font-medium bg-white rounded-full"
+                  style={{ color: colorDark }}
+                >
+                  {discountPercent}% de desconto
+                </span>
+              )}
             </div>
             <p className="text-sm text-white/80 mt-0.5">
-              Desconto aplicado automaticamente em todas as compras
+              {discountPercent > 0
+                ? "Desconto aplicado automaticamente em todas as compras"
+                : "Você está no plano básico"}
             </p>
           </div>
         </div>
-
-        {/* FEATURE DISABLED: Points will be implemented in the future */}
-        {/* <div className="flex items-center gap-3 sm:text-right">
-          <div className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-xl">
-            <Star className="w-5 h-5 text-yellow-300 fill-yellow-300" />
-            <div>
-              <p className="text-xl font-bold text-white">
-                {points.toLocaleString("pt-BR")}
-              </p>
-              <p className="text-xs text-white/80">
-                pontos disponíveis
-              </p>
-            </div>
-          </div>
-        </div> */}
       </div>
     </div>
   );
