@@ -51,11 +51,10 @@ export function UserRoleButton({ userId, currentRole }: UserRoleButtonProps) {
       <button
         onClick={() => setShowConfirm(true)}
         disabled={isPending}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 ${
-          isAdmin
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 ${isAdmin
             ? "bg-gray-100 hover:bg-gray-200 text-text-secondary border border-gray-border"
             : "bg-primary-purple hover:bg-primary-purple/90 text-white"
-        }`}
+          }`}
       >
         {isAdmin ? (
           <>
@@ -105,11 +104,10 @@ export function UserRoleButton({ userId, currentRole }: UserRoleButtonProps) {
                 <button
                   onClick={handleRoleChange}
                   disabled={isPending}
-                  className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 ${
-                    isAdmin
+                  className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 ${isAdmin
                       ? "bg-red-600 hover:bg-red-500 text-white"
                       : "bg-primary-purple hover:bg-primary-purple/90 text-white"
-                  }`}
+                    }`}
                 >
                   {isPending ? "Salvando..." : "Confirmar"}
                 </button>

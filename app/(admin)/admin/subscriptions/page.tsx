@@ -77,11 +77,10 @@ export default async function AdminSubscriptionPlansPage() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`bg-neutral-900 rounded-xl border overflow-hidden transition-all ${
-                plan.isFeatured
+              className={`bg-neutral-900 rounded-xl border overflow-hidden transition-all ${plan.isFeatured
                   ? "border-purple-500/50 ring-1 ring-purple-500/20"
                   : "border-neutral-800"
-              }`}
+                }`}
             >
               {/* Imagem ou Placeholder */}
               <div className="relative h-32 bg-gradient-to-br from-purple-600/20 to-green-600/20">
@@ -93,7 +92,7 @@ export default async function AdminSubscriptionPlansPage() {
                     className="w-full h-full object-cover"
                   />
                 )}
-                
+
                 {/* Badges */}
                 <div className="absolute top-3 left-3 flex gap-2">
                   {plan.isFeatured && (
@@ -178,11 +177,10 @@ export default async function AdminSubscriptionPlansPage() {
                     {plan.subscribersCount} assinante(s)
                   </Link>
                   <span
-                    className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      plan.isActive
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${plan.isActive
                         ? "bg-green-500/20 text-green-400"
                         : "bg-neutral-700 text-neutral-400"
-                    }`}
+                      }`}
                   >
                     {plan.isActive ? "Ativo" : "Inativo"}
                   </span>

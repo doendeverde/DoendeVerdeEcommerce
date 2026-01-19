@@ -117,11 +117,10 @@ export default async function AdminCategoriesPage() {
                     </td>
                     <td className="px-4 py-4">
                       <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          category.isActive
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${category.isActive
                             ? "bg-green-500/20 text-green-400"
                             : "bg-neutral-700 text-neutral-400"
-                        }`}
+                          }`}
                       >
                         {category.isActive ? "Ativa" : "Inativa"}
                       </span>

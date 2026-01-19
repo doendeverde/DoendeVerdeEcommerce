@@ -40,7 +40,7 @@ function formatDate(date: Date): string {
  */
 export default async function AdminUserSubscriptionsPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  
+
   const result = await adminService.getUserSubscriptions({
     status: params.status,
     planId: params.planId,
@@ -226,11 +226,9 @@ export default async function AdminUserSubscriptionsPage({ searchParams }: PageP
             <div className="flex gap-2">
               {result.page > 1 && (
                 <Link
-                  href={`/admin/user-subscriptions?page=${result.page - 1}${
-                    params.status ? `&status=${params.status}` : ""
-                  }${params.planId ? `&planId=${params.planId}` : ""}${
-                    params.search ? `&search=${params.search}` : ""
-                  }`}
+                  href={`/admin/user-subscriptions?page=${result.page - 1}${params.status ? `&status=${params.status}` : ""
+                    }${params.planId ? `&planId=${params.planId}` : ""}${params.search ? `&search=${params.search}` : ""
+                    }`}
                   className="px-3 py-1.5 bg-gray-bg hover:bg-gray-border text-text-primary text-sm rounded-lg transition-colors"
                 >
                   Anterior
@@ -238,11 +236,9 @@ export default async function AdminUserSubscriptionsPage({ searchParams }: PageP
               )}
               {result.page < result.totalPages && (
                 <Link
-                  href={`/admin/user-subscriptions?page=${result.page + 1}${
-                    params.status ? `&status=${params.status}` : ""
-                  }${params.planId ? `&planId=${params.planId}` : ""}${
-                    params.search ? `&search=${params.search}` : ""
-                  }`}
+                  href={`/admin/user-subscriptions?page=${result.page + 1}${params.status ? `&status=${params.status}` : ""
+                    }${params.planId ? `&planId=${params.planId}` : ""}${params.search ? `&search=${params.search}` : ""
+                    }`}
                   className="px-3 py-1.5 bg-gray-bg hover:bg-gray-border text-text-primary text-sm rounded-lg transition-colors"
                 >
                   Próxima

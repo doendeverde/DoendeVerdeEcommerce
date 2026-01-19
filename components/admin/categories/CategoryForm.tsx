@@ -70,10 +70,10 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
     setError(null);
 
     try {
-      const url = mode === "create" 
-        ? "/api/admin/categories" 
+      const url = mode === "create"
+        ? "/api/admin/categories"
         : `/api/admin/categories/${initialData?.id}`;
-      
+
       const method = mode === "create" ? "POST" : "PATCH";
 
       const response = await fetch(url, {

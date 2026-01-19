@@ -168,11 +168,10 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
 
             <div className="flex items-center justify-between py-2 border-b border-gray-border">
               <span className="text-text-secondary">Role</span>
-              <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
-                user.role === "ADMIN"
+              <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${user.role === "ADMIN"
                   ? "bg-primary-purple/10 text-primary-purple"
                   : "bg-gray-100 text-gray-600"
-              }`}>
+                }`}>
                 {user.role === "ADMIN" ? "Administrador" : "Cliente"}
               </span>
             </div>

@@ -51,11 +51,10 @@ export function UserStatusButton({ userId, currentStatus }: UserStatusButtonProp
       <button
         onClick={() => setShowConfirm(true)}
         disabled={isPending}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 ${
-          isBlocked
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 ${isBlocked
             ? "bg-primary-green hover:bg-primary-green/90 text-white"
             : "bg-red-100 hover:bg-red-200 text-red-700 border border-red-200"
-        }`}
+          }`}
       >
         {isBlocked ? (
           <>
@@ -105,11 +104,10 @@ export function UserStatusButton({ userId, currentStatus }: UserStatusButtonProp
                 <button
                   onClick={handleStatusChange}
                   disabled={isPending}
-                  className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 ${
-                    isBlocked
+                  className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 ${isBlocked
                       ? "bg-primary-green hover:bg-primary-green/90 text-white"
                       : "bg-red-600 hover:bg-red-500 text-white"
-                  }`}
+                    }`}
                 >
                   {isPending ? "Salvando..." : "Confirmar"}
                 </button>

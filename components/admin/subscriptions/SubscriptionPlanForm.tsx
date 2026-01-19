@@ -84,8 +84,8 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : type === "number"
-          ? parseFloat(value) || 0
-          : value,
+            ? parseFloat(value) || 0
+            : value,
     }));
   };
 
@@ -433,10 +433,10 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   {formData.billingCycle === "MONTHLY"
                     ? "por mês"
                     : formData.billingCycle === "QUARTERLY"
-                    ? "por trimestre"
-                    : formData.billingCycle === "SEMIANNUAL"
-                    ? "por semestre"
-                    : "por ano"}
+                      ? "por trimestre"
+                      : formData.billingCycle === "SEMIANNUAL"
+                        ? "por semestre"
+                        : "por ano"}
                 </p>
                 <p className="text-3xl font-bold text-white mt-1">
                   {formatCurrency(formData.price)}

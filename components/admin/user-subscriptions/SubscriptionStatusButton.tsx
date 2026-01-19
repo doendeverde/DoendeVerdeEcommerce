@@ -23,7 +23,7 @@ export function SubscriptionStatusButton({
 
   const handleStatusChange = async (newStatus: string) => {
     setError(null);
-    
+
     try {
       const response = await fetch(`/api/admin/user-subscriptions/${subscriptionId}`, {
         method: "PATCH",

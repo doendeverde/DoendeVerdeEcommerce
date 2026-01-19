@@ -50,11 +50,10 @@ export function CategoryDeleteButton({
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className={`p-2 rounded-lg transition-colors ${
-          canDelete
+        className={`p-2 rounded-lg transition-colors ${canDelete
             ? "text-neutral-400 hover:text-red-400 hover:bg-red-500/10"
             : "text-neutral-600 cursor-not-allowed"
-        }`}
+          }`}
         title={canDelete ? "Excluir" : "Não é possível excluir categoria com produtos"}
         disabled={!canDelete}
       >
