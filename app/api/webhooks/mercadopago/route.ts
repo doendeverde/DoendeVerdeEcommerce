@@ -41,17 +41,30 @@ interface WebhookPayload {
 /**
  * Valida a assinatura do webhook do Mercado Pago
  * @see https://www.mercadopago.com.br/developers/pt/docs/your-integrations/notifications/webhooks#verificarsignature
+ * 
+ * ⚠️ IMPORTANTE: Em produção, validação é OBRIGATÓRIA.
+ * Sem ela, qualquer pessoa pode enviar webhooks falsos.
  */
 function validateWebhookSignature(
   request: NextRequest,
   body: string
-): boolean {
+): { valid: boolean; error?: string } {
   const webhookSecret = process.env.MP_WEBHOOK_SECRET;
+  const isProduction = process.env.NODE_ENV === "production";
+  
+  // Em produção, OBRIGATÓRIO ter secret configurado
+  if (isProduction && !webhookSecret) {
+    console.error("[Webhook] CRITICAL: MP_WEBHOOK_SECRET not configured in production!");
+    return { 
+      valid: false, 
+      error: "Webhook secret not configured" 
+    };
+  }
   
   // Em desenvolvimento, permitir sem validação se secret não configurado
   if (!webhookSecret) {
-    console.warn("[Webhook] MP_WEBHOOK_SECRET not configured - skipping signature validation");
-    return true;
+    console.warn("[Webhook] MP_WEBHOOK_SECRET not configured - skipping signature validation (dev only)");
+    return { valid: true };
   }
 
   const xSignature = request.headers.get("x-signature");
@@ -59,7 +72,10 @@ function validateWebhookSignature(
   
   if (!xSignature || !xRequestId) {
     console.warn("[Webhook] Missing signature headers");
-    return false;
+    return { 
+      valid: false, 
+      error: "Missing signature headers" 
+    };
   }
 
   // Parse x-signature header (format: "ts=xxx,v1=xxx")
@@ -76,7 +92,10 @@ function validateWebhookSignature(
 
   if (!ts || !v1) {
     console.warn("[Webhook] Invalid signature format");
-    return false;
+    return { 
+      valid: false, 
+      error: "Invalid signature format" 
+    };
   }
 
   // Build manifest for signature
@@ -93,9 +112,13 @@ function validateWebhookSignature(
   
   if (!isValid) {
     console.warn("[Webhook] Signature validation failed");
+    return { 
+      valid: false, 
+      error: "Invalid signature" 
+    };
   }
 
-  return isValid;
+  return { valid: true };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -107,11 +130,12 @@ export async function POST(request: NextRequest) {
     // Ler body como texto para validação de assinatura
     const bodyText = await request.text();
     
-    // Validar assinatura
-    if (!validateWebhookSignature(request, bodyText)) {
-      console.error("[Webhook] Invalid signature");
+    // Validar assinatura (OBRIGATÓRIO em produção)
+    const signatureCheck = validateWebhookSignature(request, bodyText);
+    if (!signatureCheck.valid) {
+      console.error("[Webhook] Signature validation failed:", signatureCheck.error);
       return NextResponse.json(
-        { success: false, error: "Invalid signature" },
+        { success: false, error: signatureCheck.error || "Invalid signature" },
         { status: 401 }
       );
     }

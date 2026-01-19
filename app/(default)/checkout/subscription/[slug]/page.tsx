@@ -68,7 +68,7 @@ export default async function SubscriptionCheckoutPage({ params }: PageProps) {
       id: plan.id,
       name: plan.name,
       slug: plan.slug,
-      description: plan.description,
+      description: plan.description || "",
       price: Number(plan.price),
       billingCycle: plan.billingCycle,
       discountPercent: planConfig.discountPercent,

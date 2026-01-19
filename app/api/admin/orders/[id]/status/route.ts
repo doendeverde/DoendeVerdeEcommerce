@@ -1,0 +1,63 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { adminService } from "@/services/admin.service";
+import { z } from "zod";
+
+const updateStatusSchema = z.object({
+  status: z.enum(["PENDING", "PAID", "CANCELED", "SHIPPED", "DELIVERED"]),
+});
+
+interface RouteParams {
+  params: Promise<{ id: string }>;
+}
+
+/**
+ * Verifica se o usuário é admin
+ */
+async function requireAdmin() {
+  const session = await auth();
+  if (!session?.user) {
+    return { error: "Não autenticado", status: 401 };
+  }
+  if (session.user.role !== "ADMIN") {
+    return { error: "Acesso negado", status: 403 };
+  }
+  return { user: session.user };
+}
+
+/**
+ * PATCH /api/admin/orders/[id]/status
+ * Atualiza status do pedido
+ */
+export async function PATCH(request: NextRequest, { params }: RouteParams) {
+  const authResult = await requireAdmin();
+  if ("error" in authResult) {
+    return NextResponse.json(
+      { error: authResult.error },
+      { status: authResult.status }
+    );
+  }
+
+  const { id } = await params;
+
+  try {
+    const body = await request.json();
+    const validated = updateStatusSchema.parse(body);
+
+    const order = await adminService.updateOrderStatus(id, validated.status);
+
+    return NextResponse.json(order);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Status inválido", details: error.issues },
+        { status: 400 }
+      );
+    }
+    console.error("Error updating order status:", error);
+    return NextResponse.json(
+      { error: "Erro ao atualizar status do pedido" },
+      { status: 500 }
+    );
+  }
+}

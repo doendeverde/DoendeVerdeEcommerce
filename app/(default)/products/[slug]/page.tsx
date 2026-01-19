@@ -12,6 +12,9 @@ import { ProductImageGallery } from '@/components/products/ProductImageGallery';
 import { AddToCartButton } from '@/components/products/AddToCartButton';
 import { ProductGrid } from '@/components/products';
 
+// ISR: Revalidate product detail every 5 minutes
+export const revalidate = 300;
+
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }

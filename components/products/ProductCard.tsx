@@ -15,6 +15,7 @@ import { useCartStore } from '@/stores/cart';
 import { useAuthModalStore } from '@/stores/authModal';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
+import { productImageProps, getSafeImageUrl, getImageSizes } from '@/lib/image-utils';
 
 interface ProductCardProps {
   product: ProductListItem;
@@ -56,11 +57,12 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">
         <Image
-          src={product.primaryImage?.url || '/placeholder-product.png'}
+          src={getSafeImageUrl(product.primaryImage?.url)}
           alt={product.primaryImage?.altText || product.name}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          sizes={getImageSizes('card')}
+          {...productImageProps}
         />
 
         {/* Badges */}

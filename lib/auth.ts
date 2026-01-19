@@ -134,6 +134,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.sub!;
         session.user.role = token.role as UserRole;
         session.user.status = token.status as UserStatus;
+        
+        // 🔍 LOG DO USUÁRIO LOGADO - Para debug
+        console.log("\n👤 USUÁRIO LOGADO:");
+        console.log("   ID:", session.user.id);
+        console.log("   Email:", session.user.email);
+        console.log("   Role:", session.user.role);
+        console.log("");
       }
       return session;
     },

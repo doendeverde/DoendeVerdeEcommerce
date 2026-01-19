@@ -10,6 +10,7 @@ import { auth } from "@/lib/auth";
  * - /profile: Requer autenticação
  * - /orders: Requer autenticação
  * - /subscriptions: Requer autenticação
+ * - /admin/*: Requer autenticação + role ADMIN
  * 
  * Rotas Públicas (redirecionam se autenticado):
  * - /login: Redireciona para /dashboard se já autenticado
@@ -24,18 +25,37 @@ export async function middleware(request: NextRequest) {
   
   // Rotas de autenticação (login/register)
   const authRoutes = ["/login", "/register"];
+  
+  // Rotas administrativas (requerem role ADMIN)
+  const adminRoutes = ["/admin"];
 
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
   
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  
+  const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
 
   // Se está tentando acessar rota protegida sem autenticação
   if (isProtectedRoute && !session) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Se está tentando acessar rota admin
+  if (isAdminRoute) {
+    if (!session) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    
+    // Verifica se é ADMIN
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
   }
 
   // Se está tentando acessar login/register já autenticado

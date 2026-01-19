@@ -1,10 +1,16 @@
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { userService } from "@/services";
 
 export const metadata = {
   title: "Dashboard | Headshop",
   description: "Painel do usuário",
 };
+
+// Helper to format Decimal as currency
+function formatCurrency(value: { toNumber?: () => number } | number): string {
+  const num = typeof value === 'number' ? value : value.toNumber?.() ?? 0;
+  return num.toFixed(2);
+}
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -13,41 +19,10 @@ export default async function DashboardPage() {
     return null;
   }
 
-  // Buscar dados do usuário
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: {
-      _count: {
-        select: {
-          orders: true,
-          subscriptions: true,
-          addresses: true,
-        },
-      },
-    },
-  });
-
-  // Buscar pedidos recentes
-  const recentOrders = await prisma.order.findMany({
-    where: { userId: session.user.id },
-    take: 5,
-    orderBy: { createdAt: "desc" },
-    include: {
-      payments: true,
-      shipments: true,
-    },
-  });
-
-  // Buscar assinaturas ativas
-  const activeSubscriptions = await prisma.subscription.findMany({
-    where: {
-      userId: session.user.id,
-      status: "ACTIVE",
-    },
-    include: {
-      plan: true,
-    },
-  });
+  // Use service layer instead of direct Prisma calls
+  const { user, recentOrders, activeSubscriptions } = await userService.getUserDashboardData(
+    session.user.id
+  );
 
   return (
     <div className="space-y-6">
@@ -103,16 +78,18 @@ export default async function DashboardPage() {
                     <h3 className="font-medium text-gray-900">
                       {subscription.plan.name}
                     </h3>
-                    <p className="text-sm text-gray-500">
-                      Próxima cobrança:{" "}
-                      {new Date(subscription.nextBillingAt).toLocaleDateString(
-                        "pt-BR"
-                      )}
-                    </p>
+                    {subscription.nextBillingAt && (
+                      <p className="text-sm text-gray-500">
+                        Próxima cobrança:{" "}
+                        {new Date(subscription.nextBillingAt).toLocaleDateString(
+                          "pt-BR"
+                        )}
+                      </p>
+                    )}
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-gray-900">
-                      R$ {subscription.plan.price.toFixed(2)}
+                      R$ {formatCurrency(subscription.plan.price)}
                     </p>
                     <p className="text-sm text-gray-500">
                       /{subscription.plan.billingCycle === "MONTHLY" ? "mês" : "ano"}
@@ -148,7 +125,7 @@ export default async function DashboardPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-gray-900">
-                      R$ {order.totalAmount.toFixed(2)}
+                      R$ {formatCurrency(order.totalAmount)}
                     </p>
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${order.status === "DELIVERED"

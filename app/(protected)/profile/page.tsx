@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { userService } from "@/services";
 
 export const metadata = {
   title: "Meu Perfil | Headshop",
@@ -13,16 +13,8 @@ export default async function ProfilePage() {
     return null;
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: {
-      profile: true,
-      preferences: true,
-      addresses: {
-        orderBy: { isDefault: "desc" },
-      },
-    },
-  });
+  // Use service layer instead of direct Prisma calls
+  const user = await userService.getUserProfile(session.user.id);
 
   if (!user) {
     return <div>Usuário não encontrado</div>;

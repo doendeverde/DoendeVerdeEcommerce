@@ -40,7 +40,7 @@
 - ✅ Personalização baseada em preferências do usuário
 - ✅ Checkout com Mercado Pago (PIX + Cartão)
 - ✅ Autenticação com credentials e OAuth (Google, GitHub)
-- ⏳ Painel administrativo (em desenvolvimento)
+- ✅ Painel administrativo completo (protegido por role ADMIN)
 - ⏳ Sistema de pontos/fidelidade (planejado)
 
 ### 1.3 Princípios Arquiteturais
@@ -207,6 +207,20 @@ DoendeVerdeEcommerce/
 | `/orders` | Server | ✅ | Histórico de pedidos |
 | `/subscriptions` | Server | ✅ | Gerenciamento de assinatura ativa |
 
+### 4.4 Páginas Administrativas (admin) 🆕
+
+| Path | Tipo | Auth | Role | Descrição |
+|------|------|------|------|-----------|
+| `/admin` | Server | ✅ | ADMIN | Dashboard com métricas |
+| `/admin/products` | Server | ✅ | ADMIN | Lista de produtos com filtros |
+| `/admin/products/new` | Server | ✅ | ADMIN | Criar novo produto |
+| `/admin/products/[id]` | Server | ✅ | ADMIN | Editar produto existente |
+| `/admin/orders` | Server | ✅ | ADMIN | Lista de pedidos com filtros |
+| `/admin/orders/[id]` | Server | ✅ | ADMIN | Detalhes do pedido |
+| `/admin/users` | Server | ✅ | ADMIN | Lista de usuários |
+| `/admin/categories` | Server | ✅ | ADMIN | Lista de categorias |
+| `/admin/settings` | Server | ✅ | ADMIN | Configurações do sistema |
+
 ---
 
 ## 5. Mapa de API Routes
@@ -361,7 +375,34 @@ DoendeVerdeEcommerce/
 | Endpoint | Método | Auth | Descrição |
 |----------|--------|------|-----------|
 | `/api/payments/create` | POST | ✅ | Criar pagamento via Card Brick |
+| `/api/payments/webhook` | POST | ❌ | Webhook genérico de pagamentos |
 | `/api/webhooks/mercadopago` | POST | ❌ | Webhook do Mercado Pago |
+
+### 5.8 Admin API (Requer role ADMIN) 🆕
+
+| Endpoint | Método | Auth | Role | Descrição |
+|----------|--------|------|------|-----------|
+| `/api/admin/products` | GET | ✅ | ADMIN | Listar produtos com filtros |
+| `/api/admin/products` | POST | ✅ | ADMIN | Criar novo produto |
+| `/api/admin/products/[id]` | GET | ✅ | ADMIN | Detalhes do produto |
+| `/api/admin/products/[id]` | PATCH | ✅ | ADMIN | Atualizar produto |
+| `/api/admin/products/[id]` | DELETE | ✅ | ADMIN | Remover produto |
+| `/api/admin/orders/[id]/status` | PATCH | ✅ | ADMIN | Atualizar status do pedido |
+| `/api/admin/users/[id]/status` | PATCH | ✅ | ADMIN | Bloquear/desbloquear usuário |
+
+**Verificação de Admin nas API Routes:**
+```typescript
+async function requireAdmin() {
+  const session = await auth();
+  if (!session?.user) {
+    return { error: "Não autenticado", status: 401 };
+  }
+  if (session.user.role !== "ADMIN") {
+    return { error: "Acesso negado", status: 403 };
+  }
+  return { user: session.user };
+}
+```
 
 ---
 
@@ -422,6 +463,36 @@ DoendeVerdeEcommerce/
 - Verifica sessão via `auth()`
 - Redireciona para `/login` se não autenticado
 - Navbar própria com links internos e logout
+
+### 6.5 Admin Layout (`app/(admin)/layout.tsx`) 🆕
+
+**Páginas:** `/admin/*`
+
+**Características:**
+- Verifica sessão via `auth()` (server-side)
+- Verifica role `ADMIN` (server-side)
+- Redireciona para `/login` se não autenticado
+- Redireciona para `/dashboard` se não é admin
+- Sidebar fixa com navegação
+
+```tsx
+<div className="min-h-screen bg-gray-bg">
+  {/* Sidebar fixa */}
+  <AdminSidebar user={session.user} />
+  
+  {/* Conteúdo principal */}
+  <div className="lg:pl-64">
+    <AdminHeader user={session.user} />
+    <main className="p-4 lg:p-8">
+      {children}
+    </main>
+  </div>
+</div>
+```
+
+**Proteção Dupla:**
+1. **Middleware:** Intercepta requisições antes do render
+2. **Layout:** Verifica novamente no servidor antes de renderizar
 
 ---
 
@@ -491,6 +562,25 @@ DoendeVerdeEcommerce/
 | `CategoryGrid` | Server | Grid de categorias |
 | `SearchBar` | Client | Barra de busca |
 
+### 7.6 Admin (`components/admin/`) 🆕
+
+| Componente | Tipo | Descrição |
+|------------|------|-----------|
+| `AdminSidebar` | Client | Sidebar fixa com navegação do admin |
+| `AdminHeader` | Client | Header com breadcrumbs e info do usuário |
+| `AdminPageHeader` | Server | Header de página com título e ações |
+| `StatCard` | Server | Card de estatística para dashboard |
+| `DataTable` | Client | Tabela genérica com paginação |
+
+### 7.7 Admin Pages Components
+
+| Componente | Tipo | Descrição |
+|------------|------|-----------|
+| `ProductsTable` | Client | Tabela de produtos com filtros |
+| `ProductForm` | Client | Formulário de criação/edição de produto |
+| `OrdersTable` | Client | Tabela de pedidos com filtros |
+| `UsersTable` | Client | Tabela de usuários com filtros |
+
 ---
 
 ## 8. Services e Repositories
@@ -504,6 +594,7 @@ DoendeVerdeEcommerce/
 | `checkout.service.ts` | Orquestração do checkout, criação de pedido |
 | `subscription.service.ts` | Lógica de assinaturas, status do usuário |
 | `payment.service.ts` | Integração Mercado Pago, preferências PIX |
+| `admin.service.ts` 🆕 | Dashboard stats, CRUD admin, relatórios |
 
 **Exemplo de uso:**
 ```typescript
@@ -922,12 +1013,12 @@ enum PaymentStatus {
 
 ### 14.1 Crítico para Produção
 
-| Feature | Prioridade | Complexidade | Estimativa |
-|---------|------------|--------------|------------|
-| Admin Panel | 🔴 Crítica | Alta | 2-3 semanas |
-| Rate Limiting | 🔴 Crítica | Baixa | 2 dias |
-| Emails Transacionais | 🔴 Crítica | Média | 1 semana |
-| Validação Webhook MP | 🔴 Crítica | Baixa | 1 dia |
+| Feature | Prioridade | Complexidade | Estimativa | Status |
+|---------|------------|--------------|------------|--------|
+| Admin Panel | 🔴 Crítica | Alta | 2-3 semanas | ✅ Concluído |
+| Rate Limiting | 🔴 Crítica | Baixa | 2 dias | ❌ |
+| Emails Transacionais | 🔴 Crítica | Média | 1 semana | ❌ |
+| Validação Webhook MP | 🔴 Crítica | Baixa | 1 dia | ❌ |
 
 ### 14.2 Importante
 
@@ -968,30 +1059,48 @@ enum PaymentStatus {
 - [ ] Implementar soft delete
 - [ ] Refatorar Root Layout (separar providers)
 
-### 15.2 Fase 2: Admin Panel MVP (2-3 semanas)
+### 15.2 Fase 2: Admin Panel MVP (2-3 semanas) ✅ CONCLUÍDO
 
-#### Estrutura
+#### Estrutura Implementada
 ```
 app/(admin)/
-├── layout.tsx        # Layout admin com sidebar
+├── layout.tsx            # Layout admin com sidebar + verificação ADMIN
 ├── admin/
-│   ├── page.tsx      # Dashboard
+│   ├── page.tsx          # Dashboard com métricas
 │   ├── products/
-│   │   ├── page.tsx  # Lista
-│   │   ├── new/
-│   │   └── [id]/
+│   │   ├── page.tsx      # Lista com filtros
+│   │   ├── ProductsTable.tsx
+│   │   ├── ProductForm.tsx
+│   │   ├── new/page.tsx  # Criar produto
+│   │   └── [id]/page.tsx # Editar produto
 │   ├── orders/
-│   │   ├── page.tsx
-│   │   └── [id]/
+│   │   ├── page.tsx      # Lista de pedidos
+│   │   ├── OrdersTable.tsx
+│   │   └── [id]/page.tsx # Detalhes do pedido
+│   ├── categories/
+│   │   └── page.tsx      # Lista de categorias
 │   ├── users/
+│   │   ├── page.tsx      # Lista de usuários
+│   │   └── UsersTable.tsx
 │   └── settings/
+│       └── page.tsx      # Configurações
 ```
 
-#### Funcionalidades
-- [ ] Dashboard com métricas básicas
-- [ ] CRUD de produtos com upload de imagens
-- [ ] Visualização e atualização de pedidos
-- [ ] Listagem de usuários
+#### Funcionalidades Implementadas
+- [x] Dashboard com métricas básicas (pedidos, receita, produtos, usuários)
+- [x] CRUD de produtos com upload de imagens
+- [x] Visualização e atualização de pedidos
+- [x] Listagem de usuários com filtros
+- [x] Listagem de categorias
+- [x] Página de configurações
+- [x] Proteção server-side (middleware + layout)
+- [x] API routes protegidas com verificação ADMIN
+
+#### Segurança Implementada
+- Middleware verifica autenticação e role ADMIN
+- Layout admin verifica session server-side
+- API routes `/api/admin/*` usam função `requireAdmin()`
+- Usuários não-admin são redirecionados para `/dashboard`
 
 ### 15.3 Fase 3: Comunicação (1 semana)
 

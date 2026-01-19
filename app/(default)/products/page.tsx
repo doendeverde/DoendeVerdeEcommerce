@@ -11,6 +11,9 @@ import { productService } from '@/services';
 import { ProductCatalog } from './ProductCatalog';
 import type { ProductFilters } from '@/types/product';
 
+// ISR: Revalidate product listing every 5 minutes
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: 'Produtos | Doende HeadShop',
   description: 'Explore nosso catálogo completo de acessórios, piteiras, bongs, sedas, vaporizadores e muito mais.',

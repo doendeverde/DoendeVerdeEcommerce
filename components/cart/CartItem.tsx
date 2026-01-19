@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { Minus, Plus, Trash2, AlertCircle } from 'lucide-react';
 import { CartItemDisplay } from '@/types/cart';
 import { useCartStore, selectIsItemPending } from '@/stores/cart';
+import { productImageProps, getSafeImageUrl, getImageSizes } from '@/lib/image-utils';
 
 interface CartItemProps {
   item: CartItemDisplay;
@@ -48,11 +49,12 @@ export function CartItem({ item }: CartItemProps) {
         className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
       >
         <Image
-          src={item.product.image?.url || '/placeholder-product.png'}
+          src={getSafeImageUrl(item.product.image?.url)}
           alt={item.product.image?.altText || item.product.name}
           fill
           className="object-cover"
-          sizes="80px"
+          sizes={getImageSizes('cart')}
+          {...productImageProps}
         />
       </Link>
 

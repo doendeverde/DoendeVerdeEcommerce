@@ -2,9 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { registerSchema } from "@/schemas/auth.schema";
 import { hashPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/prisma";
+import { authLimiter, checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting check (per IP) - 10 requests per minute
+    const rateLimitCheck = checkRateLimit(request, authLimiter);
+    if (!rateLimitCheck.success) {
+      return rateLimitCheck.response;
+    }
+
     const body = await request.json();
 
     // Validate input

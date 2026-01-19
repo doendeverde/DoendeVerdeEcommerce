@@ -1,10 +1,16 @@
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { userService } from "@/services";
 
 export const metadata = {
   title: "Meus Pedidos | Headshop",
   description: "Histórico de pedidos",
 };
+
+// Helper to format Decimal as currency
+function formatCurrency(value: { toNumber?: () => number } | number): string {
+  const num = typeof value === 'number' ? value : value.toNumber?.() ?? 0;
+  return num.toFixed(2);
+}
 
 export default async function OrdersPage() {
   const session = await auth();
@@ -13,20 +19,8 @@ export default async function OrdersPage() {
     return null;
   }
 
-  const orders = await prisma.order.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: "desc" },
-    include: {
-      items: {
-        include: {
-          product: true,
-        },
-      },
-      payments: true,
-      shipments: true,
-      addressSnapshot: true,
-    },
-  });
+  // Use service layer instead of direct Prisma calls
+  const orders = await userService.getUserOrders(session.user.id);
 
   return (
     <div className="space-y-6">
@@ -69,7 +63,7 @@ export default async function OrdersPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-bold text-gray-900">
-                      R$ {order.totalAmount.toFixed(2)}
+                      R$ {formatCurrency(order.totalAmount)}
                     </p>
                     <span
                       className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${order.status === "DELIVERED"
@@ -102,11 +96,11 @@ export default async function OrdersPage() {
                         </p>
                         <p className="text-sm text-gray-600">
                           Quantidade: {item.quantity} x R${" "}
-                          {item.unitPrice.toFixed(2)}
+                          {formatCurrency(item.unitPrice)}
                         </p>
                       </div>
                       <p className="font-semibold text-gray-900">
-                        R$ {item.totalPrice.toFixed(2)}
+                        R$ {formatCurrency(item.totalPrice)}
                       </p>
                     </div>
                   ))}
@@ -126,10 +120,10 @@ export default async function OrdersPage() {
                         Status:{" "}
                         <span
                           className={`font-medium ${order.payments[0].status === "PAID"
-                              ? "text-green-600"
-                              : order.payments[0].status === "FAILED"
-                                ? "text-red-600"
-                                : "text-yellow-600"
+                            ? "text-green-600"
+                            : order.payments[0].status === "FAILED"
+                              ? "text-red-600"
+                              : "text-yellow-600"
                             }`}
                         >
                           {order.payments[0].status}
@@ -137,7 +131,7 @@ export default async function OrdersPage() {
                       </p>
                     </div>
                     <p className="text-sm text-gray-600">
-                      R$ {order.payments[0].amount.toFixed(2)}
+                      R$ {formatCurrency(order.payments[0].amount)}
                     </p>
                   </div>
                 </div>
@@ -157,10 +151,10 @@ export default async function OrdersPage() {
                       Status:{" "}
                       <span
                         className={`font-medium ${order.shipments[0].status === "DELIVERED"
-                            ? "text-green-600"
-                            : order.shipments[0].status === "LOST" || order.shipments[0].status === "RETURNED"
-                              ? "text-red-600"
-                              : "text-blue-600"
+                          ? "text-green-600"
+                          : order.shipments[0].status === "LOST" || order.shipments[0].status === "RETURNED"
+                            ? "text-red-600"
+                            : "text-blue-600"
                           }`}
                       >
                         {order.shipments[0].status}

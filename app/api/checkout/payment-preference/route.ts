@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createSubscriptionPayment, createProductPayment } from "@/services/payment.service";
+import { checkoutLimiter, getClientIp, checkRateLimit } from "@/lib/rate-limit";
 import { z } from "zod";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,6 +39,12 @@ const paymentPreferenceSchema = z.discriminatedUnion("type", [
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting check (per IP)
+    const rateLimitCheck = checkRateLimit(request, checkoutLimiter);
+    if (!rateLimitCheck.success) {
+      return rateLimitCheck.response;
+    }
+
     const session = await auth();
     
     if (!session?.user?.id) {
