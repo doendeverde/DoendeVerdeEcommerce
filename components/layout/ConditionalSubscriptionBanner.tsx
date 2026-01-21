@@ -15,7 +15,7 @@ export function ConditionalSubscriptionBanner() {
   const pathname = usePathname();
 
   // Don't show banner on checkout pages
-  const isCheckoutPage = pathname?.startsWith("/checkout/subscription");
+  const isCheckoutPage = pathname?.startsWith("/checkout/subscription") || pathname?.startsWith("/subscription");
 
   if (isCheckoutPage) {
     return null;

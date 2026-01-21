@@ -1,7 +1,9 @@
 /**
  * Orders List Component
- * 
+ *
  * Client component that handles filtering and pagination of orders.
+ * Uses actual OrderStatus enum values from Prisma:
+ * PENDING | PAID | CANCELED | SHIPPED | DELIVERED
  */
 
 "use client";
@@ -34,7 +36,6 @@ interface Payment {
   status: string;
   provider: string;
   amount: number;
-  method?: string;
 }
 
 interface Shipment {
@@ -70,7 +71,8 @@ interface OrderData {
   addressSnapshot: AddressSnapshot | null;
 }
 
-type OrderStatus = "ALL" | "PENDING" | "CONFIRMED" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELED";
+// Actual OrderStatus enum values from Prisma schema
+type OrderStatus = "ALL" | "PENDING" | "PAID" | "SHIPPED" | "DELIVERED" | "CANCELED";
 
 interface OrdersListProps {
   initialOrders: OrderData[];
@@ -195,8 +197,8 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
                 key={page}
                 onClick={() => setCurrentPage(page)}
                 className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === page
-                    ? "bg-primary-green text-white"
-                    : "hover:bg-gray-100 text-gray-700"
+                  ? "bg-primary-green text-white"
+                  : "hover:bg-gray-100 text-gray-700"
                   }`}
               >
                 {page}

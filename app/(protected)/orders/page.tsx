@@ -57,7 +57,6 @@ export default async function OrdersPage() {
       status: payment.status,
       provider: payment.provider,
       amount: convertDecimalToNumber(payment.amount),
-      method: payment.method ?? undefined,
     })),
     shipments: order.shipments.map((shipment) => ({
       id: shipment.id,

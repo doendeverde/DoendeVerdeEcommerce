@@ -1,14 +1,17 @@
 /**
  * Order Filters Component
- * 
+ *
  * Search bar and status filter for orders.
+ * Uses actual OrderStatus enum values from Prisma:
+ * PENDING | PAID | CANCELED | SHIPPED | DELIVERED
  */
 
 "use client";
 
 import { Search, Filter, X } from "lucide-react";
 
-type OrderStatus = "ALL" | "PENDING" | "CONFIRMED" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELED";
+// Actual OrderStatus enum values from Prisma schema
+type OrderStatus = "ALL" | "PENDING" | "PAID" | "SHIPPED" | "DELIVERED" | "CANCELED";
 
 interface OrderFiltersProps {
   searchQuery: string;
@@ -19,9 +22,8 @@ interface OrderFiltersProps {
 
 const STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
   { value: "ALL", label: "Todos os status" },
-  { value: "PENDING", label: "Pendente" },
-  { value: "CONFIRMED", label: "Confirmado" },
-  { value: "PROCESSING", label: "Processando" },
+  { value: "PENDING", label: "Aguardando Pagamento" },
+  { value: "PAID", label: "Pago" },
   { value: "SHIPPED", label: "Enviado" },
   { value: "DELIVERED", label: "Entregue" },
   { value: "CANCELED", label: "Cancelado" },

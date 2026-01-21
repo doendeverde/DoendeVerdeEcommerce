@@ -599,7 +599,6 @@ export async function getUserOrdersWithImages(userId: string): Promise<UserOrder
           status: true,
           provider: true,
           amount: true,
-          method: true,
         },
       },
       shipments: {
@@ -654,7 +653,6 @@ export interface UserOrderWithImages {
     status: string;
     provider: string;
     amount: Decimal;
-    method: string | null;
   }[];
   shipments: {
     id: string;
