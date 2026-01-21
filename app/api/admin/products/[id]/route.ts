@@ -10,7 +10,6 @@ const updateProductSchema = z.object({
   slug: z.string().optional(),
   description: z.string().optional(),
   basePrice: z.number().positive().optional(),
-  compareAtPrice: z.number().nullable().optional(),
   stock: z.number().int().min(0).optional(),
   lowStockAlert: z.number().int().min(0).optional(),
   loyaltyPoints: z.number().int().min(0).optional(),

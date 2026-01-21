@@ -3,6 +3,11 @@
  *
  * Transforms Prisma data into domain types and adds business logic.
  * Uses helper functions from types/product.ts for transformations.
+ * 
+ * REGRA DE NEGÓCIO:
+ * - Produto tem apenas basePrice (preço fixo)
+ * - Desconto é da ASSINATURA, não do produto
+ * - Para cálculo de preço com desconto, use lib/pricing.ts
  */
 
 import { productRepository, categoryRepository } from '@/repositories';
@@ -14,7 +19,6 @@ import {
   type CategoryItem,
   type ProductWithRelations,
   toProductListItem,
-  computeDiscountPercentage,
 } from '@/types/product';
 
 // ─────────────────────────────────────────────────────────────────────────────

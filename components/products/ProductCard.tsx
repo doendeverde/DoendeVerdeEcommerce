@@ -2,20 +2,25 @@
  * ProductCard Component
  *
  * Card de produto para grid de catálogo.
- * Seguindo UI spec: imagem 1:1, badges, pontos, preço, botão adicionar.
+ * 
+ * REGRA DE NEGÓCIO:
+ * - Exibe preço base do produto
+ * - Desconto é da ASSINATURA, não do produto
+ * - Campos de desconto são opcionais e vêm preenchidos quando usuário tem assinatura
  */
 
 'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, Package } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { ProductListItem } from '@/types/product';
 import { useCartStore } from '@/stores/cart';
 import { useAuthModalStore } from '@/stores/authModal';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import { productImageProps, getSafeImageUrl, getImageSizes } from '@/lib/image-utils';
+import { CompactPriceDisplay, SubscriptionDiscountBadge } from '@/components/ui/PriceDisplay';
 
 interface ProductCardProps {
   product: ProductListItem;
@@ -74,11 +79,13 @@ export function ProductCard({ product }: ProductCardProps) {
             </span>
           )}
 
-          {/* Discount Badge */}
-          {product.isOnSale && (
-            <span className="inline-flex items-center rounded-full bg-primary-green px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-white shadow-sm">
-              -{product.discountPercentage}%
-            </span>
+          {/* Subscription Discount Badge - only shows if user has active subscription */}
+          {product.hasSubscriptionDiscount && product.subscriptionDiscountPercent && product.subscriptionDiscountPercent > 0 && (
+            <SubscriptionDiscountBadge
+              discountPercent={product.subscriptionDiscountPercent}
+              discountLabel={product.subscriptionDiscountLabel}
+              size="sm"
+            />
           )}
 
           {/* Low Stock Badge */}
@@ -104,24 +111,14 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.name}
         </h3>
 
-        {/* FEATURE DISABLED: Points will be implemented in the future */}
-        {/* <div className="mt-2 flex items-center gap-1 text-xs text-primary-purple font-medium">
-          <Package className="h-3.5 w-3.5" />
-          <span>+{product.loyaltyPoints} pontos</span>
-        </div> */}
-
         {/* Price Section */}
         <div className="mt-auto pt-2 sm:pt-4 flex items-end justify-between gap-1 sm:gap-2">
-          <div className="flex flex-col">
-            {product.isOnSale && product.compareAtPrice && (
-              <span className="text-xs sm:text-sm text-gray-400 line-through">
-                R$ {product.compareAtPrice.toFixed(2)}
-              </span>
-            )}
-            <span className="text-sm sm:text-lg font-bold text-gray-900">
-              R$ {product.basePrice.toFixed(2)}
-            </span>
-          </div>
+          <CompactPriceDisplay
+            basePrice={product.basePrice}
+            finalPrice={product.finalPrice}
+            discountPercent={product.subscriptionDiscountPercent}
+            hasDiscount={product.hasSubscriptionDiscount}
+          />
 
           {/* Add to Cart Button */}
           <button

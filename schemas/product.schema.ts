@@ -4,6 +4,8 @@ import { z } from "zod";
  * Product Schemas — Zod validation
  *
  * Schemas para validação de parâmetros de busca e filtros de produtos.
+ * 
+ * NOTA: Removido filtro "onSale" pois desconto é da assinatura, não do produto.
  */
 
 // Query params for product listing
@@ -12,7 +14,6 @@ export const productFiltersSchema = z.object({
   categorySlug: z.string().optional(),
   minPrice: z.coerce.number().min(0).optional(),
   maxPrice: z.coerce.number().min(0).optional(),
-  onSale: z.coerce.boolean().optional(),
   inStock: z.coerce.boolean().optional(),
   sortBy: z
     .enum(["relevance", "price_asc", "price_desc", "newest"])

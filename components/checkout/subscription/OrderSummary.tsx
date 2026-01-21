@@ -152,7 +152,7 @@ export function OrderSummary({
 
         {shippingOption && shippingOption.price > 0 && (
           <p className="text-xs text-gray-500 text-center">
-            Frete cobrado apenas na primeira entrega
+            Frete cobrado mensalmente por entrega
           </p>
         )}
       </div>

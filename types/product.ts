@@ -5,6 +5,12 @@ import type { Prisma } from "@prisma/client";
  *
  * Tipos derivados do Prisma com campos computados para uso no frontend.
  * Separados do schema do banco para permitir evolução independente.
+ * 
+ * REGRA DE NEGÓCIO IMPORTANTE:
+ * - Produto tem apenas basePrice (preço fixo)
+ * - Desconto NÃO é do produto, é da ASSINATURA
+ * - Campos de desconto (finalPrice, discountPercent, etc) são calculados
+ *   server-side baseado na assinatura ativa do usuário
  */
 
 // Product with all relations loaded
@@ -22,8 +28,8 @@ export interface ProductListItem {
   name: string;
   slug: string;
   description: string;
+  /** Preço base fixo do produto (único preço do produto) */
   basePrice: number;
-  compareAtPrice: number | null;
   // loyaltyPoints: number; // FEATURE DISABLED: Will be implemented in the future
   stock: number;
   lowStockAlert: number;
@@ -39,10 +45,18 @@ export interface ProductListItem {
     altText: string | null;
   } | null;
   // Computed fields
-  discountPercentage: number;
   isLowStock: boolean;
-  isOnSale: boolean;
   isOutOfStock: boolean;
+  
+  // Campos de desconto de ASSINATURA (opcionais, preenchidos quando usuário tem assinatura)
+  /** Preço final com desconto de assinatura aplicado */
+  finalPrice?: number;
+  /** Percentual de desconto da assinatura (0-100) */
+  subscriptionDiscountPercent?: number;
+  /** Se o usuário atual tem desconto de assinatura */
+  hasSubscriptionDiscount?: boolean;
+  /** Label do desconto (ex: "Desconto Doende Bronze") */
+  subscriptionDiscountLabel?: string | null;
 }
 
 // Product for detail page (full data)
@@ -71,7 +85,6 @@ export interface ProductFilters {
   categorySlug?: string;
   minPrice?: number;
   maxPrice?: number;
-  onSale?: boolean;
   inStock?: boolean;
   sortBy?: "relevance" | "price_asc" | "price_desc" | "newest";
   page?: number;
@@ -104,26 +117,15 @@ export interface CategoryItem {
 export type CategoryWithCount = CategoryItem;
 
 /**
- * Helper function to compute discount percentage
- */
-export function computeDiscountPercentage(
-  basePrice: number,
-  compareAtPrice: number | null
-): number {
-  if (!compareAtPrice || compareAtPrice <= basePrice) return 0;
-  return Math.round(((compareAtPrice - basePrice) / compareAtPrice) * 100);
-}
-
-/**
  * Helper function to transform Prisma product to ProductListItem
+ * 
+ * NOTA: Esta função NÃO calcula desconto de assinatura.
+ * Para obter preços com desconto de assinatura, use lib/pricing.ts
  */
 export function toProductListItem(
   product: ProductWithRelations
 ): ProductListItem {
   const basePrice = Number(product.basePrice);
-  const compareAtPrice = product.compareAtPrice
-    ? Number(product.compareAtPrice)
-    : null;
 
   const primaryImage = product.images.find((img) => img.isPrimary) || product.images[0];
 
@@ -133,7 +135,6 @@ export function toProductListItem(
     slug: product.slug,
     description: product.description,
     basePrice,
-    compareAtPrice,
     // loyaltyPoints: product.loyaltyPoints, // FEATURE DISABLED: Will be implemented in the future
     stock: product.stock,
     lowStockAlert: product.lowStockAlert,
@@ -147,9 +148,10 @@ export function toProductListItem(
     primaryImage: primaryImage
       ? { url: primaryImage.url, altText: primaryImage.altText }
       : null,
-    discountPercentage: computeDiscountPercentage(basePrice, compareAtPrice),
     isLowStock: product.stock > 0 && product.stock <= product.lowStockAlert,
-    isOnSale: compareAtPrice !== null && compareAtPrice > basePrice,
     isOutOfStock: product.stock === 0,
+    // Campos de assinatura não são preenchidos aqui - usar lib/pricing.ts
+    hasSubscriptionDiscount: false,
   };
 }
+

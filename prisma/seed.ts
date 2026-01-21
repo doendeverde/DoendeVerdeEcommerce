@@ -92,7 +92,6 @@ async function main() {
       slug: 'dichavador-premium-metal-4-partes',
       description: '<p>Dichavador de metal de alta qualidade com 4 partes separáveis. Possui tela fina para coletar kief e design ergonômico para fácil manuseio.</p><ul><li>Material: Liga de zinco</li><li>Diâmetro: 55mm</li><li>Altura: 45mm</li><li>Dentes afiados em formato de diamante</li></ul>',
       basePrice: 89.90,
-      compareAtPrice: 119.90,
       stock: 25,
       lowStockAlert: 5,
       loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
@@ -106,7 +105,6 @@ async function main() {
       slug: 'piteira-vidro-artesanal',
       description: '<p>Piteira artesanal feita em vidro borossilicato resistente ao calor. Design exclusivo com espiral interna que resfria a fumaça.</p>',
       basePrice: 45.00,
-      compareAtPrice: 55.00,
       stock: 42,
       lowStockAlert: 10,
       loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
@@ -120,7 +118,6 @@ async function main() {
       slug: 'bong-vidro-30cm-percolador',
       description: '<p>Bong de vidro borossilicato de 30cm com percolador tipo árvore para máxima filtragem. Base larga para estabilidade.</p><ul><li>Altura: 30cm</li><li>Espessura: 5mm</li><li>Ice catcher incluído</li><li>Encaixe 18.8mm</li></ul>',
       basePrice: 189.90,
-      compareAtPrice: 249.90,
       stock: 8,
       lowStockAlert: 3,
       loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
@@ -134,7 +131,6 @@ async function main() {
       slug: 'seda-king-size-slim-caixa-50',
       description: '<p>Caixa com 50 livros de seda King Size Slim. Papel ultrafino de queima lenta e uniforme. Certificação FSC.</p>',
       basePrice: 89.00,
-      compareAtPrice: null,
       stock: 100,
       lowStockAlert: 20,
       loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
@@ -148,7 +144,6 @@ async function main() {
       slug: 'vaporizador-portatil-ervas',
       description: '<p>Vaporizador portátil para ervas secas com controle de temperatura. Bateria de longa duração e design compacto.</p><ul><li>Temperatura: 180-220°C</li><li>Bateria: 2200mAh</li><li>Tempo de aquecimento: 30s</li><li>Câmara em cerâmica</li></ul>',
       basePrice: 299.90,
-      compareAtPrice: 399.90,
       stock: 12,
       lowStockAlert: 3,
       loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
@@ -162,7 +157,6 @@ async function main() {
       slug: 'kit-iniciante-completo',
       description: '<p>Kit perfeito para quem está começando. Inclui:</p><ul><li>1x Dichavador de metal 2 partes</li><li>1x Piteira de vidro</li><li>5x Livros de seda</li><li>1x Isqueiro recarregável</li><li>1x Porta-fumo de metal</li></ul>',
       basePrice: 129.90,
-      compareAtPrice: 179.90,
       stock: 15,
       lowStockAlert: 5,
       loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
@@ -176,7 +170,6 @@ async function main() {
       slug: 'dichavador-madeira-premium',
       description: '<p>Dichavador de madeira nobre com acabamento artesanal. Design clássico e durável.</p>',
       basePrice: 69.90,
-      compareAtPrice: null,
       stock: 18,
       lowStockAlert: 5,
       loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
@@ -190,7 +183,6 @@ async function main() {
       slug: 'pack-piteiras-coloridas-10un',
       description: '<p>Pack com 10 piteiras de vidro em cores variadas. Cada piteira é única!</p>',
       basePrice: 79.90,
-      compareAtPrice: 99.90,
       stock: 2,
       lowStockAlert: 5,
       loyaltyPoints: 0, // FEATURE DISABLED: Will be implemented in the future
@@ -216,7 +208,6 @@ async function main() {
         slug: productFields.slug,
         description: productFields.description,
         basePrice: productFields.basePrice,
-        compareAtPrice: productFields.compareAtPrice,
         stock: productFields.stock,
         lowStockAlert: productFields.lowStockAlert,
         loyaltyPoints: productFields.loyaltyPoints,

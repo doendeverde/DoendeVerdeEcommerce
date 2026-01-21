@@ -31,7 +31,6 @@ export const productRepository = {
       categorySlug,
       minPrice,
       maxPrice,
-      onSale,
       inStock,
       sortBy = "relevance",
       page = 1,
@@ -63,11 +62,6 @@ export const productRepository = {
     }
     if (maxPrice !== undefined) {
       where.basePrice = { ...where.basePrice as object, lte: maxPrice };
-    }
-
-    // On sale filter
-    if (onSale) {
-      where.compareAtPrice = { not: null };
     }
 
     // In stock filter

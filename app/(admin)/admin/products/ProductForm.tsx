@@ -36,7 +36,6 @@ interface ProductData {
   slug: string;
   description: string;
   basePrice: number;
-  compareAtPrice: number | null;
   stock: number;
   lowStockAlert: number;
   loyaltyPoints: number;
@@ -62,7 +61,9 @@ const statusOptions: { value: ProductStatus; label: string }[] = [
 
 /**
  * Formulário de produto para criação/edição
- * Inclui upload de imagens e validação
+ * 
+ * NOTA: Campo compareAtPrice removido.
+ * Desconto é da ASSINATURA, não do produto.
  */
 export function ProductForm({ product, categories, isEditing }: ProductFormProps) {
   const router = useRouter();
@@ -75,7 +76,6 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
     slug: product?.slug || "",
     description: product?.description || "",
     basePrice: product?.basePrice?.toString() || "",
-    compareAtPrice: product?.compareAtPrice?.toString() || "",
     stock: product?.stock?.toString() || "0",
     lowStockAlert: product?.lowStockAlert?.toString() || "5",
     loyaltyPoints: product?.loyaltyPoints?.toString() || "0",
@@ -172,7 +172,6 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
         slug: formData.slug || generateSlug(formData.name),
         description: formData.description.trim(),
         basePrice: parseFloat(formData.basePrice),
-        compareAtPrice: formData.compareAtPrice ? parseFloat(formData.compareAtPrice) : null,
         stock: parseInt(formData.stock) || 0,
         lowStockAlert: parseInt(formData.lowStockAlert) || 5,
         loyaltyPoints: parseInt(formData.loyaltyPoints) || 0,
@@ -277,39 +276,24 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
           {/* Pricing */}
           <div className="bg-white rounded-xl border border-gray-border p-6 space-y-4">
             <h2 className="text-lg font-semibold text-text-primary">Preço</h2>
+            <p className="text-sm text-gray-500">
+              Desconto é aplicado apenas para assinantes. Configure descontos nos planos de assinatura.
+            </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-text-primary mb-1">
-                  Preço (R$) *
-                </label>
-                <input
-                  type="number"
-                  name="basePrice"
-                  value={formData.basePrice}
-                  onChange={handleChange}
-                  step="0.01"
-                  min="0"
-                  className="w-full px-3 py-2 border border-gray-border rounded-lg focus:ring-2 focus:ring-primary-purple/20 focus:border-primary-purple"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-text-primary mb-1">
-                  Preço comparativo (R$)
-                </label>
-                <input
-                  type="number"
-                  name="compareAtPrice"
-                  value={formData.compareAtPrice}
-                  onChange={handleChange}
-                  step="0.01"
-                  min="0"
-                  placeholder="Preço original para mostrar desconto"
-                  className="w-full px-3 py-2 border border-gray-border rounded-lg focus:ring-2 focus:ring-primary-purple/20 focus:border-primary-purple"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-text-primary mb-1">
+                Preço (R$) *
+              </label>
+              <input
+                type="number"
+                name="basePrice"
+                value={formData.basePrice}
+                onChange={handleChange}
+                step="0.01"
+                min="0"
+                className="w-full px-3 py-2 border border-gray-border rounded-lg focus:ring-2 focus:ring-primary-purple/20 focus:border-primary-purple"
+                required
+              />
             </div>
           </div>
 

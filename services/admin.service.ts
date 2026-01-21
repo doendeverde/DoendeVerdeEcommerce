@@ -386,7 +386,6 @@ interface ProductDetail {
   slug: string;
   description: string;
   basePrice: number;
-  compareAtPrice: number | null;
   stock: number;
   lowStockAlert: number;
   status: ProductStatus;
@@ -417,7 +416,6 @@ async function getProductById(id: string): Promise<ProductDetail | null> {
     slug: product.slug,
     description: product.description,
     basePrice: product.basePrice.toNumber(),
-    compareAtPrice: product.compareAtPrice?.toNumber() ?? null,
     stock: product.stock,
     lowStockAlert: product.lowStockAlert,
     status: product.status,
@@ -442,7 +440,6 @@ interface CreateProductInput {
   slug: string;
   description: string;
   basePrice: number;
-  compareAtPrice?: number;
   stock: number;
   lowStockAlert?: number;
   status?: ProductStatus;
@@ -459,7 +456,6 @@ async function createProduct(data: CreateProductInput): Promise<ProductDetail> {
       slug: data.slug,
       description: data.description,
       basePrice: data.basePrice,
-      compareAtPrice: data.compareAtPrice,
       stock: data.stock,
       lowStockAlert: data.lowStockAlert ?? 5,
       status: data.status ?? ProductStatus.DRAFT,
@@ -487,7 +483,6 @@ async function createProduct(data: CreateProductInput): Promise<ProductDetail> {
     slug: product.slug,
     description: product.description,
     basePrice: product.basePrice.toNumber(),
-    compareAtPrice: product.compareAtPrice?.toNumber() ?? null,
     stock: product.stock,
     lowStockAlert: product.lowStockAlert,
     status: product.status,
@@ -512,7 +507,6 @@ interface UpdateProductInput {
   slug?: string;
   description?: string;
   basePrice?: number;
-  compareAtPrice?: number | null;
   stock?: number;
   lowStockAlert?: number;
   status?: ProductStatus;
@@ -535,7 +529,6 @@ async function updateProduct(id: string, data: UpdateProductInput): Promise<Prod
       slug: data.slug,
       description: data.description,
       basePrice: data.basePrice,
-      compareAtPrice: data.compareAtPrice,
       stock: data.stock,
       lowStockAlert: data.lowStockAlert,
       status: data.status,
@@ -564,7 +557,6 @@ async function updateProduct(id: string, data: UpdateProductInput): Promise<Prod
     slug: product.slug,
     description: product.description,
     basePrice: product.basePrice.toNumber(),
-    compareAtPrice: product.compareAtPrice?.toNumber() ?? null,
     stock: product.stock,
     lowStockAlert: product.lowStockAlert,
     status: product.status,

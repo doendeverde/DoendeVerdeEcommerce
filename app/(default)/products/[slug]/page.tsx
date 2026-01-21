@@ -2,11 +2,16 @@
  * Product Detail Page
  *
  * Página completa de um produto individual.
+ * 
+ * REGRA DE NEGÓCIO:
+ * - Exibe preço base do produto
+ * - Desconto é da ASSINATURA, não do produto
+ * - TODO: Integrar com lib/pricing.ts para exibir desconto quando usuário tiver assinatura
  */
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronRight, Package, Shield, Truck } from 'lucide-react';
+import { ChevronRight, Shield, Truck } from 'lucide-react';
 import { productService } from '@/services';
 import { ProductImageGallery } from '@/components/products/ProductImageGallery';
 import { AddToCartButton } from '@/components/products/AddToCartButton';
@@ -102,13 +107,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <span className="text-3xl font-bold text-gray-900">
                 R$ {product.basePrice.toFixed(2)}
               </span>
-              {product.isOnSale && product.compareAtPrice && (
+              {/* Desconto de assinatura seria exibido aqui quando usuário tiver assinatura ativa */}
+              {product.hasSubscriptionDiscount && product.finalPrice && product.subscriptionDiscountPercent && (
                 <>
                   <span className="text-lg text-gray-400 line-through">
-                    R$ {product.compareAtPrice.toFixed(2)}
+                    R$ {product.basePrice.toFixed(2)}
                   </span>
-                  <span className="rounded-full bg-primary-green px-3 py-1 text-sm font-bold text-white">
-                    -{product.discountPercentage}%
+                  <span className="rounded-full bg-primary-purple px-3 py-1 text-sm font-bold text-white">
+                    -{product.subscriptionDiscountPercent}% assinante
                   </span>
                 </>
               )}
