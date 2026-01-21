@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Sparkles, Gift, Truck, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Gift, Truck } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { SubscriptionPlanItem } from "@/types/subscription";
@@ -17,6 +17,7 @@ interface SubscriptionCTABannerProps {
  * - Manual navigation with arrows
  * - Plan cards with gradient colors
  * - CTA to subscription page
+ * - Simple and minimalist design
  */
 export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps) {
   const [plans, setPlans] = useState<SubscriptionPlanItem[]>([]);
@@ -108,70 +109,79 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
 
       {/* Content */}
       <div className="relative z-10 p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-centerjustify-between gap-4">
           {/* Left: Plan info */}
           <div className="flex-1">
             {/* Badge */}
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-4 h-4 text-yellow-300" />
-              <span className="text-xs font-medium text-white/90 uppercase tracking-wide">
+            {/* <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="w-5 h-5 text-yellow-300" />
+              <span className="text-sm font-medium text-white/90 uppercase tracking-wide">
                 Economize até {Math.max(...plans.map(p => p.discountPercent))}% com assinatura
               </span>
-            </div>
+            </div> */}
 
             {/* Plan name with slide animation */}
-            <div className="overflow-hidden">
+            <div className="overflow-hidden mb-2">
               <h3
                 key={currentPlan.id}
-                className="text-lg sm:text-xl font-bold text-white animate-slideIn"
+                className="text-4xl sm:text-4xl font-bold text-white animate-slideIn"
               >
                 {currentPlan.name}
               </h3>
             </div>
 
             {/* Plan short description */}
-            <p className="text-sm text-white/80 mt-1">
+            {/* <p className="text-base sm:text-lg text-white/90 font-light">
               {currentPlan.shortDescription}
-            </p>
+            </p> */}
 
-            {/* Plan highlights */}
-            <div className="flex items-center gap-4 mt-3 text-xs text-white/70">
+            {/* Plan highlights - simplified */}
+            <div className="flex items-center gap-6 mt-4 absolute sm:relative">
               {currentPlan.discountPercent > 0 && (
-                <span className="flex items-center gap-1">
-                  <Gift className="w-3.5 h-3.5" />
-                  {currentPlan.discountPercent}% desconto
+                <span className="flex items-center gap-2 text-white/90">
+                  <Gift className="w-5 h-5" />
+                  <span className="text-sm font-medium">
+                    {currentPlan.discountPercent}% desconto
+                  </span>
                 </span>
               )}
+              {/* Pontuação comentada - não será implementada agora
               {currentPlan.monthlyPoints > 0 && (
-                <span className="flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 fill-current" />
-                  {currentPlan.monthlyPoints} pontos/mês
+                <span className="flex items-center gap-2 text-white/90">
+                  <Star className="w-5 h-5 fill-current" />
+                  <span className="text-sm font-medium">
+                    {currentPlan.monthlyPoints} pontos/mês
+                  </span>
                 </span>
               )}
-              {currentPlan.order >= 2 && (
-                <span className="flex items-center gap-1">
-                  <Truck className="w-3.5 h-3.5" />
-                  Frete grátis
+              */}
+              {/* frete grátis comentado - não será implementada agora */}
+              {/* {currentPlan.order >= 2 && (
+                <span className="flex items-center gap-2 text-white/90">
+                  <Truck className="w-5 h-5" />
+                  <span className="text-sm font-medium">Frete grátis</span>
                 </span>
-              )}
+              )} */}
             </div>
           </div>
 
           {/* Right: Price and CTA */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
             {/* Price */}
-            <div className="text-right">
-              <p className="text-xs text-white/60">a partir de</p>
-              <p className="text-2xl font-bold text-white">
+            <div className="flex items-baseline justify-center sm:justify-end gap-1 text-white">
+              <p className="text-3xl sm:text-4xl font-bold">
                 R$ {currentPlan.price.toFixed(2).replace(".", ",")}
-                <span className="text-sm font-normal">/mês</span>
+              </p>
+              <p className="text-sm font-light opacity-80">
+                /mês
               </p>
             </div>
+
 
             {/* CTA Button */}
             <Link
               href={`/checkout/subscription/${currentPlan.slug}`}
-              className="px-4 py-2.5 bg-white rounded-lg text-sm font-semibold transition-all duration-200 hover:scale-105 hover:shadow-lg"
+              className="px-6 py-3 bg-white rounded-lg text-base font-semibold transition-all duration-200 hover:scale-105 hover:shadow-xl whitespace-nowrap"
               style={{ color: currentPlan.colorDark }}
             >
               Assinar agora
