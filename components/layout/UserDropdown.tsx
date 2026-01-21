@@ -128,10 +128,10 @@ export function UserDropdown({ className }: UserDropdownProps) {
 
           {/* Menu Items */}
           <div className="py-2">
-            <DropdownLink href="/perfil" icon={User}>
+            <DropdownLink href="/profile" icon={User}>
               Meu Perfil
             </DropdownLink>
-            <DropdownLink href="/minhas-compras" icon={ShoppingBag}>
+            <DropdownLink href="/orders" icon={ShoppingBag}>
               Minhas Compras
             </DropdownLink>
 

@@ -66,31 +66,31 @@ export function ProductCard({ product }: ProductCardProps) {
         />
 
         {/* Badges */}
-        <div className="absolute left-3 top-3 flex flex-col gap-2">
-          {/* Category Badge */}
+        <div className="absolute left-2 top-2 sm:left-3 sm:top-3 flex flex-col gap-1.5 sm:gap-2">
+          {/* Category Badge - hidden on mobile for cleaner look */}
           {product.category && (
-            <span className="inline-flex items-center rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-medium text-gray-700 shadow-sm">
+            <span className="hidden sm:inline-flex items-center rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-medium text-gray-700 shadow-sm">
               {product.category.name}
             </span>
           )}
 
           {/* Discount Badge */}
           {product.isOnSale && (
-            <span className="inline-flex items-center rounded-full bg-primary-green px-3 py-1 text-xs font-bold text-white shadow-sm">
+            <span className="inline-flex items-center rounded-full bg-primary-green px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-bold text-white shadow-sm">
               -{product.discountPercentage}%
             </span>
           )}
 
           {/* Low Stock Badge */}
           {product.isLowStock && !product.isOutOfStock && (
-            <span className="inline-flex items-center rounded-full bg-amber-500 px-3 py-1 text-xs font-medium text-white shadow-sm">
-              Últimas unidades
+            <span className="inline-flex items-center rounded-full bg-amber-500 px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-medium text-white shadow-sm">
+              Últimas
             </span>
           )}
 
           {/* Out of Stock Badge */}
           {product.isOutOfStock && (
-            <span className="inline-flex items-center rounded-full bg-gray-500 px-3 py-1 text-xs font-medium text-white shadow-sm">
+            <span className="inline-flex items-center rounded-full bg-gray-500 px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-medium text-white shadow-sm">
               Esgotado
             </span>
           )}
@@ -98,9 +98,9 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col p-3 sm:p-4">
         {/* Product Name */}
-        <h3 className="text-base font-semibold text-gray-900 line-clamp-2 group-hover:text-primary-green transition-colors">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 line-clamp-2 group-hover:text-primary-green transition-colors">
           {product.name}
         </h3>
 
@@ -111,14 +111,14 @@ export function ProductCard({ product }: ProductCardProps) {
         </div> */}
 
         {/* Price Section */}
-        <div className="mt-auto pt-4 flex items-end justify-between gap-2">
+        <div className="mt-auto pt-2 sm:pt-4 flex items-end justify-between gap-1 sm:gap-2">
           <div className="flex flex-col">
             {product.isOnSale && product.compareAtPrice && (
-              <span className="text-sm text-gray-400 line-through">
+              <span className="text-xs sm:text-sm text-gray-400 line-through">
                 R$ {product.compareAtPrice.toFixed(2)}
               </span>
             )}
-            <span className="text-lg font-bold text-gray-900">
+            <span className="text-sm sm:text-lg font-bold text-gray-900">
               R$ {product.basePrice.toFixed(2)}
             </span>
           </div>
@@ -127,13 +127,13 @@ export function ProductCard({ product }: ProductCardProps) {
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart || product.isOutOfStock}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-green text-white transition-all hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary-green text-white transition-all hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex-shrink-0"
             aria-label="Adicionar ao carrinho"
           >
             {isAddingToCart ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              <div className="h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
             ) : (
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
             )}
           </button>
         </div>

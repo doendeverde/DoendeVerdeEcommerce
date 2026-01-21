@@ -104,7 +104,7 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
         if (onSuccess) {
           onSuccess();
         }
-        router.push("/dashboard");
+        router.push("/");
         router.refresh();
       } else {
         // Registro OK mas login falhou - redirecionar para login manual

@@ -16,7 +16,7 @@ interface ProductGridProps {
 export function ProductGrid({ products, isLoading }: ProductGridProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
           <ProductCardSkeleton key={i} />
         ))}
@@ -53,7 +53,7 @@ export function ProductGrid({ products, isLoading }: ProductGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
@@ -68,21 +68,18 @@ function ProductCardSkeleton() {
       <div className="aspect-square bg-gray-200" />
 
       {/* Content */}
-      <div className="p-4 space-y-3">
+      <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
         {/* Name */}
-        <div className="h-5 w-3/4 rounded bg-gray-200" />
-        <div className="h-5 w-1/2 rounded bg-gray-200" />
-
-        {/* Points */}
-        <div className="h-4 w-24 rounded bg-gray-200" />
+        <div className="h-4 sm:h-5 w-3/4 rounded bg-gray-200" />
+        <div className="h-4 sm:h-5 w-1/2 rounded bg-gray-200" />
 
         {/* Price */}
-        <div className="flex items-end justify-between pt-2">
+        <div className="flex items-end justify-between pt-1 sm:pt-2">
           <div className="space-y-1">
-            <div className="h-4 w-16 rounded bg-gray-200" />
-            <div className="h-6 w-24 rounded bg-gray-200" />
+            <div className="h-3 sm:h-4 w-12 sm:w-16 rounded bg-gray-200" />
+            <div className="h-5 sm:h-6 w-16 sm:w-24 rounded bg-gray-200" />
           </div>
-          <div className="h-10 w-10 rounded-full bg-gray-200" />
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-200" />
         </div>
       </div>
     </div>

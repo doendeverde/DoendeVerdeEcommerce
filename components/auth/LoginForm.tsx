@@ -32,7 +32,7 @@ export function LoginForm({ onSuccess, onSwitchView, callbackUrl: callbackUrlPro
   const { setSubmitting } = useAuthModalStore();
 
   // Prioriza callbackUrl de prop (modal) sobre searchParams (página)
-  const callbackUrl = callbackUrlProp || searchParams?.get("callbackUrl") || "/dashboard";
+  const callbackUrl = callbackUrlProp || searchParams?.get("callbackUrl") || "/";
 
   const [formData, setFormData] = useState<LoginInput>({
     email: "",

@@ -441,6 +441,241 @@ export async function getUserOrderById(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Full Profile with Preferences (for profile page)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface FullUserProfile extends UserProfile {
+  preferences: {
+    id: string;
+    yearsSmoking: number | null;
+    favoritePaperType: string | null;
+    favoritePaperSize: string | null;
+    paperFilterSize: string | null;
+    glassFilterSize: string | null;
+    glassFilterThickness: string | null;
+    favoriteColors: string[];
+    tobaccoUsage: string | null;
+    consumptionFrequency: string | null;
+    consumptionMoment: string[];
+    consumesFlower: boolean;
+    consumesSkunk: boolean;
+    consumesHash: boolean;
+    consumesExtracts: boolean;
+    consumesOilEdibles: boolean;
+    likesAccessories: boolean;
+    likesCollectibles: boolean;
+    likesPremiumItems: boolean;
+    notes: string | null;
+  } | null;
+  activeSubscription: {
+    id: string;
+    plan: {
+      name: string;
+    };
+  } | null;
+}
+
+/**
+ * Get user full profile with preferences, addresses and active subscription
+ */
+export async function getUserFullProfile(userId: string): Promise<FullUserProfile | null> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      fullName: true,
+      birthDate: true,
+      whatsapp: true,
+      status: true,
+      createdAt: true,
+      profile: {
+        select: {
+          phone: true,
+          document: true,
+        },
+      },
+      preferences: {
+        select: {
+          id: true,
+          yearsSmoking: true,
+          favoritePaperType: true,
+          favoritePaperSize: true,
+          paperFilterSize: true,
+          glassFilterSize: true,
+          glassFilterThickness: true,
+          favoriteColors: true,
+          tobaccoUsage: true,
+          consumptionFrequency: true,
+          consumptionMoment: true,
+          consumesFlower: true,
+          consumesSkunk: true,
+          consumesHash: true,
+          consumesExtracts: true,
+          consumesOilEdibles: true,
+          likesAccessories: true,
+          likesCollectibles: true,
+          likesPremiumItems: true,
+          notes: true,
+        },
+      },
+      addresses: {
+        orderBy: { isDefault: "desc" },
+        select: {
+          id: true,
+          label: true,
+          street: true,
+          number: true,
+          complement: true,
+          neighborhood: true,
+          city: true,
+          state: true,
+          zipCode: true,
+          isDefault: true,
+        },
+      },
+      subscriptions: {
+        where: { status: "ACTIVE" },
+        take: 1,
+        select: {
+          id: true,
+          plan: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) return null;
+
+  return {
+    ...user,
+    activeSubscription: user.subscriptions[0] || null,
+  };
+}
+
+/**
+ * Get user orders with product images
+ */
+export async function getUserOrdersWithImages(userId: string): Promise<UserOrderWithImages[]> {
+  const orders = await prisma.order.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      status: true,
+      totalAmount: true,
+      subtotalAmount: true,
+      shippingAmount: true,
+      discountAmount: true,
+      createdAt: true,
+      items: {
+        select: {
+          id: true,
+          quantity: true,
+          unitPrice: true,
+          totalPrice: true,
+          product: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              images: {
+                take: 1,
+                select: {
+                  url: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      payments: {
+        select: {
+          id: true,
+          status: true,
+          provider: true,
+          amount: true,
+          method: true,
+        },
+      },
+      shipments: {
+        select: {
+          id: true,
+          status: true,
+          carrier: true,
+          trackingCode: true,
+          shippedAt: true,
+          deliveredAt: true,
+        },
+      },
+      addressSnapshot: {
+        select: {
+          street: true,
+          number: true,
+          complement: true,
+          neighborhood: true,
+          city: true,
+          state: true,
+          zipCode: true,
+        },
+      },
+    },
+  });
+
+  return orders;
+}
+
+export interface UserOrderWithImages {
+  id: string;
+  status: string;
+  totalAmount: Decimal;
+  subtotalAmount: Decimal;
+  shippingAmount: Decimal;
+  discountAmount: Decimal;
+  createdAt: Date;
+  items: {
+    id: string;
+    quantity: number;
+    unitPrice: Decimal;
+    totalPrice: Decimal;
+    product: {
+      id: string;
+      name: string;
+      slug: string;
+      images: { url: string }[];
+    };
+  }[];
+  payments: {
+    id: string;
+    status: string;
+    provider: string;
+    amount: Decimal;
+    method: string | null;
+  }[];
+  shipments: {
+    id: string;
+    status: string;
+    carrier: string | null;
+    trackingCode: string | null;
+    shippedAt: Date | null;
+    deliveredAt: Date | null;
+  }[];
+  addressSnapshot: {
+    street: string;
+    number: string;
+    complement: string | null;
+    neighborhood: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  } | null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Export service object for convenient imports
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -450,9 +685,11 @@ export const userService = {
   
   // Profile
   getUserProfile,
+  getUserFullProfile,
   updateUserProfile,
   
   // Orders
   getUserOrders,
   getUserOrderById,
+  getUserOrdersWithImages,
 };

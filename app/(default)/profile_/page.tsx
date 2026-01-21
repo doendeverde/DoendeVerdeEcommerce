@@ -35,26 +35,26 @@ export default async function ProfilePage() {
   // Transform preferences to the expected type
   const preferencesData: UserPreferencesData | null = user.preferences
     ? {
-      yearsSmoking: user.preferences.yearsSmoking,
-      favoritePaperType: user.preferences.favoritePaperType as any,
-      favoritePaperSize: user.preferences.favoritePaperSize as any,
-      paperFilterSize: user.preferences.paperFilterSize as any,
-      glassFilterSize: user.preferences.glassFilterSize as any,
-      glassFilterThickness: user.preferences.glassFilterThickness as any,
-      favoriteColors: user.preferences.favoriteColors,
-      tobaccoUsage: user.preferences.tobaccoUsage as any,
-      consumptionFrequency: user.preferences.consumptionFrequency as any,
-      consumptionMoment: user.preferences.consumptionMoment as any[],
-      consumesFlower: user.preferences.consumesFlower,
-      consumesSkunk: user.preferences.consumesSkunk,
-      consumesHash: user.preferences.consumesHash,
-      consumesExtracts: user.preferences.consumesExtracts,
-      consumesOilEdibles: user.preferences.consumesOilEdibles,
-      likesAccessories: user.preferences.likesAccessories,
-      likesCollectibles: user.preferences.likesCollectibles,
-      likesPremiumItems: user.preferences.likesPremiumItems,
-      notes: user.preferences.notes,
-    }
+        yearsSmoking: user.preferences.yearsSmoking,
+        favoritePaperType: user.preferences.favoritePaperType as any,
+        favoritePaperSize: user.preferences.favoritePaperSize as any,
+        paperFilterSize: user.preferences.paperFilterSize as any,
+        glassFilterSize: user.preferences.glassFilterSize as any,
+        glassFilterThickness: user.preferences.glassFilterThickness as any,
+        favoriteColors: user.preferences.favoriteColors,
+        tobaccoUsage: user.preferences.tobaccoUsage as any,
+        consumptionFrequency: user.preferences.consumptionFrequency as any,
+        consumptionMoment: user.preferences.consumptionMoment as any[],
+        consumesFlower: user.preferences.consumesFlower,
+        consumesSkunk: user.preferences.consumesSkunk,
+        consumesHash: user.preferences.consumesHash,
+        consumesExtracts: user.preferences.consumesExtracts,
+        consumesOilEdibles: user.preferences.consumesOilEdibles,
+        likesAccessories: user.preferences.likesAccessories,
+        likesCollectibles: user.preferences.likesCollectibles,
+        likesPremiumItems: user.preferences.likesPremiumItems,
+        notes: user.preferences.notes,
+      }
     : null;
 
   return (

@@ -2,12 +2,17 @@
  * ProductCatalog Client Component
  *
  * Handles search, filters, and product listing with client-side state.
- * Receives initial data from server for fast first render.
+ * Receives initial data from server for fast first render (SEO optimized).
+ * 
+ * Optimizations:
+ * - Cache for previously fetched results
+ * - AbortController to cancel in-flight requests
+ * - Debounce handled by SearchBar component
  */
 
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { ProductListItem, CategoryItem } from '@/types/product';
 import {
@@ -33,10 +38,30 @@ interface ProductsResponse {
   pagination: PaginationState;
 }
 
+interface CachedResult {
+  products: ProductListItem[];
+  categories: CategoryItem[];
+  pagination: PaginationState;
+  timestamp: number;
+}
+
 interface ProductCatalogProps {
   initialProducts: ProductListItem[];
   initialCategories: CategoryItem[];
   initialPagination: PaginationState;
+}
+
+// Cache duration: 5 minutes
+const CACHE_DURATION = 5 * 60 * 1000;
+
+// Generate cache key from filter params
+function getCacheKey(params: Record<string, string | undefined | null>): string {
+  const sortedParams = Object.entries(params)
+    .filter(([, v]) => v !== undefined && v !== null && v !== '')
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => `${k}=${v}`)
+    .join('&');
+  return sortedParams || 'default';
 }
 
 export function ProductCatalog({
@@ -50,6 +75,12 @@ export function ProductCatalog({
 
   // Track if this is the initial render (to skip fetch on mount)
   const isInitialMount = useRef(true);
+
+  // AbortController ref for cancelling in-flight requests
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Results cache
+  const cacheRef = useRef<Map<string, CachedResult>>(new Map());
 
   // State - initialized with server data
   const [products, setProducts] = useState<ProductListItem[]>(initialProducts);
@@ -94,13 +125,54 @@ export function ProductCatalog({
     [searchParams, router, pathname]
   );
 
+  // Current filter params for cache key
+  const currentFilterParams = useMemo(() => ({
+    search,
+    category,
+    minPrice: minPrice?.toString(),
+    maxPrice: maxPrice?.toString(),
+    inStock: inStock ? 'true' : undefined,
+    sortBy,
+    sortOrder,
+    page: page.toString(),
+  }), [search, category, minPrice, maxPrice, inStock, sortBy, sortOrder, page]);
+
   // Fetch products on filter changes (skip initial mount - data comes from server)
   useEffect(() => {
     // Skip fetch on initial mount - we already have data from server
     if (isInitialMount.current) {
       isInitialMount.current = false;
+
+      // Store initial data in cache
+      const initialCacheKey = getCacheKey(currentFilterParams);
+      cacheRef.current.set(initialCacheKey, {
+        products: initialProducts,
+        categories: initialCategories,
+        pagination: initialPagination,
+        timestamp: Date.now(),
+      });
       return;
     }
+
+    const cacheKey = getCacheKey(currentFilterParams);
+
+    // Check cache first
+    const cached = cacheRef.current.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      setProducts(cached.products);
+      setCategories(cached.categories);
+      setPagination(cached.pagination);
+      return;
+    }
+
+    // Cancel any in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
 
     const fetchProducts = async () => {
       setIsLoading(true);
@@ -117,23 +189,59 @@ export function ProductCatalog({
         params.set('page', page.toString());
         params.set('pageSize', '12');
 
-        const response = await fetch(`/api/products?${params.toString()}`);
+        const response = await fetch(`/api/products?${params.toString()}`, {
+          signal: abortController.signal,
+        });
+
+        // Check if request was aborted
+        if (abortController.signal.aborted) return;
+
         const data: ProductsResponse = await response.json();
 
         if (data.success) {
+          // Update state
           setProducts(data.products);
           setCategories(data.categories);
           setPagination(data.pagination);
+
+          // Store in cache
+          cacheRef.current.set(cacheKey, {
+            products: data.products,
+            categories: data.categories,
+            pagination: data.pagination,
+            timestamp: Date.now(),
+          });
+
+          // Cleanup old cache entries (keep last 20)
+          if (cacheRef.current.size > 20) {
+            const entries = Array.from(cacheRef.current.entries());
+            entries
+              .sort((a, b) => a[1].timestamp - b[1].timestamp)
+              .slice(0, entries.length - 20)
+              .forEach(([key]) => cacheRef.current.delete(key));
+          }
         }
       } catch (error) {
+        // Ignore abort errors
+        if (error instanceof Error && error.name === 'AbortError') {
+          return;
+        }
         console.error('Error fetching products:', error);
       } finally {
-        setIsLoading(false);
+        // Only set loading to false if this request wasn't aborted
+        if (!abortController.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchProducts();
-  }, [search, category, minPrice, maxPrice, inStock, sortBy, sortOrder, page]);
+
+    // Cleanup on unmount or when deps change
+    return () => {
+      abortController.abort();
+    };
+  }, [currentFilterParams, initialProducts, initialCategories, initialPagination]);
 
   // Handlers
   const handleSearchChange = (value: string) => {
@@ -170,23 +278,23 @@ export function ProductCatalog({
 
   return (
     <div className="space-y-6">
-      {/* Search and Filters */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="w-full max-w-md">
-          <SearchBar value={search} onChange={handleSearchChange} />
-        </div>
-        <div className="flex items-center gap-2">
-          <ProductFilters
-            minPrice={minPrice}
-            maxPrice={maxPrice}
-            inStock={inStock}
-            sortBy={sortBy}
-            sortOrder={sortOrder}
-            onFiltersChange={handleFiltersChange}
-            onClear={handleClearFilters}
-          />
-        </div>
+      {/* Search Bar */}
+      <div className="w-full">
+        <SearchBar value={search} onChange={handleSearchChange} />
       </div>
+
+      {/* FEATURE DISABLED: Filters - will be enabled in the future */}
+      {/* <div className="flex items-center gap-2">
+        <ProductFilters
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          inStock={inStock}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onFiltersChange={handleFiltersChange}
+          onClear={handleClearFilters}
+        />
+      </div> */}
 
       {/* Categories */}
       <CategoryChips
