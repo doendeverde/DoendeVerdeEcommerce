@@ -11,3 +11,4 @@ export { checkoutService } from './checkout.service';
 export * as paymentService from './payment.service';
 export { userService } from './user.service';
 export { adminService } from './admin.service';
+export { shippingService } from './shipping.service';

@@ -19,5 +19,9 @@ export {
 export { CardPaymentBrick, type CardPaymentFormData } from "./CardPaymentBrick";
 export { CardPaymentStep, type PaymentResult } from "./CardPaymentStep";
 
+// Shipping Components
+export { ShippingCalculator } from "./ShippingCalculator";
+export { ShippingSelector } from "./ShippingSelector";
+
 // Subscription Checkout Components
 export * from "./subscription";

@@ -101,6 +101,21 @@ export const paymentDataSchema = z.object({
 export type PaymentDataInput = z.infer<typeof paymentDataSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Shipping Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const selectedShippingOptionSchema = z.object({
+  id: z.string().min(1, "ID da opção de frete é obrigatório"),
+  carrier: z.string().min(1, "Transportadora é obrigatória"),
+  service: z.string().min(1, "Serviço é obrigatório"),
+  name: z.string().min(1, "Nome é obrigatório"),
+  price: z.number().min(0, "Preço não pode ser negativo"),
+  deliveryDays: z.number().int().min(0, "Prazo não pode ser negativo"),
+});
+
+export type SelectedShippingOptionInput = z.infer<typeof selectedShippingOptionSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Subscription Checkout Schemas
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -108,9 +123,23 @@ export const subscriptionCheckoutSchema = z.object({
   planSlug: z.string().min(1, "Plano é obrigatório"),
   addressId: z.string().uuid("ID de endereço inválido"),
   paymentData: paymentDataSchema,
+  shippingOption: selectedShippingOptionSchema.optional(),
 });
 
 export type SubscriptionCheckoutInput = z.infer<typeof subscriptionCheckoutSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Product Checkout Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const productCheckoutSchema = z.object({
+  addressId: z.string().uuid("ID de endereço inválido"),
+  paymentData: paymentDataSchema,
+  notes: z.string().max(500).optional(),
+  shippingOption: selectedShippingOptionSchema.optional(),
+});
+
+export type ProductCheckoutInput = z.infer<typeof productCheckoutSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Webhook Schemas (Mercado Pago)

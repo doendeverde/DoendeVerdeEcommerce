@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import type { Address } from "@prisma/client";
 import type { PaymentMethod } from "@/types/checkout";
+import type { SelectedShippingOption } from "@/types/shipping";
 import type {
   CheckoutStepId,
   SubscriptionCheckoutPageData,
@@ -60,6 +61,10 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Shipping state
+  const [selectedShippingOption, setSelectedShippingOption] = useState<SelectedShippingOption | null>(null);
+  const [isShippingLoading, setIsShippingLoading] = useState(false);
+
   // PIX specific state
   const [pixData, setPixData] = useState<PixPaymentData | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -81,7 +86,20 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
   }, []);
 
   const handleAddressSelect = useCallback((id: string) => {
+    // Clear shipping when address changes (will be recalculated automatically)
+    if (id !== selectedAddressId) {
+      setSelectedShippingOption(null);
+    }
     setSelectedAddressId(id);
+  }, [selectedAddressId]);
+
+  // Shipping Handlers
+  const handleShippingSelect = useCallback((option: SelectedShippingOption | null) => {
+    setSelectedShippingOption(option);
+  }, []);
+
+  const handleShippingLoadingChange = useCallback((loading: boolean) => {
+    setIsShippingLoading(loading);
   }, []);
 
   /**
@@ -97,6 +115,11 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
       return;
     }
 
+    if (!selectedShippingOption) {
+      setError("Selecione uma opção de frete");
+      return;
+    }
+
     setIsProcessing(true);
     setError(null);
 
@@ -108,6 +131,7 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
           planSlug: data.plan.slug,
           addressId: selectedAddressId,
           paymentData: { method: "pix" },
+          shippingOption: selectedShippingOption,
         }),
       });
 
@@ -140,7 +164,7 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
     } finally {
       setIsProcessing(false);
     }
-  }, [selectedAddressId, data.plan.slug]);
+  }, [selectedAddressId, selectedShippingOption, data.plan.slug]);
 
   /**
    * Handler para regenerar PIX (quando expira).
@@ -180,6 +204,11 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
       return;
     }
 
+    if (!selectedShippingOption) {
+      setError("Selecione uma opção de frete");
+      return;
+    }
+
     setIsProcessing(true);
     setCurrentStep("processing");
     setError(null);
@@ -203,6 +232,7 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
             identificationType: cardData.identificationType,
             identificationNumber: cardData.identificationNumber,
           },
+          shippingOption: selectedShippingOption,
         }),
       });
 
@@ -221,7 +251,7 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
     } finally {
       setIsProcessing(false);
     }
-  }, [selectedAddressId, paymentMethod, data.plan.slug]);
+  }, [selectedAddressId, selectedShippingOption, paymentMethod, data.plan.slug]);
 
   // Render: Error state (active subscription)
   if (currentStep === "error" && data.hasActiveSubscription) {
@@ -270,7 +300,11 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
 
           {/* Sidebar - Order Summary */}
           <div className="md:col-span-1">
-            <OrderSummary plan={data.plan} />
+            <OrderSummary
+              plan={data.plan}
+              shippingOption={selectedShippingOption}
+              isLoadingShipping={isShippingLoading}
+            />
           </div>
         </div>
       </div>
@@ -318,6 +352,10 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
               onAddressCreate={handleAddressCreate}
               onBack={goBackToPreferences}
               onContinue={goToPayment}
+              subscriptionPlanId={data.plan.id}
+              selectedShippingOption={selectedShippingOption}
+              onShippingSelect={handleShippingSelect}
+              onShippingLoadingChange={handleShippingLoadingChange}
             />
           )}
 
@@ -330,7 +368,7 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
               onSubmit={handlePixCheckout}
               onCardPaymentSubmit={handleCardPaymentSubmit}
               isProcessing={isProcessing}
-              amount={data.plan.price}
+              amount={data.plan.price + (selectedShippingOption?.price || 0)}
               payerEmail={data.user.email}
             />
           )}
@@ -338,7 +376,11 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
 
         {/* Sidebar - Order Summary */}
         <div className="md:col-span-1">
-          <OrderSummary plan={data.plan} />
+          <OrderSummary
+            plan={data.plan}
+            shippingOption={selectedShippingOption}
+            isLoadingShipping={isShippingLoading}
+          />
         </div>
       </div>
     </div>

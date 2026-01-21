@@ -19,6 +19,8 @@ export interface CreateOrderData {
   shippingAmount?: number;
   totalAmount: number;
   notes?: string;
+  /** Shipping data to persist with the order */
+  shippingData?: Record<string, unknown> | null;
 }
 
 export interface CreateOrderItemData {
@@ -138,6 +140,7 @@ export async function createOrder(
       shippingAmount: orderData.shippingAmount || 0,
       totalAmount: orderData.totalAmount,
       notes: orderData.notes,
+      shippingData: orderData.shippingData ? JSON.parse(JSON.stringify(orderData.shippingData)) : undefined,
       items: {
         create: items,
       },
@@ -165,16 +168,21 @@ export async function createSubscriptionOrder(
   planId: string,
   planName: string,
   planPrice: number,
-  addressSnapshot: CreateOrderAddressSnapshotData
+  addressSnapshot: CreateOrderAddressSnapshotData,
+  shippingAmount: number = 0,
+  shippingData?: Record<string, unknown> | null
 ): Promise<OrderWithRelations> {
+  const totalAmount = planPrice + shippingAmount;
+  
   return createOrder(
     {
       userId,
       subtotalAmount: planPrice,
       discountAmount: 0,
-      shippingAmount: 0,
-      totalAmount: planPrice,
+      shippingAmount,
+      totalAmount,
       notes: `Assinatura: ${planName}`,
+      shippingData,
     },
     [
       {

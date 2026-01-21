@@ -3,14 +3,17 @@
  * 
  * Step 2 of subscription checkout: Address selection/creation.
  * Allows users to select an existing address or create a new one.
+ * Now includes automatic shipping calculation when an address is selected.
  */
 
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { MapPin, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import type { Address } from "@prisma/client";
 import type { AddressFormData } from "@/types/subscription-checkout";
+import type { SelectedShippingOption } from "@/types/shipping";
+import { ShippingSelector } from "../ShippingSelector";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -23,6 +26,12 @@ interface AddressStepProps {
   onAddressCreate: (address: Address) => void;
   onBack: () => void;
   onContinue: () => void;
+  /** Shipping integration props */
+  subscriptionPlanId?: string;
+  productIds?: string[];
+  selectedShippingOption?: SelectedShippingOption | null;
+  onShippingSelect?: (option: SelectedShippingOption | null) => void;
+  onShippingLoadingChange?: (isLoading: boolean) => void;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -51,13 +60,36 @@ export function AddressStep({
   onAddressCreate,
   onBack,
   onContinue,
+  subscriptionPlanId,
+  productIds,
+  selectedShippingOption,
+  onShippingSelect,
+  onShippingLoadingChange,
 }: AddressStepProps) {
   const [showForm, setShowForm] = useState(addresses.length === 0);
   const [form, setForm] = useState<AddressFormData>(INITIAL_ADDRESS_FORM);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isShippingLoading, setIsShippingLoading] = useState(false);
 
-  const canContinue = selectedAddressId !== null;
+  // Get CEP from selected address
+  const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
+  const selectedCep = selectedAddress?.zipCode || "";
+
+  // Can only continue if address AND shipping are selected
+  const canContinue =
+    selectedAddressId !== null &&
+    (!onShippingSelect || selectedShippingOption !== null) &&
+    !isShippingLoading;
+
+  // Handle shipping loading state
+  const handleShippingLoadingChange = useCallback(
+    (loading: boolean) => {
+      setIsShippingLoading(loading);
+      onShippingLoadingChange?.(loading);
+    },
+    [onShippingLoadingChange]
+  );
 
   // Handlers
   const handleFormChange = useCallback((field: keyof AddressFormData, value: string) => {
@@ -147,6 +179,19 @@ export function AddressStep({
         />
       )}
 
+      {/* Shipping Selector - Shows when an address is selected */}
+      {selectedAddressId && selectedCep && onShippingSelect && !showForm && (
+        <ShippingSelector
+          cep={selectedCep}
+          subscriptionPlanId={subscriptionPlanId}
+          productIds={productIds}
+          selectedOption={selectedShippingOption || null}
+          onSelectOption={onShippingSelect}
+          onLoadingChange={handleShippingLoadingChange}
+          className="mt-4"
+        />
+      )}
+
       {/* Navigation */}
       {!showForm && (
         <div className="flex gap-3 mt-4">
@@ -188,8 +233,8 @@ function AddressList({ addresses, selectedId, onSelect, onShowForm }: AddressLis
         <label
           key={address.id}
           className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors ${selectedId === address.id
-              ? "border-primary-green bg-green-50"
-              : "border-gray-200 hover:border-gray-300"
+            ? "border-primary-green bg-green-50"
+            : "border-gray-200 hover:border-gray-300"
             }`}
         >
           <input

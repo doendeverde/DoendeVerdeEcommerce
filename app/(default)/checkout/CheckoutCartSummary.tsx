@@ -8,7 +8,8 @@
 "use client";
 
 import Image from "next/image";
-import { Package, Truck, Tag, ShoppingBag } from "lucide-react";
+import { Package, Truck, Tag, ShoppingBag, Loader2 } from "lucide-react";
+import type { SelectedShippingOption } from "@/types/shipping";
 
 interface CartItem {
   productId: string;
@@ -23,20 +24,35 @@ interface CartItem {
 interface CheckoutCartSummaryProps {
   items: CartItem[];
   subtotal: number;
-  shipping: number;
+  /** Static shipping value OR calculated from shippingOption */
+  shipping?: number;
   discount: number;
   total: number;
+  /** Selected shipping option (for detailed display) */
+  shippingOption?: SelectedShippingOption | null;
+  /** If shipping is being calculated */
+  isLoadingShipping?: boolean;
 }
 
 export function CheckoutCartSummary({
   items,
   subtotal,
-  shipping,
+  shipping: shippingProp = 0,
   discount,
-  total,
+  total: totalProp,
+  shippingOption,
+  isLoadingShipping = false,
 }: CheckoutCartSummaryProps) {
   const formatPrice = (value: number) =>
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  // Use shipping option price if available, otherwise use shipping prop
+  const shippingPrice = shippingOption?.price ?? shippingProp;
+
+  // Recalculate total with shipping option
+  const total = shippingOption
+    ? subtotal - discount + shippingPrice
+    : totalProp;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -102,12 +118,33 @@ export function CheckoutCartSummary({
             <Truck className="w-4 h-4" />
             Frete
           </span>
-          {shipping === 0 ? (
-            <span className="text-primary-green font-medium">Grátis</span>
+          {isLoadingShipping ? (
+            <span className="text-gray-400 flex items-center gap-1">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Calculando...
+            </span>
+          ) : shippingOption ? (
+            shippingPrice === 0 ? (
+              <span className="text-primary-green font-medium">Grátis</span>
+            ) : (
+              <span className="text-gray-900">{formatPrice(shippingPrice)}</span>
+            )
           ) : (
-            <span className="text-gray-900">{formatPrice(shipping)}</span>
+            <span className="text-gray-400 text-xs">Selecione o endereço</span>
           )}
         </div>
+
+        {/* Shipping details */}
+        {shippingOption && (
+          <div className="flex justify-between text-xs text-gray-500 bg-gray-50 rounded-lg p-2 -mx-2">
+            <span>{shippingOption.name}</span>
+            <span>
+              {shippingOption.deliveryDays === 1
+                ? "1 dia útil"
+                : `${shippingOption.deliveryDays} dias úteis`}
+            </span>
+          </div>
+        )}
 
         {/* Discount */}
         {discount > 0 && (

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Loader2, ImageIcon, Plus, X, Star } from "lucide-react";
 import Link from "next/link";
+import { ShippingProfileSelector } from "@/components/admin/shipping";
 
 interface PlanFormData {
   name: string;
@@ -16,6 +17,7 @@ interface PlanFormData {
   imageUrl: string;
   isActive: boolean;
   isFeatured: boolean;
+  shippingProfileId: string | null;
 }
 
 interface PlanFormProps {
@@ -63,6 +65,7 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
     imageUrl: initialData?.imageUrl || "",
     isActive: initialData?.isActive ?? true,
     isFeatured: initialData?.isFeatured ?? false,
+    shippingProfileId: initialData?.shippingProfileId ?? null,
   });
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -423,6 +426,20 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Shipping Profile */}
+            <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-white">Frete</h2>
+              <p className="text-sm text-neutral-400">
+                Selecione um perfil de frete para calcular o envio dos kits desta assinatura.
+              </p>
+              <ShippingProfileSelector
+                value={formData.shippingProfileId}
+                onChange={(profileId: string | null) =>
+                  setFormData((prev) => ({ ...prev, shippingProfileId: profileId }))
+                }
+              />
             </div>
 
             {/* Preview do Preço */}

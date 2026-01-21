@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 
 interface AdminPageHeaderProps {
   title: string;
@@ -10,6 +10,10 @@ interface AdminPageHeaderProps {
     href?: string;
     onClick?: () => void;
     icon?: React.ReactNode;
+  };
+  back?: {
+    href: string;
+    label?: string;
   };
   children?: React.ReactNode;
   className?: string;
@@ -23,6 +27,7 @@ export function AdminPageHeader({
   title,
   description,
   action,
+  back,
   children,
   className,
 }: AdminPageHeaderProps) {
@@ -33,11 +38,22 @@ export function AdminPageHeader({
         className
       )}
     >
-      <div>
-        <h1 className="text-2xl font-bold text-text-primary">{title}</h1>
-        {description && (
-          <p className="mt-1 text-sm text-text-secondary">{description}</p>
+      <div className="flex items-center gap-4">
+        {back && (
+          <Link
+            href={back.href}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            title={back.label || "Voltar"}
+          >
+            <ArrowLeft className="w-5 h-5 text-text-secondary" />
+          </Link>
         )}
+        <div>
+          <h1 className="text-2xl font-bold text-text-primary">{title}</h1>
+          {description && (
+            <p className="mt-1 text-sm text-text-secondary">{description}</p>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center gap-3">

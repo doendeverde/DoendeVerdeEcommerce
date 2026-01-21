@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProductStatus } from "@prisma/client";
+import { ShippingProfileSelector } from "@/components/admin/shipping";
 
 interface Category {
   id: string;
@@ -42,6 +43,7 @@ interface ProductData {
   status: ProductStatus;
   isPublished: boolean;
   categoryId: string;
+  shippingProfileId: string | null;
   images: ProductImage[];
 }
 
@@ -80,6 +82,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
     status: product?.status || "DRAFT" as ProductStatus,
     isPublished: product?.isPublished ?? false,
     categoryId: product?.categoryId || "",
+    shippingProfileId: product?.shippingProfileId || null as string | null,
   });
 
   const [images, setImages] = useState<ProductImage[]>(product?.images || []);
@@ -176,6 +179,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
         status: formData.status,
         isPublished: formData.isPublished,
         categoryId: formData.categoryId,
+        shippingProfileId: formData.shippingProfileId,
         images: images.map((img, index) => ({
           url: img.url,
           altText: img.altText,
@@ -491,6 +495,20 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Shipping Profile */}
+          <div className="bg-white rounded-xl border border-gray-border p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-text-primary">Frete</h2>
+            <p className="text-sm text-text-secondary">
+              Selecione um perfil de frete para calcular o envio deste produto.
+            </p>
+            <ShippingProfileSelector
+              value={formData.shippingProfileId}
+              onChange={(profileId) =>
+                setFormData((prev) => ({ ...prev, shippingProfileId: profileId }))
+              }
+            />
           </div>
 
           {/* Actions */}

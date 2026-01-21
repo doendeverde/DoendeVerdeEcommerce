@@ -1,24 +1,52 @@
 /**
  * Order Summary Component
  * 
- * Sidebar showing plan details, benefits, and pricing.
+ * Sidebar showing plan details, benefits, pricing, and shipping.
  * Sticky on desktop for easy reference during checkout.
  */
 
 "use client";
 
-import { Crown, Check } from "lucide-react";
+import { Crown, Check, Truck, Loader2 } from "lucide-react";
 import type { PlanData } from "@/types/subscription-checkout";
+import type { SelectedShippingOption } from "@/types/shipping";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface OrderSummaryProps {
+  plan: PlanData;
+  /** Opção de frete selecionada */
+  shippingOption?: SelectedShippingOption | null;
+  /** Se está carregando opções de frete */
+  isLoadingShipping?: boolean;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+function formatPrice(value: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface OrderSummaryProps {
-  plan: PlanData;
-}
+export function OrderSummary({
+  plan,
+  shippingOption,
+  isLoadingShipping = false,
+}: OrderSummaryProps) {
+  // Calculate total with shipping
+  const shippingPrice = shippingOption?.price || 0;
+  const total = plan.price + shippingPrice;
 
-export function OrderSummary({ plan }: OrderSummaryProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6">
       <h3 className="font-semibold text-gray-900 mb-4">Resumo</h3>
@@ -34,8 +62,8 @@ export function OrderSummary({ plan }: OrderSummaryProps) {
           {plan.badge && (
             <span
               className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full ${plan.badge === "premium"
-                  ? "bg-purple-100 text-primary-purple"
-                  : "bg-green-100 text-primary-green"
+                ? "bg-purple-100 text-primary-purple"
+                : "bg-green-100 text-primary-green"
                 }`}
             >
               {plan.badge === "premium" ? "Premium" : "Mais popular"}
@@ -64,12 +92,35 @@ export function OrderSummary({ plan }: OrderSummaryProps) {
 
       {/* Pricing */}
       <div className="pt-4 space-y-2">
+        {/* Plan price */}
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">Plano mensal</span>
-          <span className="text-gray-900">
-            R$ {plan.price.toFixed(2).replace(".", ",")}
-          </span>
+          <span className="text-gray-900">{formatPrice(plan.price)}</span>
         </div>
+
+        {/* Shipping */}
+        <div className="flex justify-between text-sm">
+          <span className="text-gray-600 flex items-center gap-1">
+            <Truck className="w-3.5 h-3.5" />
+            Frete
+          </span>
+          {isLoadingShipping ? (
+            <span className="text-gray-400 flex items-center gap-1">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Calculando...
+            </span>
+          ) : shippingOption ? (
+            shippingOption.price === 0 ? (
+              <span className="text-primary-green font-medium">Grátis</span>
+            ) : (
+              <span className="text-gray-900">{formatPrice(shippingOption.price)}</span>
+            )
+          ) : (
+            <span className="text-gray-400 text-xs">Selecione o endereço</span>
+          )}
+        </div>
+
+        {/* Discount info */}
         {plan.discountPercent > 0 && (
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Desconto em compras</span>
@@ -78,12 +129,32 @@ export function OrderSummary({ plan }: OrderSummaryProps) {
             </span>
           </div>
         )}
+
+        {/* Shipping details */}
+        {shippingOption && (
+          <div className="flex justify-between text-xs text-gray-500 bg-gray-50 rounded-lg p-2 -mx-2">
+            <span>{shippingOption.name}</span>
+            <span>
+              {shippingOption.deliveryDays === 1
+                ? "1 dia útil"
+                : `${shippingOption.deliveryDays} dias úteis`}
+            </span>
+          </div>
+        )}
+
+        {/* Total */}
         <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
           <span>Total</span>
           <span className="text-primary-green">
-            R$ {plan.price.toFixed(2).replace(".", ",")}/mês
+            {formatPrice(total)}/mês
           </span>
         </div>
+
+        {shippingOption && shippingOption.price > 0 && (
+          <p className="text-xs text-gray-500 text-center">
+            Frete cobrado apenas na primeira entrega
+          </p>
+        )}
       </div>
 
       {/* Trust badges */}

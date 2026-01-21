@@ -117,6 +117,7 @@ model Order {
   discountAmount  Decimal               @default(0) @db.Decimal(10, 2)
   shippingAmount  Decimal               @default(0) @db.Decimal(10, 2)
   totalAmount     Decimal               @db.Decimal(10, 2)
+  shippingData    Json?
   currency        String                @default("BRL")
   notes           String?
   createdAt       DateTime              @default(now())
@@ -210,6 +211,7 @@ model Product {
   stock                Int                   @default(0)
   stockMode            StockMode             @default(SIMPLE)
   categoryId           String
+  shippingProfileId    String?
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
   compareAtPrice       Decimal?              @db.Decimal(10, 2)
@@ -220,6 +222,7 @@ model Product {
   cartItems            CartItem[]
   orderItems           OrderItem[]
   category             Category              @relation(fields: [categoryId], references: [id])
+  shippingProfile      ShippingProfile?      @relation(fields: [shippingProfileId], references: [id])
   images               ProductImage[]
   options              ProductOption[]
   tags                 ProductTag[]
@@ -231,6 +234,7 @@ model Product {
   @@index([categoryId])
   @@index([categoryId, isPublished, status])
   @@index([isPublished])
+  @@index([shippingProfileId])
   @@index([slug])
   @@index([status])
 }
@@ -420,21 +424,23 @@ model SubscriptionCycle {
 }
 
 model SubscriptionPlan {
-  id               String                @id @default(uuid())
-  name             String
-  slug             String                @unique
-  description      String?
-  shortDescription String?
-  price            Decimal               @db.Decimal(10, 2)
-  billingCycle     BillingCycle          @default(MONTHLY)
-  features         String[]              @default([])
-  imageUrl         String?
-  active           Boolean               @default(true)
-  isFeatured       Boolean               @default(false)
-  createdAt        DateTime              @default(now())
-  updatedAt        DateTime              @updatedAt
-  subscriptions    Subscription[]
-  products         SubscriptionProduct[]
+  id                String                @id @default(uuid())
+  name              String
+  slug              String                @unique
+  description       String?
+  shortDescription  String?
+  price             Decimal               @db.Decimal(10, 2)
+  billingCycle      BillingCycle          @default(MONTHLY)
+  features          String[]              @default([])
+  imageUrl          String?
+  active            Boolean               @default(true)
+  isFeatured        Boolean               @default(false)
+  shippingProfileId String?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  subscriptions     Subscription[]
+  products          SubscriptionProduct[]
+  shippingProfile   ShippingProfile?      @relation(fields: [shippingProfileId], references: [id])
 
   @@index([active])
   @@index([slug])
@@ -548,6 +554,23 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model ShippingProfile {
+  id        String   @id @default(uuid())
+  name      String
+  weightKg  Decimal  @db.Decimal(6, 3)
+  widthCm   Int
+  heightCm  Int
+  lengthCm  Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products          Product[]
+  subscriptionPlans SubscriptionPlan[]
+
+  @@index([isActive])
 }
 
 model WebhookEvent {

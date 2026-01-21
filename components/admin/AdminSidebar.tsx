@@ -16,6 +16,7 @@ import {
   CreditCard,
   UserCheck,
   Leaf,
+  Truck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +44,7 @@ const navItems: NavItem[] = [
   { href: "/admin/categories", label: "Categorias", icon: Tag },
   { href: "/admin/subscriptions", label: "Planos", icon: CreditCard },
   { href: "/admin/user-subscriptions", label: "Assinaturas", icon: UserCheck },
+  { href: "/admin/shipping", label: "Frete", icon: Truck },
   { href: "/admin/settings", label: "Configurações", icon: Settings },
 ];
 

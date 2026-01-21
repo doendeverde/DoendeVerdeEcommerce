@@ -6,6 +6,7 @@
  */
 
 import type { Address, UserPreferences, PaymentProvider, PaymentStatus } from "@prisma/client";
+import type { SelectedShippingOption } from "./shipping";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Address Types
@@ -132,6 +133,8 @@ export interface SubscriptionCheckoutRequest {
   planSlug: string;
   addressId: string;
   paymentData: PaymentFormData;
+  /** Selected shipping option with price and details */
+  shippingOption?: SelectedShippingOption;
 }
 
 export interface SubscriptionCheckoutResponse {
@@ -154,6 +157,8 @@ export interface ProductCheckoutRequest {
   addressId: string;
   paymentData: PaymentFormData;
   notes?: string;
+  /** Selected shipping option with price and details */
+  shippingOption?: SelectedShippingOption;
 }
 
 export interface ProductCheckoutResponse {
@@ -187,8 +192,11 @@ export interface CartCheckoutData {
     label?: string;
     street: string;
     number: string;
+    complement?: string | null;
+    neighborhood: string;
     city: string;
     state: string;
+    zipCode: string;
     isDefault: boolean;
   }[];
   defaultAddressId: string | null;

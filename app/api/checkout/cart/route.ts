@@ -7,7 +7,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { checkoutService } from "@/services/checkout.service";
-import type { ProductCheckoutRequest } from "@/types/checkout";
+import { productCheckoutSchema } from "@/schemas/checkout.schema";
+import { ZodError } from "zod";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST - Process Cart Checkout
@@ -24,26 +25,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Parse request body
+    // 2. Parse and validate request body
     const body = await request.json();
-    const { addressId, paymentData, notes } = body as ProductCheckoutRequest;
+    const validated = productCheckoutSchema.parse(body);
 
-    // 3. Validate required fields
-    if (!addressId) {
-      return NextResponse.json(
-        { success: false, error: "Endereço é obrigatório", errorCode: "INVALID_REQUEST" },
-        { status: 400 }
-      );
-    }
-
-    if (!paymentData?.method) {
-      return NextResponse.json(
-        { success: false, error: "Método de pagamento é obrigatório", errorCode: "INVALID_REQUEST" },
-        { status: 400 }
-      );
-    }
-
-    // 4. Process checkout
+    // 3. Process checkout
     const result = await checkoutService.processProductCheckout(
       session.user.id,
       {
@@ -52,10 +38,10 @@ export async function POST(request: NextRequest) {
         email: session.user.email || "",
         whatsapp: null, // TODO: Get from user profile
       },
-      { addressId, paymentData, notes }
+      validated
     );
 
-    // 5. Return result
+    // 4. Return result
     if (!result.success) {
       return NextResponse.json(
         { success: false, error: result.error, errorCode: result.errorCode },
@@ -72,6 +58,20 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Dados inválidos",
+          details: error.issues.map((e) => ({
+            field: e.path.join("."),
+            message: e.message,
+          })),
+        },
+        { status: 400 }
+      );
+    }
+
     console.error("Checkout API error:", error);
     return NextResponse.json(
       { success: false, error: "Erro interno do servidor", errorCode: "INTERNAL_ERROR" },

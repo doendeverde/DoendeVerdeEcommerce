@@ -29,6 +29,7 @@ export default async function EditSubscriptionPlanPage({ params }: EditPlanPageP
         imageUrl: plan.imageUrl || "",
         isActive: plan.isActive,
         isFeatured: plan.isFeatured,
+        shippingProfileId: plan.shippingProfileId || null,
       }}
     />
   );

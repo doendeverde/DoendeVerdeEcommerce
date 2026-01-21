@@ -13,6 +13,7 @@ import * as orderRepository from "@/repositories/order.repository";
 import * as paymentRepository from "@/repositories/payment.repository";
 import { createSubscriptionPayment, createPixPaymentDirect } from "./payment.service";
 import { cartService } from "./cart.service";
+import { shippingService } from "./shipping.service";
 import type {
   SubscriptionCheckoutRequest,
   SubscriptionCheckoutResponse,
@@ -20,6 +21,7 @@ import type {
   ProductCheckoutResponse,
   PaymentPreference,
 } from "@/types/checkout";
+import type { SelectedShippingOption, OrderShippingData } from "@/types/shipping";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -117,6 +119,20 @@ async function processSubscriptionCheckout(
   }
 
   const planPrice = Number(plan.price);
+  
+  // Calculate shipping if option provided
+  let shippingAmount = 0;
+  let orderShippingData: OrderShippingData | null = null;
+  
+  if (data.shippingOption) {
+    shippingAmount = data.shippingOption.price;
+    orderShippingData = shippingService.buildOrderShippingData(
+      data.shippingOption,
+      address.zipCode
+    );
+  }
+  
+  const totalAmount = planPrice + shippingAmount;
 
   try {
     // 3. Create order with address snapshot
@@ -136,14 +152,16 @@ async function processSubscriptionCheckout(
         state: address.state,
         zipCode: address.zipCode,
         country: address.country,
-      }
+      },
+      shippingAmount,
+      orderShippingData as Record<string, unknown> | null
     );
 
     // 4. Create payment record
     const payment = await paymentRepository.createPayment({
       orderId: order.id,
       provider: "MERCADO_PAGO",
-      amount: planPrice,
+      amount: totalAmount,
     });
 
     // 5. Process payment based on method
@@ -151,13 +169,13 @@ async function processSubscriptionCheckout(
 
     if (data.paymentData.method === "pix") {
       // Generate PIX payment
-      paymentPreference = await createPixPayment(order.id, payment.id, planPrice, user);
+      paymentPreference = await createPixPayment(order.id, payment.id, totalAmount, user);
     } else {
       // Process card payment (credit/debit)
       const cardResult = await processCardPayment(
         order.id,
         payment.id,
-        planPrice,
+        totalAmount,
         data.paymentData,
         user
       );
@@ -193,7 +211,7 @@ async function processSubscriptionCheckout(
       // Create first cycle as paid
       await subscriptionRepository.createFirstCycle({
         subscriptionId: subscription.id,
-        amount: planPrice,
+        amount: totalAmount,
         paymentId: payment.id,
       });
 
@@ -459,9 +477,21 @@ async function processProductCheckout(
     (sum, item) => sum + Number(item.unitPrice) * item.quantity,
     0
   );
-  const shipping = 0; // TODO: Calculate shipping based on address
+  
+  // Calculate shipping from provided option
+  let shippingAmount = 0;
+  let orderShippingData: OrderShippingData | null = null;
+  
+  if (data.shippingOption) {
+    shippingAmount = data.shippingOption.price;
+    orderShippingData = shippingService.buildOrderShippingData(
+      data.shippingOption,
+      address.zipCode
+    );
+  }
+  
   const discount = 0; // TODO: Apply user subscription discount
-  const total = subtotal + shipping - discount;
+  const total = subtotal + shippingAmount - discount;
 
   try {
     // 4. Create order with items and address snapshot
@@ -480,9 +510,10 @@ async function processProductCheckout(
         userId,
         subtotalAmount: subtotal,
         discountAmount: discount,
-        shippingAmount: shipping,
+        shippingAmount,
         totalAmount: total,
         notes: data.notes,
+        shippingData: orderShippingData as Record<string, unknown> | null,
       },
       orderItems,
       {

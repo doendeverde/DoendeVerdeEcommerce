@@ -27,6 +27,7 @@ import type {
   CartCheckoutData,
   ProductCheckoutStepId,
 } from "@/types/checkout";
+import type { SelectedShippingOption } from "@/types/shipping";
 
 // Reuse components from subscription checkout
 import {
@@ -79,9 +80,9 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
     data.addresses.map((a) => ({
       ...a,
       userId: "",
-      complement: null,
-      neighborhood: "",
-      zipCode: "",
+      complement: a.complement ?? null,
+      neighborhood: a.neighborhood,
+      zipCode: a.zipCode,
       country: "BR",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -93,6 +94,10 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
+
+  // Shipping state
+  const [selectedShippingOption, setSelectedShippingOption] = useState<SelectedShippingOption | null>(null);
+  const [isShippingLoading, setIsShippingLoading] = useState(false);
 
   // PIX specific state
   const [pixData, setPixData] = useState<PixPaymentData | null>(null);
@@ -113,7 +118,20 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
   }, []);
 
   const handleAddressSelect = useCallback((id: string) => {
+    // Clear shipping when address changes
+    if (id !== selectedAddressId) {
+      setSelectedShippingOption(null);
+    }
     setSelectedAddressId(id);
+  }, [selectedAddressId]);
+
+  // Shipping Handlers
+  const handleShippingSelect = useCallback((option: SelectedShippingOption | null) => {
+    setSelectedShippingOption(option);
+  }, []);
+
+  const handleShippingLoadingChange = useCallback((loading: boolean) => {
+    setIsShippingLoading(loading);
   }, []);
 
   /**
@@ -122,6 +140,11 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
   const handlePixCheckout = useCallback(async () => {
     if (!selectedAddressId) {
       setError("Selecione um endereço de entrega");
+      return;
+    }
+
+    if (!selectedShippingOption) {
+      setError("Selecione uma opção de frete");
       return;
     }
 
@@ -135,6 +158,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
         body: JSON.stringify({
           addressId: selectedAddressId,
           paymentData: { method: "pix" },
+          shippingOption: selectedShippingOption,
         }),
       });
 
@@ -167,7 +191,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
     } finally {
       setIsProcessing(false);
     }
-  }, [selectedAddressId]);
+  }, [selectedAddressId, selectedShippingOption]);
 
   /**
    * Handler para regenerar PIX (quando expira).
@@ -185,6 +209,11 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
     async (cardData: CardPaymentData) => {
       if (!selectedAddressId) {
         setError("Selecione um endereço de entrega");
+        return;
+      }
+
+      if (!selectedShippingOption) {
+        setError("Selecione uma opção de frete");
         return;
       }
 
@@ -208,6 +237,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
               cardBrand: cardData.paymentMethodId,
               installments: cardData.installments || 1,
             },
+            shippingOption: selectedShippingOption,
           }),
         });
 
@@ -226,7 +256,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
         setIsProcessing(false);
       }
     },
-    [selectedAddressId, paymentMethod]
+    [selectedAddressId, selectedShippingOption, paymentMethod]
   );
 
   /**
@@ -342,6 +372,10 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
             onAddressCreate={handleAddressCreate}
             onBack={() => router.push("/cart")}
             onContinue={goToPayment}
+            productIds={data.items.map(item => item.productId)}
+            selectedShippingOption={selectedShippingOption}
+            onShippingSelect={handleShippingSelect}
+            onShippingLoadingChange={handleShippingLoadingChange}
           />
         )}
 
@@ -353,7 +387,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
             onCardPaymentSubmit={handleCardCheckout}
             onBack={goBackToAddress}
             isProcessing={isProcessing}
-            amount={data.total}
+            amount={data.subtotal - data.discount + (selectedShippingOption?.price || 0)}
             isSubscription={false}
           />
         )}
@@ -361,7 +395,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
         {currentStep === "pix_waiting" && pixData && orderId && (
           <PixWaitingStep
             pixData={pixData}
-            amount={data.total}
+            amount={data.subtotal - data.discount + (selectedShippingOption?.price || 0)}
             orderId={orderId}
             onPaymentConfirmed={handlePixConfirmed}
             onPaymentFailed={handlePixFailed}
@@ -378,9 +412,10 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
           <CheckoutCartSummary
             items={data.items}
             subtotal={data.subtotal}
-            shipping={data.shipping}
             discount={data.discount}
             total={data.total}
+            shippingOption={selectedShippingOption}
+            isLoadingShipping={isShippingLoading}
           />
         </div>
       </div>

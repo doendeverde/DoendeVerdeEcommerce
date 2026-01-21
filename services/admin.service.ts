@@ -393,6 +393,7 @@ interface ProductDetail {
   isPublished: boolean;
   categoryId: string;
   loyaltyPoints: number;
+  shippingProfileId: string | null;
   images: ProductImage[];
   createdAt: Date;
   updatedAt: Date;
@@ -423,6 +424,7 @@ async function getProductById(id: string): Promise<ProductDetail | null> {
     isPublished: product.isPublished,
     categoryId: product.categoryId,
     loyaltyPoints: product.loyaltyPoints,
+    shippingProfileId: product.shippingProfileId,
     images: product.images.map((img) => ({
       id: img.id,
       url: img.url,
@@ -492,6 +494,7 @@ async function createProduct(data: CreateProductInput): Promise<ProductDetail> {
     isPublished: product.isPublished,
     categoryId: product.categoryId,
     loyaltyPoints: product.loyaltyPoints,
+    shippingProfileId: product.shippingProfileId,
     images: product.images.map((img) => ({
       id: img.id,
       url: img.url,
@@ -568,6 +571,7 @@ async function updateProduct(id: string, data: UpdateProductInput): Promise<Prod
     isPublished: product.isPublished,
     categoryId: product.categoryId,
     loyaltyPoints: product.loyaltyPoints,
+    shippingProfileId: product.shippingProfileId,
     images: product.images.map((img) => ({
       id: img.id,
       url: img.url,
@@ -1509,6 +1513,7 @@ async function getSubscriptionPlanById(id: string) {
     imageUrl: plan.imageUrl,
     isActive: plan.active,
     isFeatured: plan.isFeatured,
+    shippingProfileId: plan.shippingProfileId,
     createdAt: plan.createdAt,
     updatedAt: plan.updatedAt,
     _count: { userSubscriptions: plan._count.subscriptions },
