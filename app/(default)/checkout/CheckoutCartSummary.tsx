@@ -27,6 +27,8 @@ interface CheckoutCartSummaryProps {
   /** Static shipping value OR calculated from shippingOption */
   shipping?: number;
   discount: number;
+  /** Label explaining the discount (e.g., "Desconto Doende Bronze") */
+  discountLabel?: string | null;
   total: number;
   /** Selected shipping option (for detailed display) */
   shippingOption?: SelectedShippingOption | null;
@@ -39,6 +41,7 @@ export function CheckoutCartSummary({
   subtotal,
   shipping: shippingProp = 0,
   discount,
+  discountLabel,
   total: totalProp,
   shippingOption,
   isLoadingShipping = false,
@@ -149,11 +152,11 @@ export function CheckoutCartSummary({
         {/* Discount */}
         {discount > 0 && (
           <div className="flex justify-between text-sm">
-            <span className="text-primary-green flex items-center gap-1">
+            <span className="text-primary-purple flex items-center gap-1">
               <Tag className="w-4 h-4" />
-              Desconto
+              {discountLabel || "Desconto"}
             </span>
-            <span className="text-primary-green font-medium">
+            <span className="text-primary-purple font-medium">
               -{formatPrice(discount)}
             </span>
           </div>

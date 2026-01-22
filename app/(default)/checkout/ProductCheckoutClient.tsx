@@ -21,6 +21,7 @@ import {
   CreditCard,
   CheckCircle,
 } from "lucide-react";
+import { roundMoney } from "@/lib/utils";
 import type { Address } from "@prisma/client";
 import type {
   PaymentMethod,
@@ -387,7 +388,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
             onCardPaymentSubmit={handleCardCheckout}
             onBack={goBackToAddress}
             isProcessing={isProcessing}
-            amount={data.subtotal - data.discount + (selectedShippingOption?.price || 0)}
+            amount={roundMoney(data.subtotal - data.discount + (selectedShippingOption?.price || 0))}
             isSubscription={false}
           />
         )}
@@ -395,7 +396,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
         {currentStep === "pix_waiting" && pixData && orderId && (
           <PixWaitingStep
             pixData={pixData}
-            amount={data.subtotal - data.discount + (selectedShippingOption?.price || 0)}
+            amount={roundMoney(data.subtotal - data.discount + (selectedShippingOption?.price || 0))}
             orderId={orderId}
             onPaymentConfirmed={handlePixConfirmed}
             onPaymentFailed={handlePixFailed}
@@ -413,6 +414,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
             items={data.items}
             subtotal={data.subtotal}
             discount={data.discount}
+            discountLabel={data.discountLabel}
             total={data.total}
             shippingOption={selectedShippingOption}
             isLoadingShipping={isShippingLoading}

@@ -6,6 +6,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
+import { roundMoney } from "@/lib/utils";
 import { subscriptionRepository } from "@/repositories/subscription.repository";
 import { cartRepository } from "@/repositories/cart.repository";
 import * as addressRepository from "@/repositories/address.repository";
@@ -14,6 +15,7 @@ import * as paymentRepository from "@/repositories/payment.repository";
 import { createSubscriptionPayment, createPixPaymentDirect } from "./payment.service";
 import { cartService } from "./cart.service";
 import { shippingService } from "./shipping.service";
+import { getPlanConfig } from "@/types/subscription";
 import type {
   SubscriptionCheckoutRequest,
   SubscriptionCheckoutResponse,
@@ -132,7 +134,7 @@ async function processSubscriptionCheckout(
     );
   }
   
-  const totalAmount = planPrice + shippingAmount;
+  const totalAmount = roundMoney(planPrice + shippingAmount);
 
   try {
     // 3. Create order with address snapshot
@@ -169,7 +171,19 @@ async function processSubscriptionCheckout(
 
     if (data.paymentData.method === "pix") {
       // Generate PIX payment
-      paymentPreference = await createPixPayment(order.id, payment.id, totalAmount, user);
+      try {
+        paymentPreference = await createPixPayment(order.id, payment.id, totalAmount, user);
+      } catch (pixError) {
+        console.error("[Subscription Checkout] PIX payment creation failed:", pixError);
+        await paymentRepository.markPaymentAsFailed(payment.id, { 
+          error: pixError instanceof Error ? pixError.message : "PIX creation failed" 
+        });
+        return {
+          success: false,
+          error: "Erro ao gerar PIX. Verifique os dados e tente novamente.",
+          errorCode: "PIX_CREATION_FAILED",
+        };
+      }
     } else {
       // Process card payment (credit/debit)
       const cardResult = await processCardPayment(
@@ -247,42 +261,44 @@ async function processSubscriptionCheckout(
 /**
  * Create PIX payment preference using Mercado Pago SDK
  */
+/**
+ * Create PIX payment using Mercado Pago API
+ * Throws on error to allow proper handling by caller
+ */
 async function createPixPayment(
   orderId: string,
   paymentId: string,
   amount: number,
   user: UserCheckoutData
 ): Promise<PaymentPreference> {
-  try {
-    const result = await createPixPaymentDirect({
-      amount,
-      description: `Pagamento pedido #${orderId}`,
-      email: user.email,
-      externalReference: orderId,
-    });
+  console.log("[createPixPayment] Creating PIX for order:", {
+    orderId,
+    paymentId,
+    amount,
+    email: user.email,
+  });
 
-    return {
-      id: result.paymentId,
-      initPoint: result.ticketUrl || "",
-      externalReference: orderId,
-      qrCode: result.qrCode,
-      qrCodeBase64: result.qrCodeBase64,
-      pixCopyPaste: result.pixCopyPaste,
-      expirationDate: result.expirationDate,
-    };
-  } catch (error) {
-    console.error("Error creating PIX payment:", error);
-    // Return placeholder for error cases - frontend should handle this
-    return {
-      id: `pix_error_${paymentId}`,
-      initPoint: "",
-      externalReference: orderId,
-      qrCode: "",
-      qrCodeBase64: "",
-      pixCopyPaste: "",
-      expirationDate: new Date(Date.now() + 30 * 60 * 1000),
-    };
-  }
+  const result = await createPixPaymentDirect({
+    amount,
+    description: `Pagamento pedido #${orderId}`,
+    email: user.email,
+    externalReference: orderId,
+  });
+
+  console.log("[createPixPayment] PIX created successfully:", {
+    pixPaymentId: result.paymentId,
+    hasQrCode: !!result.qrCode,
+  });
+
+  return {
+    id: result.paymentId,
+    initPoint: result.ticketUrl || "",
+    externalReference: orderId,
+    qrCode: result.qrCode,
+    qrCodeBase64: result.qrCodeBase64,
+    pixCopyPaste: result.pixCopyPaste,
+    expirationDate: result.expirationDate,
+  };
 }
 
 /**
@@ -474,7 +490,12 @@ async function processProductCheckout(
 
   // 3. Calculate totals
   const subtotal = cart.items.reduce(
-    (sum, item) => sum + Number(item.unitPrice) * item.quantity,
+    (sum, item) => {
+      const price = Number(item.unitPrice);
+      const qty = item.quantity;
+      console.log(`[Checkout] Item: ${item.product?.name || item.productId}, price: ${price}, qty: ${qty}`);
+      return sum + price * qty;
+    },
     0
   );
   
@@ -483,15 +504,43 @@ async function processProductCheckout(
   let orderShippingData: OrderShippingData | null = null;
   
   if (data.shippingOption) {
-    shippingAmount = data.shippingOption.price;
+    shippingAmount = Number(data.shippingOption.price) || 0;
     orderShippingData = shippingService.buildOrderShippingData(
       data.shippingOption,
       address.zipCode
     );
   }
   
-  const discount = 0; // TODO: Apply user subscription discount
-  const total = subtotal + shippingAmount - discount;
+  // Apply subscription discount if user has active subscription
+  let discount = 0;
+  let subscriptionDiscountPercent = 0;
+  let subscriptionDiscountLabel: string | null = null;
+  
+  const activeSubscription = await subscriptionRepository.findUserActiveSubscription(userId);
+  if (activeSubscription) {
+    const planConfig = getPlanConfig(activeSubscription.plan.slug);
+    subscriptionDiscountPercent = planConfig.discountPercent;
+    
+    if (subscriptionDiscountPercent > 0) {
+      discount = Math.round(subtotal * (subscriptionDiscountPercent / 100) * 100) / 100;
+      subscriptionDiscountLabel = `Desconto ${activeSubscription.plan.name}`;
+      console.log(`[Checkout] Applying subscription discount: ${subscriptionDiscountPercent}% (${subscriptionDiscountLabel}), amount: R$${discount}`);
+    }
+  }
+  
+  const total = roundMoney(subtotal + shippingAmount - discount);
+
+  // Validate total before proceeding
+  if (total <= 0 || !Number.isFinite(total)) {
+    console.error("[Checkout] Invalid total calculated:", { subtotal, shippingAmount, discount, total });
+    return {
+      success: false,
+      error: "Valor total do pedido inválido. Verifique os itens do carrinho.",
+      errorCode: "INVALID_TOTAL",
+    };
+  }
+
+  console.log("[Checkout] Cart totals:", { subtotal, shippingAmount, discount, total, itemCount: cart.items.length });
 
   try {
     // 4. Create order with items and address snapshot
@@ -542,7 +591,20 @@ async function processProductCheckout(
 
     if (data.paymentData.method === "pix") {
       // Generate PIX payment
-      paymentPreference = await createPixPayment(order.id, payment.id, total, user);
+      try {
+        paymentPreference = await createPixPayment(order.id, payment.id, total, user);
+      } catch (pixError) {
+        console.error("[Checkout] PIX payment creation failed:", pixError);
+        // Mark payment as failed
+        await paymentRepository.markPaymentAsFailed(payment.id, { 
+          error: pixError instanceof Error ? pixError.message : "PIX creation failed" 
+        });
+        return {
+          success: false,
+          error: "Erro ao gerar PIX. Verifique os dados e tente novamente.",
+          errorCode: "PIX_CREATION_FAILED",
+        };
+      }
       
       // Return - user needs to pay
       return {

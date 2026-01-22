@@ -65,10 +65,10 @@ export function SuccessState({ planName, benefits }: SuccessStateProps) {
         </ul>
       </div>
       <button
-        onClick={() => router.push("/dashboard")}
+        onClick={() => router.push("/subscriptions")}
         className="px-6 py-3 bg-primary-green text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
       >
-        Ir para o Dashboard
+        Ver minha assinatura
       </button>
     </div>
   );

@@ -108,7 +108,7 @@ export function toCartItemDisplay(item: CartItemWithProduct): CartItemDisplay {
     variantId: item.variantId,
     quantity: item.quantity,
     unitPrice,
-    totalPrice: unitPrice * item.quantity,
+    totalPrice: Math.round(unitPrice * item.quantity * 100) / 100,
     currentPrice,
     priceChanged: unitPrice !== currentPrice,
     isOutOfStock: stock === 0,
@@ -143,7 +143,7 @@ export function toCartState(cart: CartWithItems): CartState {
     id: cart.id,
     items,
     itemCount: items.reduce((acc, item) => acc + item.quantity, 0),
-    subtotal: items.reduce((acc, item) => acc + item.totalPrice, 0),
+    subtotal: Math.round(items.reduce((acc, item) => acc + item.totalPrice, 0) * 100) / 100,
     // loyaltyPointsTotal: items.reduce(
     //   (acc, item) => acc + item.product.loyaltyPoints * item.quantity,
     //   0

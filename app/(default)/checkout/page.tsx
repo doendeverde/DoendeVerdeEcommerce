@@ -8,6 +8,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { cartService } from "@/services/cart.service";
+import { subscriptionService } from "@/services";
 import * as addressRepository from "@/repositories/address.repository";
 import { ProductCheckoutClient } from "./ProductCheckoutClient";
 import type { CartCheckoutData } from "@/types/checkout";
@@ -43,7 +44,13 @@ export default async function ProductCheckoutPage() {
   const addresses = await addressRepository.findUserAddresses(session.user.id);
   const defaultAddress = addresses.find((a) => a.isDefault);
 
-  // 6. Build checkout data
+  // 6. Get subscription discount
+  const subscriptionDiscount = await subscriptionService.getUserSubscriptionDiscount(session.user.id);
+  const discountAmount = subscriptionDiscount.discountPercent > 0
+    ? Math.round(cart.subtotal * (subscriptionDiscount.discountPercent / 100) * 100) / 100
+    : 0;
+
+  // 7. Build checkout data
   const checkoutData: CartCheckoutData = {
     items: cart.items.map((item) => ({
       productId: item.productId,
@@ -55,9 +62,11 @@ export default async function ProductCheckoutPage() {
       image: item.product.image?.url,
     })),
     subtotal: cart.subtotal,
-    shipping: 0, // TODO: Calculate shipping
-    discount: 0, // TODO: Apply subscription discount
-    total: cart.subtotal, // subtotal + shipping - discount
+    shipping: 0, // Will be calculated after address selection
+    discount: discountAmount,
+    discountLabel: subscriptionDiscount.discountLabel,
+    discountPercent: subscriptionDiscount.discountPercent,
+    total: Math.round((cart.subtotal - discountAmount) * 100) / 100, // subtotal + shipping - discount
     hasAddress: addresses.length > 0,
     addresses: addresses.map((a) => ({
       id: a.id,
@@ -76,9 +85,9 @@ export default async function ProductCheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gray-bg py-8">
-      <div className="container-main">
-        <ProductCheckoutClient data={checkoutData} />
-      </div>
+      {/* <div className="container-main"> */}
+      <ProductCheckoutClient data={checkoutData} />
+      {/* </div> */}
     </div>
   );
 }

@@ -9,6 +9,7 @@
 
 import { ReactNode } from "react";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import { SubscriptionProvider } from "@/components/providers/SubscriptionProvider";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { CartDrawer } from "@/components/cart";
 import { Toaster } from "sonner";
@@ -20,10 +21,12 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <SessionProvider>
-      {children}
-      <AuthModal />
-      <CartDrawer />
-      <Toaster position="top-right" richColors />
+      <SubscriptionProvider>
+        {children}
+        <AuthModal />
+        <CartDrawer />
+        <Toaster position="top-right" richColors />
+      </SubscriptionProvider>
     </SessionProvider>
   );
 }

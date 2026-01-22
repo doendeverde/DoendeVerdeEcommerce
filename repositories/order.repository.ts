@@ -176,7 +176,7 @@ export async function createSubscriptionOrder(
   console.log("[Order Repository] Plan ID:", planId);
   console.log("[Order Repository] Plan Name:", planName);
   
-  const totalAmount = planPrice + shippingAmount;
+  const totalAmount = Math.round((planPrice + shippingAmount) * 100) / 100;
   
   // Para assinaturas, não criamos OrderItem porque não há productId real
   // O planId não está na tabela Product, então não podemos usar como productId

@@ -6,22 +6,21 @@ import { auth } from "@/lib/auth";
  * Middleware para proteger rotas e gerenciar redirecionamentos de autenticação.
  * 
  * Rotas Protegidas:
- * - /dashboard: Requer autenticação
  * - /profile: Requer autenticação
  * - /orders: Requer autenticação
  * - /subscriptions: Requer autenticação
  * - /admin/*: Requer autenticação + role ADMIN
  * 
  * Rotas Públicas (redirecionam se autenticado):
- * - /login: Redireciona para /dashboard se já autenticado
- * - /register: Redireciona para /dashboard se já autenticado
+ * - /login: Redireciona para / se já autenticado
+ * - /register: Redireciona para / se já autenticado
  */
 export async function middleware(request: NextRequest) {
   const session = await auth();
   const { pathname } = request.nextUrl;
 
   // Rotas que requerem autenticação
-  const protectedRoutes = ["/dashboard", "/profile", "/orders", "/subscriptions"];
+  const protectedRoutes = ["/profile", "/orders", "/subscriptions"];
   
   // Rotas de autenticação (login/register)
   const authRoutes = ["/login", "/register"];
@@ -54,13 +53,13 @@ export async function middleware(request: NextRequest) {
     
     // Verifica se é ADMIN
     if (session.user.role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
   // Se está tentando acessar login/register já autenticado
   if (isAuthRoute && session) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   // Verificar se usuário está bloqueado

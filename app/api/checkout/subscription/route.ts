@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
     // ═══════════════════════════════════════════════════════════════════════
     const planPrice = Number(plan.price);
     const shippingAmount = shippingOption?.price || 0;
-    const totalAmount = planPrice + shippingAmount;
+    const totalAmount = Math.round((planPrice + shippingAmount) * 100) / 100;
     
     console.log("[Checkout Subscription] Amounts:", {
       planPrice,
@@ -350,11 +350,20 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Atualiza payment com transactionId do MP
+      // Atualiza payment com transactionId do MP E dados do PIX para recuperação
       if (pixResult.paymentId) {
+        const pixExpiresAt = pixResult.expirationDate || new Date(Date.now() + 30 * 60 * 1000);
+        
         await prisma.payment.update({
           where: { id: payment.id },
-          data: { transactionId: pixResult.paymentId },
+          data: { 
+            transactionId: pixResult.paymentId,
+            // Persistir dados PIX para recuperação futura
+            pixQrCode: pixResult.qrCode || pixResult.pixCopyPaste || null,
+            pixQrCodeBase64: pixResult.qrCodeBase64 || null,
+            pixTicketUrl: pixResult.ticketUrl || null,
+            pixExpiresAt: pixExpiresAt,
+          },
         });
       }
 

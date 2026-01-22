@@ -19,6 +19,9 @@ export {
 export { CardPaymentBrick, type CardPaymentFormData } from "./CardPaymentBrick";
 export { CardPaymentStep, type PaymentResult } from "./CardPaymentStep";
 
+// PIX Recovery
+export { PendingPixAlert } from "./PendingPixAlert";
+
 // Shipping Components
 export { ShippingCalculator } from "./ShippingCalculator";
 export { ShippingSelector } from "./ShippingSelector";

@@ -97,6 +97,8 @@ export type CheckoutStepId = "address" | "preferences" | "payment" | "pix_waitin
 export interface StepConfig {
   id: CheckoutStepId;
   label: string;
+  /** Label curto para mobile */
+  shortLabel?: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 

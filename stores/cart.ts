@@ -164,7 +164,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     const previousCart = cart;
     const optimisticItems = cart.items.map((item) =>
       item.id === itemId
-        ? { ...item, quantity, totalPrice: item.unitPrice * quantity }
+        ? { ...item, quantity, totalPrice: Math.round(item.unitPrice * quantity * 100) / 100 }
         : item
     );
 
@@ -172,7 +172,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
       cart: {
         ...cart,
         items: optimisticItems,
-        subtotal: optimisticItems.reduce((sum, item) => sum + item.totalPrice, 0),
+        subtotal: Math.round(optimisticItems.reduce((sum, item) => sum + item.totalPrice, 0) * 100) / 100,
         itemCount: optimisticItems.reduce((sum, item) => sum + item.quantity, 0),
       },
       pendingOperations: new Set([...pendingOperations, operationId]),
@@ -230,7 +230,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
       cart: {
         ...cart,
         items: optimisticItems,
-        subtotal: optimisticItems.reduce((sum, item) => sum + item.totalPrice, 0),
+        subtotal: Math.round(optimisticItems.reduce((sum, item) => sum + item.totalPrice, 0) * 100) / 100,
         itemCount: optimisticItems.reduce((sum, item) => sum + item.quantity, 0),
         isEmpty: optimisticItems.length === 0,
         hasOutOfStockItems: optimisticItems.some((item) => item.isOutOfStock),

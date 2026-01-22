@@ -599,6 +599,11 @@ export async function getUserOrdersWithImages(userId: string): Promise<UserOrder
           status: true,
           provider: true,
           amount: true,
+          transactionId: true,
+          pixQrCode: true,
+          pixQrCodeBase64: true,
+          pixTicketUrl: true,
+          pixExpiresAt: true,
         },
       },
       shipments: {
@@ -653,6 +658,11 @@ export interface UserOrderWithImages {
     status: string;
     provider: string;
     amount: Decimal;
+    transactionId: string | null;
+    pixQrCode: string | null;
+    pixQrCodeBase64: string | null;
+    pixTicketUrl: string | null;
+    pixExpiresAt: Date | null;
   }[];
   shipments: {
     id: string;

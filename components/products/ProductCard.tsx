@@ -6,7 +6,8 @@
  * REGRA DE NEGÓCIO:
  * - Exibe preço base do produto
  * - Desconto é da ASSINATURA, não do produto
- * - Campos de desconto são opcionais e vêm preenchidos quando usuário tem assinatura
+ * - Se produto já vier com dados de desconto (SSR), usa esses dados
+ * - Se não, usa o hook useProductDiscount para calcular client-side
  */
 
 'use client';
@@ -21,6 +22,7 @@ import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import { productImageProps, getSafeImageUrl, getImageSizes } from '@/lib/image-utils';
 import { CompactPriceDisplay, SubscriptionDiscountBadge } from '@/components/ui/PriceDisplay';
+import { useProductDiscount } from '@/components/providers/SubscriptionProvider';
 
 interface ProductCardProps {
   product: ProductListItem;
@@ -30,6 +32,17 @@ export function ProductCard({ product }: ProductCardProps) {
   const { data: session } = useSession();
   const { addItem, pendingOperations } = useCartStore();
   const { open } = useAuthModalStore();
+
+  // Use client-side discount calculation
+  const subscriptionDiscount = useProductDiscount(product.basePrice);
+
+  // Merge: prefer product data (from SSR) over client-side calculation
+  const discountInfo = {
+    finalPrice: product.finalPrice ?? subscriptionDiscount.finalPrice,
+    discountPercent: product.subscriptionDiscountPercent ?? subscriptionDiscount.discountPercent,
+    hasSubscriptionDiscount: product.hasSubscriptionDiscount ?? subscriptionDiscount.hasSubscriptionDiscount,
+    discountLabel: product.subscriptionDiscountLabel ?? subscriptionDiscount.discountLabel,
+  };
 
   const isAddingToCart = pendingOperations.has(`add-${product.id}`);
 
@@ -80,10 +93,10 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
 
           {/* Subscription Discount Badge - only shows if user has active subscription */}
-          {product.hasSubscriptionDiscount && product.subscriptionDiscountPercent && product.subscriptionDiscountPercent > 0 && (
+          {discountInfo.hasSubscriptionDiscount && discountInfo.discountPercent && discountInfo.discountPercent > 0 && (
             <SubscriptionDiscountBadge
-              discountPercent={product.subscriptionDiscountPercent}
-              discountLabel={product.subscriptionDiscountLabel}
+              discountPercent={discountInfo.discountPercent}
+              discountLabel={discountInfo.discountLabel}
               size="sm"
             />
           )}
@@ -115,9 +128,9 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="mt-auto pt-2 sm:pt-4 flex items-end justify-between gap-1 sm:gap-2">
           <CompactPriceDisplay
             basePrice={product.basePrice}
-            finalPrice={product.finalPrice}
-            discountPercent={product.subscriptionDiscountPercent}
-            hasDiscount={product.hasSubscriptionDiscount}
+            finalPrice={discountInfo.finalPrice}
+            discountPercent={discountInfo.discountPercent}
+            hasDiscount={discountInfo.hasSubscriptionDiscount}
           />
 
           {/* Add to Cart Button */}

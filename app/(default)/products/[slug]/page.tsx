@@ -6,7 +6,7 @@
  * REGRA DE NEGÓCIO:
  * - Exibe preço base do produto
  * - Desconto é da ASSINATURA, não do produto
- * - TODO: Integrar com lib/pricing.ts para exibir desconto quando usuário tiver assinatura
+ * - ProductDetailPrice usa context para mostrar desconto quando usuário tem assinatura
  */
 
 import { notFound } from 'next/navigation';
@@ -16,6 +16,7 @@ import { productService } from '@/services';
 import { ProductImageGallery } from '@/components/products/ProductImageGallery';
 import { AddToCartButton } from '@/components/products/AddToCartButton';
 import { ProductGrid } from '@/components/products';
+import { ProductDetailPrice } from '@/components/products/ProductPrice';
 
 // ISR: Revalidate product detail every 5 minutes
 export const revalidate = 300;
@@ -102,22 +103,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {product.name}
             </h1>
 
-            {/* Price */}
-            <div className="mt-6 flex items-baseline gap-4">
-              <span className="text-3xl font-bold text-gray-900">
-                R$ {product.basePrice.toFixed(2)}
-              </span>
-              {/* Desconto de assinatura seria exibido aqui quando usuário tiver assinatura ativa */}
-              {product.hasSubscriptionDiscount && product.finalPrice && product.subscriptionDiscountPercent && (
-                <>
-                  <span className="text-lg text-gray-400 line-through">
-                    R$ {product.basePrice.toFixed(2)}
-                  </span>
-                  <span className="rounded-full bg-primary-purple px-3 py-1 text-sm font-bold text-white">
-                    -{product.subscriptionDiscountPercent}% assinante
-                  </span>
-                </>
-              )}
+            {/* Price - Uses SubscriptionProvider context for discount */}
+            <div className="mt-6">
+              <ProductDetailPrice basePrice={product.basePrice} />
             </div>
 
             {/* FEATURE DISABLED: Points will be implemented in the future */}

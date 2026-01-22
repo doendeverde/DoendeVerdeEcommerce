@@ -1,8 +1,16 @@
 /**
- * Checkout Progress Component
+ * Checkout Progress Component (Refatorado)
  * 
  * Visual stepper showing checkout progress through steps:
  * Preferences → Address → Payment
+ * 
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * MELHORIAS DE UX:
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * - SEM linhas conectoras (layout mais limpo e estável)
+ * - Responsividade extrema (mobile-first)
+ * - Sem "pulos" de layout entre etapas
+ * - Labels adaptáveis em mobile
  */
 
 "use client";
@@ -15,9 +23,9 @@ import type { CheckoutStepId, StepConfig } from "@/types/subscription-checkout";
 // ─────────────────────────────────────────────────────────────────────────────
 
 const STEPS: StepConfig[] = [
-  { id: "preferences", label: "Preferências", icon: Settings },
-  { id: "address", label: "Endereço", icon: MapPin },
-  { id: "payment", label: "Pagamento", icon: CreditCard },
+  { id: "preferences", label: "Preferências", shortLabel: "Pref.", icon: Settings },
+  { id: "address", label: "Endereço", shortLabel: "End.", icon: MapPin },
+  { id: "payment", label: "Pagamento", shortLabel: "Pagar", icon: CreditCard },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -56,50 +64,70 @@ interface CheckoutProgressProps {
 
 export function CheckoutProgress({ currentStep }: CheckoutProgressProps) {
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        {STEPS.map((step, index) => {
+    <nav
+      aria-label="Progresso do checkout"
+      className="bg-white rounded-xl shadow-sm"
+    >
+      {/* 
+        Layout sem linhas conectoras:
+        - justify-between garante espaçamento uniforme
+        - Sem elementos visuais que possam causar overflow
+        - Padding responsivo
+      */}
+      <div className="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
+        {STEPS.map((step) => {
           const isActive = isStepActive(step.id, currentStep);
           const isPast = isStepPast(step.id, currentStep);
           const Icon = step.icon;
 
           return (
-            <div key={step.id} className="flex items-center">
-              {/* Step indicator */}
-              <div className="flex flex-col items-center">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isPast
+            <div
+              key={step.id}
+              className="flex flex-col items-center gap-1.5 min-w-0"
+              aria-current={isActive ? "step" : undefined}
+            >
+              {/* Step Circle */}
+              <div
+                className={`
+                  w-9 h-9 sm:w-10 sm:h-10 
+                  rounded-full flex items-center justify-center 
+                  transition-all duration-200 flex-shrink-0
+                  ${isPast
                     ? "bg-primary-green text-white"
                     : isActive
-                      ? "bg-primary-green/10 text-primary-green border-2 border-primary-green"
+                      ? "bg-primary-green/10 text-primary-green ring-2 ring-primary-green ring-offset-1"
                       : "bg-gray-100 text-gray-400"
-                    }`}
-                >
-                  {isPast ? (
-                    <Check className="w-5 h-5" />
-                  ) : (
-                    <Icon className="w-5 h-5" />
-                  )}
-                </div>
-                <span
-                  className={`text-xs mt-1 ${isActive ? "text-primary-green font-medium" : "text-gray-500"
-                    }`}
-                >
-                  {step.label}
-                </span>
+                  }
+                `}
+              >
+                {isPast ? (
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                ) : (
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                )}
               </div>
 
-              {/* Connector line (except for last step) */}
-              {index < STEPS.length - 1 && (
-                <div
-                  className={`w-16 md:w-24 h-1 mx-2 rounded ${isPast ? "bg-primary-green" : "bg-gray-200"
-                    }`}
-                />
-              )}
+              {/* Step Label - Responsivo */}
+              <span
+                className={`
+                  text-[10px] sm:text-xs font-medium text-center
+                  truncate max-w-[60px] sm:max-w-none
+                  ${isActive
+                    ? "text-primary-green"
+                    : isPast
+                      ? "text-gray-700"
+                      : "text-gray-500"
+                  }
+                `}
+              >
+                {/* Label curto em mobile, completo em desktop */}
+                <span className="sm:hidden">{step.shortLabel || step.label}</span>
+                <span className="hidden sm:inline">{step.label}</span>
+              </span>
             </div>
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 }

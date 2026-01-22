@@ -186,9 +186,48 @@ async function getPlansWithColors(): Promise<SubscriptionPlanItem[]> {
     .sort((a, b) => a.order - b.order);
 }
 
+/**
+ * Get subscription discount info for checkout
+ * Returns discount percentage and label based on user's active subscription
+ */
+interface SubscriptionDiscountInfo {
+  hasActiveSubscription: boolean;
+  discountPercent: number;
+  discountLabel: string | null;
+  planSlug: string | null;
+  planName: string | null;
+}
+
+async function getUserSubscriptionDiscount(userId: string): Promise<SubscriptionDiscountInfo> {
+  const subscription = await subscriptionRepository.findUserActiveSubscription(userId);
+  
+  if (!subscription) {
+    return {
+      hasActiveSubscription: false,
+      discountPercent: 0,
+      discountLabel: null,
+      planSlug: null,
+      planName: null,
+    };
+  }
+  
+  const planConfig = getPlanConfig(subscription.plan.slug);
+  
+  return {
+    hasActiveSubscription: true,
+    discountPercent: planConfig.discountPercent,
+    discountLabel: planConfig.discountPercent > 0 
+      ? `Desconto ${subscription.plan.name}` 
+      : null,
+    planSlug: subscription.plan.slug,
+    planName: subscription.plan.name,
+  };
+}
+
 export const subscriptionService = {
   getPlans,
   getUserSubscription,
+  getUserSubscriptionDiscount,
   getUserPlanSlug,
   userHasPlan,
   getPlanDisplayConfig,

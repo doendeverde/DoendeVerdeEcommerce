@@ -44,3 +44,28 @@ export function formatDateTime(date: Date | string): string {
     minute: "2-digit",
   }).format(d);
 }
+
+/**
+ * Round a number to 2 decimal places for monetary values.
+ * Prevents floating point precision issues like 29.9 + 28.62 = 58.519999999999996
+ * 
+ * @example
+ * roundMoney(29.9 + 28.62) // returns 58.52
+ * roundMoney(100 * 0.15) // returns 15.00
+ */
+export function roundMoney(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+/**
+ * Sum multiple monetary values with proper rounding.
+ * Use this instead of simple addition to avoid precision issues.
+ * 
+ * @example
+ * sumMoney(29.9, 28.62) // returns 58.52
+ * sumMoney(100, -15, 10.50) // returns 95.50
+ */
+export function sumMoney(...values: number[]): number {
+  const sum = values.reduce((acc, val) => acc + val, 0);
+  return roundMoney(sum);
+}

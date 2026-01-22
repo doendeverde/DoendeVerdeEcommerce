@@ -57,6 +57,11 @@ export default async function OrdersPage() {
       status: payment.status,
       provider: payment.provider,
       amount: convertDecimalToNumber(payment.amount),
+      transactionId: payment.transactionId,
+      pixQrCode: payment.pixQrCode,
+      pixQrCodeBase64: payment.pixQrCodeBase64,
+      pixTicketUrl: payment.pixTicketUrl,
+      pixExpiresAt: payment.pixExpiresAt,
     })),
     shipments: order.shipments.map((shipment) => ({
       id: shipment.id,

@@ -192,6 +192,11 @@ model Payment {
   amount        Decimal             @db.Decimal(10, 2)
   transactionId String?
   payload       Json?
+  // PIX-specific fields for recovery
+  pixQrCode     String?             @db.Text
+  pixQrCodeBase64 String?           @db.Text
+  pixTicketUrl  String?
+  pixExpiresAt  DateTime?
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
   order         Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -429,6 +434,7 @@ model SubscriptionPlan {
   description       String?
   shortDescription  String?
   price             Decimal               @db.Decimal(10, 2)
+  discountPercent   Int                   @default(0) // Percentual de desconto em produtos (0-100)
   billingCycle      BillingCycle          @default(MONTHLY)
   features          String[]              @default([])
   imageUrl          String?

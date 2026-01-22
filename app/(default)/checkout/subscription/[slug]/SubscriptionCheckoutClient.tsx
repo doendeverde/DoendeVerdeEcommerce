@@ -1,5 +1,5 @@
 /**
- * Subscription Checkout Client Component
+ * Subscription Checkout Client Component (Refatorado)
  * 
  * Main checkout flow orchestrator with steps:
  * 1. Preferences (REQUIRED - user must define or confirm preferences)
@@ -8,12 +8,18 @@
  * 4. PIX QR Code display (if PIX selected) or card processing
  * 5. Confirmation
  * 
- * This component manages state and coordinates between step components.
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * MELHORIAS DE UX:
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * - Recuperação de PIX pendente (usuário pode fechar e voltar)
+ * - SEM redirecionamentos para rotas inexistentes
+ * - Estados de erro tratados localmente
+ * - Responsividade extrema
  */
 
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import type { Address } from "@prisma/client";
@@ -40,6 +46,9 @@ import {
   type PixPaymentData,
 } from "@/components/checkout/subscription";
 
+import { PendingPixAlert } from "@/components/checkout";
+import { usePendingPix } from "@/hooks/usePendingPix";
+
 // Types
 interface SubscriptionCheckoutClientProps {
   data: SubscriptionCheckoutPageData;
@@ -48,6 +57,14 @@ interface SubscriptionCheckoutClientProps {
 // Component
 export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientProps) {
   const router = useRouter();
+
+  // Hook para verificar PIX pendente
+  const {
+    isLoading: isCheckingPendingPix,
+    hasPendingPix,
+    pendingPixData,
+    dismiss: dismissPendingPix
+  } = usePendingPix();
 
   // State
   const [currentStep, setCurrentStep] = useState<CheckoutStepId>(
@@ -69,6 +86,21 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
   const [pixData, setPixData] = useState<PixPaymentData | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [isRegeneratingPix, setIsRegeneratingPix] = useState(false);
+
+  // Handler para continuar com PIX pendente recuperado do backend
+  const handleContinueWithPendingPix = useCallback(() => {
+    if (pendingPixData) {
+      setPixData({
+        paymentId: pendingPixData.paymentId,
+        qrCode: pendingPixData.qrCode,
+        qrCodeBase64: pendingPixData.qrCodeBase64,
+        ticketUrl: pendingPixData.ticketUrl,
+        expirationDate: pendingPixData.expiresAt,
+      });
+      setOrderId(pendingPixData.orderId);
+      setCurrentStep("pix_waiting");
+    }
+  }, [pendingPixData]);
 
   // Navigation Handlers
   const goToAddress = useCallback(() => setCurrentStep("address"), []);
@@ -314,6 +346,17 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
   // Render: Main checkout flow
   return (
     <div className="space-y-6">
+      {/* Alerta de PIX pendente recuperável */}
+      {hasPendingPix && pendingPixData && currentStep !== "pix_waiting" && (
+        <PendingPixAlert
+          amount={pendingPixData.amount}
+          remainingSeconds={pendingPixData.remainingSeconds}
+          planName={pendingPixData.planInfo?.planName}
+          onContinue={handleContinueWithPendingPix}
+          onDismiss={dismissPendingPix}
+        />
+      )}
+
       {/* Header */}
       <CheckoutHeader
         planName={data.plan.name}

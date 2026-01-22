@@ -175,12 +175,26 @@ export async function createPixPaymentDirect(data: {
   email: string;
   externalReference: string;
 }): Promise<PixPaymentResult> {
+  // Validate and normalize amount (MP requires 2 decimal places max, > 0)
+  const normalizedAmount = Math.round(data.amount * 100) / 100;
+  
+  if (normalizedAmount <= 0 || !Number.isFinite(normalizedAmount)) {
+    throw new Error(`Invalid transaction_amount: ${data.amount} (normalized: ${normalizedAmount})`);
+  }
+  
+  console.log("[PIX Payment] Creating with amount:", {
+    original: data.amount,
+    normalized: normalizedAmount,
+    description: data.description,
+    email: data.email,
+  });
+
   // Import Payment API from mercadopago lib
   const { paymentApi } = await import("@/lib/mercadopago");
   
   const response = await paymentApi.create({
     body: {
-      transaction_amount: data.amount,
+      transaction_amount: normalizedAmount,
       description: data.description,
       payment_method_id: "pix",
       payer: {

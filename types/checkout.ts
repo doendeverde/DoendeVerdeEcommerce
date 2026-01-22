@@ -185,6 +185,10 @@ export interface CartCheckoutData {
   subtotal: number;
   shipping: number;
   discount: number;
+  /** Label explaining the discount (e.g., "Desconto Doende Bronze") */
+  discountLabel?: string | null;
+  /** Discount percentage (0-100) */
+  discountPercent?: number;
   total: number;
   hasAddress: boolean;
   addresses: {

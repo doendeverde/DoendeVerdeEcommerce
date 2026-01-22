@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DeliveryProgress } from "./DeliveryProgress";
+import { OrderPixPayment, PixPendingBadge } from "./OrderPixPayment";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -48,6 +49,11 @@ interface Payment {
   status: string;
   provider: string;
   amount: number;
+  transactionId?: string | null;
+  pixQrCode?: string | null;
+  pixQrCodeBase64?: string | null;
+  pixTicketUrl?: string | null;
+  pixExpiresAt?: Date | null;
 }
 
 interface Shipment {
@@ -82,6 +88,7 @@ interface OrderData {
   shipments: Shipment[];
   addressSnapshot: AddressSnapshot | null;
 }
+
 
 interface OrderCardProps {
   order: OrderData;
@@ -179,9 +186,16 @@ function getPaymentMethodLabel(provider: string | undefined | null): string {
 
 export function OrderCard({ order }: OrderCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showPixModal, setShowPixModal] = useState(false);
   const statusConfig = getStatusConfig(order.status);
   const payment = order.payments[0];
   const shipment = order.shipments[0];
+
+  // Check if order has pending PIX payment
+  const hasPendingPix =
+    order.status === "PENDING" &&
+    payment?.provider === "MERCADO_PAGO" &&
+    payment?.pixQrCode;
 
   // Calculate totals
   const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
@@ -250,6 +264,25 @@ export function OrderCard({ order }: OrderCardProps) {
                 </p>
               </div>
 
+              {/* PIX Badge - Desktop */}
+              {hasPendingPix && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowPixModal(true);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" />
+                  </svg>
+                  Pagar PIX
+                </button>
+              )}
+
               {/* Status Badge */}
               <div
                 className={cn(
@@ -284,6 +317,23 @@ export function OrderCard({ order }: OrderCardProps) {
                 {statusConfig.icon}
                 <span>{statusConfig.label}</span>
               </div>
+              {hasPendingPix && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowPixModal(true);
+                  }}
+                  className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-medium hover:bg-green-200 transition-colors"
+                >
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" />
+                  </svg>
+                  Pagar PIX
+                </button>
+              )}
               <div className="text-gray-400">
                 {isExpanded ? (
                   <ChevronUp className="w-5 h-5" />
@@ -443,8 +493,55 @@ export function OrderCard({ order }: OrderCardProps) {
               </p>
             </div>
           )}
+
+          {/* PIX Payment Button - Show when order has pending PIX */}
+          {hasPendingPix && (
+            <div className="p-5 bg-gradient-to-r from-green-50 to-emerald-50 border-t border-green-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-semibold text-green-800 flex items-center gap-2">
+                    <svg className="w-5 h-5" viewBox="0 0 512 512" fill="currentColor">
+                      <path d="M242.4 292.5C247.8 287.1 257.1 287.1 262.5 292.5L339.5 369.5C353.7 383.7 googletag.7 googletag7 353.7 411.5L searching.5 334.5C searching1 329.1 searching1 319.8 searching.5 314.4L262.5 219.5C257.1 214.1 247.8 214.1 242.4 219.5L165.4 296.5C151.2 310.7 151.2 333.3 165.4 347.5L242.4 424.5C247.8 429.9 257.1 429.9 262.5 424.5L339.5 347.5C353.7 333.3 353.7 310.7 339.5 296.5L314.4 271.4" />
+                    </svg>
+                    Pagamento PIX Pendente
+                  </h4>
+                  <p className="text-xs text-green-600 mt-1">
+                    Clique para visualizar o QR Code e finalizar o pagamento
+                  </p>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowPixModal(true);
+                  }}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" />
+                  </svg>
+                  Pagar com PIX
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* PIX Payment Modal */}
+      {showPixModal && payment && (
+        <OrderPixPayment
+          orderId={order.id}
+          paymentId={payment.id}
+          amount={order.totalAmount}
+          pixQrCode={payment.pixQrCode || ""}
+          pixQrCodeBase64={payment.pixQrCodeBase64 || undefined}
+          pixExpiresAt={payment.pixExpiresAt || undefined}
+          onClose={() => setShowPixModal(false)}
+        />
+      )}
     </div>
   );
 }
