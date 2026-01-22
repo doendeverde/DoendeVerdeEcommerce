@@ -172,7 +172,16 @@ export async function createSubscriptionOrder(
   shippingAmount: number = 0,
   shippingData?: Record<string, unknown> | null
 ): Promise<OrderWithRelations> {
+  console.log("[Order Repository] Creating subscription order...");
+  console.log("[Order Repository] Plan ID:", planId);
+  console.log("[Order Repository] Plan Name:", planName);
+  
   const totalAmount = planPrice + shippingAmount;
+  
+  // Para assinaturas, não criamos OrderItem porque não há productId real
+  // O planId não está na tabela Product, então não podemos usar como productId
+  // A informação da assinatura fica em order.notes e metadata
+  console.log("[Order Repository] Creating order WITHOUT items (subscription-only)");
   
   return createOrder(
     {
@@ -181,18 +190,10 @@ export async function createSubscriptionOrder(
       discountAmount: 0,
       shippingAmount,
       totalAmount,
-      notes: `Assinatura: ${planName}`,
+      notes: `Assinatura: ${planName} (Plan ID: ${planId})`,
       shippingData,
     },
-    [
-      {
-        productId: planId, // Using planId as "productId" for subscription orders
-        title: `Assinatura ${planName}`,
-        quantity: 1,
-        unitPrice: planPrice,
-        totalPrice: planPrice,
-      },
-    ],
+    [], // SEM items - assinatura não tem produto físico associado
     addressSnapshot
   );
 }

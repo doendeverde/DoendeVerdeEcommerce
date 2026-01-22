@@ -75,28 +75,117 @@
 
 ```
 app/api/
+├── checkout/
+│   ├── route.ts                   # Checkout de produtos avulsos
+│   └── subscription/
+│       └── route.ts               # ⭐ Checkout de assinatura (PIX/Cartão)
 ├── payments/
-│   ├── create/
-│   │   └── route.ts        # Cria pagamento com token
-│   └── webhook/
-│       └── route.ts        # Webhook duplicado (manter webhooks/mercadopago)
+│   └── create/
+│       └── route.ts               # Pagamento avulso (cartão)
 ├── webhooks/
 │   └── mercadopago/
-│       └── route.ts        # ⭐ Webhook principal
-└── checkout/
-    └── payment-preference/
-        └── route.ts        # (Legacy) Checkout Pro - deprecar
+│       └── route.ts               # ⭐ Webhook do Mercado Pago
 
-components/checkout/
-├── CardPaymentBrick.tsx    # Brick do MP - captura cartão
-├── CardPaymentStep.tsx     # Step de pagamento com states
-└── index.ts                # Barrel export
-
-lib/
-└── mercadopago.ts          # Config do SDK server-side
+schemas/
+├── payment.schema.ts              # ⭐ Validação de pagamentos (discriminated union)
+└── checkout.schema.ts             # Schemas de checkout (re-export)
 
 services/
-└── payment.service.ts      # Orquestração de pagamentos
+├── mercadopago.service.ts         # ⭐ Serviço de pagamentos MP
+├── checkout.service.ts            # Orquestração de checkout
+└── payment.service.ts             # (Legacy) Serviço de pagamentos
+
+components/checkout/
+├── CardPaymentBrick.tsx           # Brick do MP - captura cartão
+├── PixPaymentStep.tsx             # PIX com QR Code
+├── OrderSummary.tsx               # Resumo do pedido
+└── CheckoutForm.tsx               # Form principal
+```
+
+## 🔄 Fluxo de Checkout de Assinatura
+
+### POST /api/checkout/subscription
+
+Endpoint unificado para checkout de assinaturas. Suporta PIX e Cartão.
+
+#### Request Body
+
+```typescript
+{
+  planSlug: string;        // "doende-bronze" | "doende-prata" | "doende-ouro"
+  addressId: string;       // UUID do endereço de entrega
+  shippingOption?: {       // Opção de frete selecionada
+    code: string;
+    name: string;
+    price: number;
+    estimatedDays: number;
+  };
+  paymentData: PixPaymentData | CardPaymentData;
+}
+```
+
+#### PIX Payment Data
+
+```typescript
+{
+  method: "pix"
+}
+```
+
+#### Card Payment Data
+
+```typescript
+{
+  method: "credit_card" | "debit_card";
+  token: string;           // Token do Checkout Bricks
+  paymentMethodId: string; // "visa", "master", etc
+  issuerId: number;        // ID do emissor
+  installments: number;    // 1-12
+  payerEmail: string;      // Email do pagador
+}
+```
+
+#### Respostas
+
+**PIX - Sucesso (200)**
+```json
+{
+  "success": true,
+  "data": {
+    "orderId": "uuid",
+    "paymentId": "uuid",
+    "status": "pending",
+    "paymentPreference": {
+      "qrCode": "00020126...",
+      "qrCodeBase64": "data:image/png;base64,...",
+      "pixCopyPaste": "00020126...",
+      "expirationDate": "2024-01-01T00:00:00Z"
+    }
+  }
+}
+```
+
+**Cartão - Aprovado (200)**
+```json
+{
+  "success": true,
+  "data": {
+    "subscriptionId": "uuid",
+    "orderId": "uuid",
+    "paymentId": "uuid",
+    "status": "approved"
+  }
+}
+```
+
+**Erro (400)**
+```json
+{
+  "success": false,
+  "error": "Mensagem amigável",
+  "errorCode": "ERROR_CODE",
+  "details": [{ "field": "token", "message": "Token inválido" }]
+}
 ```
 
 ## 🔄 Fluxo Detalhado
@@ -200,25 +289,111 @@ interface PaymentRecord {
 ### Variáveis de Ambiente
 
 ```bash
-# Frontend (exposta ao client)
+# ═══════════════════════════════════════════════════════════════════════════
+# FRONTEND (exposta ao client)
+# ═══════════════════════════════════════════════════════════════════════════
+# Obtida em: Mercado Pago > Suas integrações > Credenciais
 NEXT_PUBLIC_MP_PUBLIC_KEY=APP_USR-xxx
 
-# Backend (NUNCA expor)
-ACCESS_TOKEN_MP=APP_USR-xxx
+# ═══════════════════════════════════════════════════════════════════════════
+# BACKEND (NUNCA expor)
+# ═══════════════════════════════════════════════════════════════════════════
+# Obtido em: Mercado Pago > Suas integrações > Credenciais
+# ⚠️ Use TEST- para sandbox, APP_USR- para produção
+ACCESS_TOKEN_MP=TEST-xxx  # ou APP_USR-xxx em produção
 
-# Webhook (validação de assinatura)
+# ═══════════════════════════════════════════════════════════════════════════
+# WEBHOOK (validação de assinatura)
+# ═══════════════════════════════════════════════════════════════════════════
+# Obtido ao configurar webhook no painel do Mercado Pago
 MP_WEBHOOK_SECRET=xxx
 
-# URLs
+# ═══════════════════════════════════════════════════════════════════════════
+# URLS
+# ═══════════════════════════════════════════════════════════════════════════
+# URL base da aplicação (usado para notification_url no pagamento)
 AUTH_URL=https://seudominio.com
 ```
 
-### Webhook no Painel do Mercado Pago
+### Configuração de Webhooks no Mercado Pago
 
-1. Acesse: Suas integrações → Webhooks
-2. URL: `https://seudominio.com/api/webhooks/mercadopago`
-3. Eventos: `payment`
-4. Copie o Secret para `MP_WEBHOOK_SECRET`
+#### Passo a Passo
+
+1. **Acesse o painel de desenvolvedores**
+   - URL: https://www.mercadopago.com.br/developers/panel
+   - Faça login com sua conta Mercado Pago
+
+2. **Navegue até Webhooks**
+   - Clique em "Suas integrações"
+   - Selecione sua aplicação
+   - Vá na aba "Webhooks"
+
+3. **Configure o endpoint**
+   - Clique em "Configurar webhook"
+   - **URL de produção:** `https://seudominio.com/api/webhooks/mercadopago`
+   - **URL de teste:** `https://seu-ngrok-url.ngrok.io/api/webhooks/mercadopago`
+
+4. **Selecione os eventos**
+   - ✅ **payment** - Notificações de pagamento (obrigatório)
+   - ⬜ subscription - Para assinaturas gerenciadas pelo MP
+   - ⬜ invoice - Para faturas de assinatura
+
+5. **Copie o Secret**
+   - Após salvar, o MP mostra o `Signing Secret`
+   - Copie e adicione ao `.env` como `MP_WEBHOOK_SECRET`
+
+#### Eventos de Payment
+
+O webhook recebe notificações para:
+
+| Action | Quando |
+|--------|--------|
+| `payment.created` | Pagamento criado |
+| `payment.updated` | Status atualizado |
+
+#### Status de Pagamento
+
+| Status MP | Status Interno | Ação |
+|-----------|----------------|------|
+| `approved` | `PAID` | ✅ Ativa assinatura |
+| `pending` | `PENDING` | ⏳ Aguarda |
+| `in_process` | `PENDING` | ⏳ Em análise |
+| `rejected` | `FAILED` | ❌ Notifica usuário |
+| `cancelled` | `CANCELED` | ❌ Cancela pedido |
+| `refunded` | `REFUNDED` | 💰 Processa reembolso |
+
+### Testando Webhook Localmente
+
+#### Usando ngrok
+
+```bash
+# Instale ngrok
+npm install -g ngrok
+
+# Exponha o localhost
+ngrok http 3000
+
+# Copie a URL HTTPS (ex: https://abc123.ngrok.io)
+# Configure no painel do MP como URL de teste
+```
+
+#### Simulando Webhook Manualmente
+
+```bash
+# Simule uma notificação de pagamento aprovado
+curl -X POST http://localhost:3000/api/webhooks/mercadopago \
+  -H "Content-Type: application/json" \
+  -H "x-request-id: test-$(date +%s)" \
+  -d '{
+    "type": "payment",
+    "action": "payment.updated",
+    "data": {
+      "id": "123456789"
+    }
+  }'
+```
+
+⚠️ **Nota:** Em desenvolvimento sem `MP_WEBHOOK_SECRET`, a validação de assinatura é ignorada.
 
 ## 🧪 Testes
 

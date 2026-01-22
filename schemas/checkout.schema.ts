@@ -6,6 +6,10 @@
  */
 
 import { z } from "zod";
+import { 
+  PaymentMethodEnum,
+  paymentDataSchema,
+} from "./payment.schema";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Address Schemas
@@ -75,30 +79,26 @@ export type PreferencesInput = z.infer<typeof preferencesSchema>;
 export type PreferencesUpdateInput = z.infer<typeof preferencesUpdateSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Payment Schemas
+// Payment Schemas (re-exported from payment.schema.ts)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const paymentMethodEnum = z.enum(["credit_card", "debit_card", "pix"]);
+// Re-export everything from payment.schema
+export {
+  PaymentMethodEnum,
+  paymentDataSchema,
+  pixPaymentSchema,
+  cardPaymentSchema,
+  validatePaymentData,
+  isPixPayment,
+  isCardPayment,
+  type PaymentData,
+  type PaymentMethod,
+  type PixPaymentData,
+  type CardPaymentData,
+} from "./payment.schema";
 
-export const paymentDataSchema = z.object({
-  method: paymentMethodEnum,
-  // For card payments (token from Mercado Pago SDK)
-  cardToken: z.string().optional(),
-  cardBrand: z.string().optional(),
-  cardLastFour: z.string().length(4).optional(),
-  installments: z.number().int().min(1).max(12).default(1),
-}).refine(
-  (data) => {
-    // Card payments require token
-    if (data.method === "credit_card" || data.method === "debit_card") {
-      return !!data.cardToken;
-    }
-    return true;
-  },
-  { message: "Token do cartão é obrigatório para pagamento com cartão" }
-);
-
-export type PaymentDataInput = z.infer<typeof paymentDataSchema>;
+// Legacy alias for backward compatibility
+export const paymentMethodEnum = PaymentMethodEnum;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shipping Schemas
