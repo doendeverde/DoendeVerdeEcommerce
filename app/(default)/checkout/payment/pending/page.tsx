@@ -31,7 +31,7 @@ async function PaymentPendingContent({ searchParams }: PaymentPendingPageProps) 
   const isPix = payment_type === "pix" || payment_type === "bank_transfer";
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <main className="bg-gray-50 flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
           {/* Pending Icon */}
@@ -123,7 +123,7 @@ async function PaymentPendingContent({ searchParams }: PaymentPendingPageProps) 
 export default function PaymentPendingPage(props: PaymentPendingPageProps) {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="bg-gray-50 flex items-center justify-center py-12">
         <div className="animate-pulse text-gray-400">Carregando...</div>
       </main>
     }>

@@ -50,7 +50,7 @@ async function PaymentFailureContent({ searchParams }: PaymentFailurePageProps) 
   const errorMessage = errorMessages[finalStatus] || "Pagamento não foi aprovado";
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <main className="bg-gray-50 flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
           {/* Error Icon */}
@@ -127,7 +127,7 @@ async function PaymentFailureContent({ searchParams }: PaymentFailurePageProps) 
 export default function PaymentFailurePage(props: PaymentFailurePageProps) {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <main className="bg-gray-50 flex items-center justify-center py-12">
         <div className="animate-pulse text-gray-400">Carregando...</div>
       </main>
     }>

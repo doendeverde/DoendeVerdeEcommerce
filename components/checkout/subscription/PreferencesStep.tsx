@@ -336,11 +336,10 @@ function ConsumptionSection({
             onChange("yearsSmoking", value);
           }}
           placeholder="Ex: 5"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent ${
-            form.yearsSmoking !== null && form.yearsSmoking > 100 
-              ? "border-red-500 bg-red-50" 
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent ${form.yearsSmoking !== null && form.yearsSmoking > 100
+              ? "border-red-500 bg-red-50"
               : "border-gray-300"
-          }`}
+            }`}
         />
         {form.yearsSmoking !== null && form.yearsSmoking > 100 ? (
           <p className="text-sm text-red-600 mt-1">

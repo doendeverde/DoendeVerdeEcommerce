@@ -21,12 +21,12 @@ interface DefaultLayoutProps {
  */
 export default function DefaultLayout({ children }: DefaultLayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-bg">
+    <div className="min-h-screen bg-gray-bg flex flex-col">
       {/* Fixed Header */}
       <Header />
 
-      {/* Main Content */}
-      <main>
+      {/* Main Content - flex-1 para ocupar espaço restante, mas não forçar altura extra */}
+      <main className="flex-1 flex flex-col">
         {/* Subscription Banner - Shows plan status or CTA carousel (hidden on checkout) */}
         <div className="container-main py-4">
           <ConditionalSubscriptionBanner />
