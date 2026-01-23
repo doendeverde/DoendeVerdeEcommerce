@@ -27,8 +27,9 @@ const CONFIG = {
   /** Timeout para API externa em ms */
   API_TIMEOUT: 10000,
   /** URL da API Melhor Envio - Sandbox ou Produção */
+  /** Use MELHOR_ENVIO_PRODUCTION=true para forçar produção independente de NODE_ENV */
   MELHOR_ENVIO_URL:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === "production" || process.env.MELHOR_ENVIO_PRODUCTION === "true"
       ? "https://www.melhorenvio.com.br/api/v2/me/shipment/calculate"
       : "https://sandbox.melhorenvio.com.br/api/v2/me/shipment/calculate",
   /** Preço mínimo de frete */
@@ -36,6 +37,52 @@ const CONFIG = {
   /** Usar API externa ou fallback fixo */
   USE_EXTERNAL_API: process.env.SHIPPING_USE_EXTERNAL_API === "true",
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Logging Utilities
+// ─────────────────────────────────────────────────────────────────────────────
+
+const LOG_PREFIX = "[🚚 Shipping]";
+
+/**
+ * Log detalhado com formatação visual
+ */
+function logShippingInfo(title: string, data: Record<string, unknown>) {
+  console.log(`\n${LOG_PREFIX} ═══════════════════════════════════════════════`);
+  console.log(`${LOG_PREFIX} 📦 ${title}`);
+  console.log(`${LOG_PREFIX} ───────────────────────────────────────────────`);
+  for (const [key, value] of Object.entries(data)) {
+    const formattedValue = typeof value === "object" 
+      ? JSON.stringify(value, null, 2).split("\n").join(`\n${LOG_PREFIX}     `)
+      : value;
+    console.log(`${LOG_PREFIX}   ${key}: ${formattedValue}`);
+  }
+  console.log(`${LOG_PREFIX} ═══════════════════════════════════════════════\n`);
+}
+
+/**
+ * Log simples para etapas
+ */
+function logStep(message: string) {
+  console.log(`${LOG_PREFIX} → ${message}`);
+}
+
+/**
+ * Log de erro
+ */
+function logError(message: string, error?: unknown) {
+  console.error(`${LOG_PREFIX} ❌ ${message}`);
+  if (error) {
+    console.error(`${LOG_PREFIX}   Detalhes:`, error);
+  }
+}
+
+/**
+ * Log de sucesso
+ */
+function logSuccess(message: string) {
+  console.log(`${LOG_PREFIX} ✅ ${message}`);
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Regional Fallback Rates
@@ -163,9 +210,28 @@ export async function calculateShipping(
   request: ShippingQuoteRequest
 ): Promise<ShippingQuoteResponse> {
   const cep = normalizeCep(request.cep);
+  const state = getStateFromCep(cep);
+
+  // Log inicial da requisição
+  logShippingInfo("NOVA COTAÇÃO DE FRETE", {
+    "CEP Destino": `${cep} (${state || "Estado não identificado"})`,
+    "CEP Origem": CONFIG.ORIGIN_CEP,
+    "Product IDs": request.productIds || "Nenhum",
+    "Plan ID": request.planId || "Nenhum",
+    "Shipping Profile ID": request.shippingProfileId || "Nenhum",
+  });
+
+  // Log de configuração
+  logShippingInfo("CONFIGURAÇÃO ATUAL", {
+    "USE_EXTERNAL_API": CONFIG.USE_EXTERNAL_API,
+    "MELHOR_ENVIO_TOKEN definido": !!process.env.MELHOR_ENVIO_TOKEN,
+    "Ambiente": process.env.NODE_ENV || "development",
+    "API URL": CONFIG.MELHOR_ENVIO_URL,
+  });
 
   // Validate CEP
   if (!isValidCep(cep)) {
+    logError(`CEP inválido: ${cep}`);
     return {
       success: false,
       zipCode: cep,
@@ -175,21 +241,25 @@ export async function calculateShipping(
     };
   }
 
+  logStep(`CEP válido: ${cep}`);
+
   // Get shipping profile
   let profile: ShippingProfile | null = null;
 
   if (request.shippingProfileId) {
+    logStep(`Buscando perfil por ID: ${request.shippingProfileId}`);
     profile = await shippingRepository.getById(request.shippingProfileId);
   } else if (request.productIds?.length) {
+    logStep(`Buscando perfil por produtos: ${request.productIds.join(", ")}`);
     profile = await shippingRepository.getFromProducts(request.productIds);
   } else if (request.planId) {
+    logStep(`Buscando perfil por plano: ${request.planId}`);
     profile = await shippingRepository.getFromPlan(request.planId);
   }
 
   // If no profile found, use a default profile for fallback calculations
-  // This allows shipping to work even if products/plans don't have specific shipping profiles
   if (!profile) {
-    console.log("[Shipping] No profile found, using default fallback profile");
+    logStep("Nenhum perfil encontrado, usando perfil padrão");
     profile = {
       id: "default",
       name: "Perfil Padrão",
@@ -203,32 +273,69 @@ export async function calculateShipping(
     };
   }
 
+  logShippingInfo("PERFIL DE ENVIO", {
+    "ID": profile.id,
+    "Nome": profile.name,
+    "Peso (kg)": profile.weightKg,
+    "Dimensões (cm)": `${profile.widthCm}L x ${profile.heightCm}A x ${profile.lengthCm}C`,
+  });
+
   // Try external API if enabled
   if (CONFIG.USE_EXTERNAL_API && process.env.MELHOR_ENVIO_TOKEN) {
+    logStep("🌐 API externa HABILITADA - consultando Melhor Envio...");
     try {
       const externalOptions = await fetchMelhorEnvioQuotes(cep, profile);
       if (externalOptions.length > 0) {
+        logSuccess(`Recebidas ${externalOptions.length} opções da API Melhor Envio`);
+        logShippingInfo("OPÇÕES DA API EXTERNA", {
+          "Total de opções": externalOptions.length,
+          "Opções": externalOptions.map(o => ({
+            nome: o.name,
+            preço: `R$ ${o.price.toFixed(2)}`,
+            prazo: o.deliveryTime,
+          })),
+        });
         return {
           success: true,
           zipCode: formatCep(cep),
-          location: getStateFromCep(cep) || undefined,
+          location: state || undefined,
           options: externalOptions,
           quotedAt: new Date().toISOString(),
         };
       }
+      logStep("API retornou 0 opções válidas, usando fallback");
     } catch (error) {
-      console.error("[Shipping] External API error:", error);
-      // Fall through to fallback
+      logError("Erro na API Melhor Envio", error);
+      logStep("Usando fallback devido ao erro");
+    }
+  } else {
+    logStep("⚠️ API externa DESABILITADA - usando taxas regionais fixas");
+    if (!CONFIG.USE_EXTERNAL_API) {
+      console.log(`${LOG_PREFIX}   💡 Para habilitar: defina SHIPPING_USE_EXTERNAL_API=true no .env`);
+    }
+    if (!process.env.MELHOR_ENVIO_TOKEN) {
+      console.log(`${LOG_PREFIX}   💡 Token não definido: defina MELHOR_ENVIO_TOKEN no .env`);
     }
   }
 
   // Use fallback rates
+  logStep(`Calculando taxas de fallback para estado: ${state || "Desconhecido"}`);
   const fallbackOptions = calculateFallbackRates(cep, profile);
+
+  logShippingInfo("RESULTADO FINAL (FALLBACK)", {
+    "Estado": state || "Não identificado",
+    "Taxa base regional": REGIONAL_RATES[state || ""] || DEFAULT_RATE,
+    "Opções geradas": fallbackOptions.map(o => ({
+      serviço: o.name,
+      preço: `R$ ${o.price.toFixed(2)}`,
+      prazo: o.deliveryTime,
+    })),
+  });
 
   return {
     success: true,
     zipCode: formatCep(cep),
-    location: getStateFromCep(cep) || undefined,
+    location: state || undefined,
     options: fallbackOptions,
     quotedAt: new Date().toISOString(),
   };
@@ -256,6 +363,23 @@ async function fetchMelhorEnvioQuotes(
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), CONFIG.API_TIMEOUT);
 
+  const requestBody = {
+    from: { postal_code: CONFIG.ORIGIN_CEP },
+    to: { postal_code: destinationCep },
+    package: {
+      weight: profile.weightKg,
+      width: profile.widthCm,
+      height: profile.heightCm,
+      length: profile.lengthCm,
+    },
+  };
+
+  logShippingInfo("REQUISIÇÃO MELHOR ENVIO", {
+    "URL": CONFIG.MELHOR_ENVIO_URL,
+    "Método": "POST",
+    "Body": requestBody,
+  });
+
   try {
     const response = await fetch(CONFIG.MELHOR_ENVIO_URL, {
       method: "POST",
@@ -264,30 +388,48 @@ async function fetchMelhorEnvioQuotes(
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.MELHOR_ENVIO_TOKEN}`,
       },
-      body: JSON.stringify({
-        from: { postal_code: CONFIG.ORIGIN_CEP },
-        to: { postal_code: destinationCep },
-        package: {
-          weight: profile.weightKg,
-          width: profile.widthCm,
-          height: profile.heightCm,
-          length: profile.lengthCm,
-        },
-      }),
+      body: JSON.stringify(requestBody),
       signal: controller.signal,
     });
 
     clearTimeout(timeout);
 
+    logStep(`Resposta HTTP: ${response.status} ${response.statusText}`);
+
     if (!response.ok) {
-      throw new Error(`Melhor Envio API error: ${response.status}`);
+      const errorText = await response.text();
+      logError(`Erro na API Melhor Envio: ${response.status}`, errorText);
+      throw new Error(`Melhor Envio API error: ${response.status} - ${errorText}`);
     }
 
     const data: MelhorEnvioQuoteResponse[] = await response.json();
 
+    logShippingInfo("RESPOSTA MELHOR ENVIO (RAW)", {
+      "Total de serviços retornados": data.length,
+      "Serviços": data.map(item => ({
+        id: item.id,
+        nome: `${item.company?.name || "?"} ${item.name}`,
+        preço: item.price,
+        erro: item.error || null,
+      })),
+    });
+
     // Transform to our format and filter valid options
-    return data
-      .filter((item) => !item.error && parseFloat(item.price) > 0)
+    const validOptions = data
+      .filter((item) => !item.error && parseFloat(item.price) > 0);
+
+    logStep(`Opções válidas após filtro: ${validOptions.length} de ${data.length}`);
+    
+    if (data.length > 0 && validOptions.length === 0) {
+      logError("Todas as opções retornaram erro ou preço zerado", 
+        data.filter(item => item.error).map(item => ({
+          serviço: item.name,
+          erro: item.error,
+        }))
+      );
+    }
+
+    return validOptions
       .map((item, index) => ({
         id: `melhor_envio_${item.id}`,
         carrier: item.company.name,
@@ -320,7 +462,18 @@ function calculateFallbackRates(
   const state = getStateFromCep(destinationCep);
   const rate = state ? REGIONAL_RATES[state] : DEFAULT_RATE;
 
+  logShippingInfo("CÁLCULO FALLBACK", {
+    "CEP": destinationCep,
+    "Estado identificado": state || "Não encontrado",
+    "Taxa regional usada": rate ? {
+      região: rate.region,
+      taxaBase: `R$ ${rate.fixedRate.toFixed(2)}`,
+      diasEntrega: rate.deliveryDays,
+    } : "Usando taxa padrão",
+  });
+
   if (!rate) {
+    logStep("Nenhuma taxa regional encontrada, usando opção padrão");
     return [createDefaultOption(profile)];
   }
 
@@ -330,6 +483,13 @@ function calculateFallbackRates(
     CONFIG.MIN_SHIPPING_PRICE,
     rate.fixedRate * weightMultiplier
   );
+
+  logShippingInfo("AJUSTE DE PREÇO", {
+    "Peso do perfil (kg)": profile.weightKg,
+    "Multiplicador de peso": weightMultiplier.toFixed(2),
+    "Taxa base": `R$ ${rate.fixedRate.toFixed(2)}`,
+    "Preço ajustado": `R$ ${adjustedPrice.toFixed(2)}`,
+  });
 
   // Create PAC-like option (cheaper, slower)
   const pacOption: ShippingOption = {
@@ -356,6 +516,17 @@ function calculateFallbackRates(
     deliveryTime: `${Math.max(1, rate.deliveryDays - 4)} a ${Math.max(2, rate.deliveryDays - 2)} dias úteis`,
     recommended: false,
   };
+
+  logShippingInfo("OPÇÕES FALLBACK GERADAS", {
+    "PAC": {
+      preço: `R$ ${pacOption.price.toFixed(2)}`,
+      prazo: pacOption.deliveryTime,
+    },
+    "SEDEX": {
+      preço: `R$ ${sedexOption.price.toFixed(2)}`,
+      prazo: sedexOption.deliveryTime,
+    },
+  });
 
   return [pacOption, sedexOption];
 }
