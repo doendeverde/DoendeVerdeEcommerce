@@ -109,6 +109,17 @@ export async function POST(
       paymentId: pixResult.paymentId,
       hasQrCode: !!pixResult.qrCode,
     });
+    
+    // Log destacado para testes de webhook
+    console.log("\n" + "=".repeat(80));
+    console.log("🔵 PIX PAYMENT ID (Regenerated - use para webhook):", pixResult.paymentId);
+    console.log("   Order ID:", orderId);
+    console.log("   Amount: R$", amount);
+    if (pixResult.ticketUrl) {
+      console.log("\n   🎫 TICKET URL (abra para aprovar com conta teste):");
+      console.log("   ", pixResult.ticketUrl);
+    }
+    console.log("=".repeat(80) + "\n");
 
     return NextResponse.json({
       success: true,

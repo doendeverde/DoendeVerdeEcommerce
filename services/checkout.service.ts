@@ -289,6 +289,18 @@ async function createPixPayment(
     pixPaymentId: result.paymentId,
     hasQrCode: !!result.qrCode,
   });
+  
+  // Log destacado para testes de webhook
+  console.log("\n" + "=".repeat(80));
+  console.log("🔵 PIX PAYMENT ID (Checkout Service - use para webhook):", result.paymentId);
+  console.log("   Order ID:", orderId);
+  console.log("   Payment ID:", paymentId);
+  console.log("   Amount: R$", amount);
+  if (result.ticketUrl) {
+    console.log("\n   🎫 TICKET URL (abra para aprovar com conta teste):");
+    console.log("   ", result.ticketUrl);
+  }
+  console.log("=".repeat(80) + "\n");
 
   return {
     id: result.paymentId,

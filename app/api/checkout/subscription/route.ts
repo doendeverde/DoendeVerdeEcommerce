@@ -365,6 +365,18 @@ export async function POST(request: NextRequest) {
             pixExpiresAt: pixExpiresAt,
           },
         });
+        
+        // Log destacado para testes de webhook
+        console.log("\n" + "=".repeat(80));
+        console.log("🔵 PIX PAYMENT ID (Subscription - use para webhook):", pixResult.paymentId);
+        console.log("   Order ID:", order.id);
+        console.log("   Plan:", plan.name);
+        console.log("   Amount: R$", order.totalAmount);
+        if (pixResult.ticketUrl) {
+          console.log("\n   🎫 TICKET URL (abra para aprovar com conta teste):");
+          console.log("   ", pixResult.ticketUrl);
+        }
+        console.log("=".repeat(80) + "\n");
       }
 
       return NextResponse.json({

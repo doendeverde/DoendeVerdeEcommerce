@@ -310,7 +310,18 @@ export async function createPixPayment(
       status: response.status,
     });
     
+    // Log destacado para testes de webhook
     const transactionData = response.point_of_interaction?.transaction_data;
+    console.log("\n" + "=".repeat(80));
+    console.log("🔵 PIX PAYMENT ID (use para webhook):", response.id);
+    console.log("   External Reference:", request.externalReference);
+    console.log("   Amount: R$", request.amount);
+    console.log("   Webhook URL:", getWebhookUrl());
+    if (transactionData?.ticket_url) {
+      console.log("\n   🎫 TICKET URL (abra para aprovar com conta teste):");
+      console.log("   ", transactionData.ticket_url);
+    }
+    console.log("=".repeat(80) + "\n");
     
     return {
       success: true,
