@@ -536,9 +536,11 @@ export function OrderCard({ order }: OrderCardProps) {
           orderId={order.id}
           paymentId={payment.id}
           amount={order.totalAmount}
-          pixQrCode={payment.pixQrCode || ""}
-          pixQrCodeBase64={payment.pixQrCodeBase64 || undefined}
-          pixExpiresAt={payment.pixExpiresAt || undefined}
+          qrCode={payment.pixQrCode || null}
+          qrCodeBase64={payment.pixQrCodeBase64 || null}
+          ticketUrl={payment.pixTicketUrl || null}
+          expiresAt={payment.pixExpiresAt || null}
+          transactionId={payment.transactionId || null}
           onClose={() => setShowPixModal(false)}
         />
       )}
