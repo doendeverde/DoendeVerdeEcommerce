@@ -33,7 +33,7 @@
 
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { CreditCard, ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 import type { PaymentMethod } from "@/types/checkout";
 import { CardPaymentBrick, type CardPaymentFormData } from "@/components/checkout/CardPaymentBrick";
@@ -132,6 +132,13 @@ export function PaymentStep({
 }: PaymentStepProps) {
   // Estado local para controlar se o Brick já submeteu
   const [cardSubmitted, setCardSubmitted] = useState(false);
+
+  // Scroll para o topo quando iniciar processamento do pagamento
+  useEffect(() => {
+    if (isProcessing) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [isProcessing]);
 
   // Verifica se é método de cartão
   const isCardMethod = selectedMethod === "credit_card" || selectedMethod === "debit_card";

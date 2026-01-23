@@ -127,6 +127,9 @@ export async function PATCH(request: NextRequest) {
 
     const body = await request.json();
     
+    // Debug: Log incoming body
+    console.log("[PATCH /api/user/preferences] Body received:", JSON.stringify(body, null, 2));
+    
     // Validate input
     const validated = preferencesUpdateSchema.parse(body);
     
@@ -153,6 +156,7 @@ export async function PATCH(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof ZodError) {
+      console.log("[PATCH /api/user/preferences] Validation error:", JSON.stringify(error.issues, null, 2));
       return NextResponse.json(
         { 
           success: false, 

@@ -41,7 +41,7 @@ export function DataTable<T>({
   // Loading skeleton
   if (isLoading) {
     return (
-      <div className={cn("bg-white rounded-xl border border-gray-border overflow-hidden", className)}>
+      <div className={cn("bg-white rounded-xl border border-gray-border", className)}>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -100,7 +100,7 @@ export function DataTable<T>({
   };
 
   return (
-    <div className={cn("bg-white rounded-xl border border-gray-border overflow-hidden", className)}>
+    <div className={cn("bg-white rounded-xl border border-gray-border", className)}>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>

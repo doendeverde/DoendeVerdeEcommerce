@@ -106,8 +106,9 @@ export function PreferencesStep({
   const [error, setError] = useState<string | null>(null);
 
   // Validation
+  const hasInvalidYearsSmoking = form.yearsSmoking !== null && form.yearsSmoking > 100;
   const hasMinimumPreferences =
-    (hasExistingPreferences || touched) && form.consumptionFrequency !== null;
+    (hasExistingPreferences || touched) && form.consumptionFrequency !== null && !hasInvalidYearsSmoking;
 
   // Handlers
   const handleChange = useCallback(<K extends keyof PreferencesFormData>(
@@ -155,7 +156,15 @@ export function PreferencesStep({
       const result = await response.json();
 
       if (!result.success) {
-        setError(result.error || "Erro ao salvar preferências");
+        // Mostrar detalhes da validação se disponíveis
+        if (result.details && result.details.length > 0) {
+          const errorMessages = result.details.map((d: { field: string; message: string }) =>
+            `${d.field}: ${d.message}`
+          ).join("; ");
+          setError(`Dados inválidos: ${errorMessages}`);
+        } else {
+          setError(result.error || "Erro ao salvar preferências");
+        }
         return;
       }
 
@@ -296,8 +305,8 @@ function ConsumptionSection({
             <label
               key={moment.value}
               className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form.consumptionMoment.includes(moment.value)
-                  ? "border-primary-green bg-green-50"
-                  : "border-gray-200 hover:border-gray-300"
+                ? "border-primary-green bg-green-50"
+                : "border-gray-200 hover:border-gray-300"
                 }`}
             >
               <input
@@ -322,12 +331,24 @@ function ConsumptionSection({
           min="0"
           max="100"
           value={form.yearsSmoking ?? ""}
-          onChange={(e) =>
-            onChange("yearsSmoking", e.target.value ? parseInt(e.target.value) : null)
-          }
+          onChange={(e) => {
+            const value = e.target.value ? parseInt(e.target.value) : null;
+            onChange("yearsSmoking", value);
+          }}
           placeholder="Ex: 5"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent ${
+            form.yearsSmoking !== null && form.yearsSmoking > 100 
+              ? "border-red-500 bg-red-50" 
+              : "border-gray-300"
+          }`}
         />
+        {form.yearsSmoking !== null && form.yearsSmoking > 100 ? (
+          <p className="text-sm text-red-600 mt-1">
+            🤣 Você nem tem 100 anos, como assim você fuma a mais de 100 anos??? Tá chapando kkkk
+          </p>
+        ) : (
+          <p className="text-xs text-gray-500 mt-1">Máximo 100 anos</p>
+        )}
       </div>
     </div>
   );
@@ -342,8 +363,8 @@ function WhatYouConsumeSection({ form, onChange }: SectionProps) {
           <label
             key={item.field}
             className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form[item.field]
-                ? "border-primary-green bg-green-50"
-                : "border-gray-200 hover:border-gray-300"
+              ? "border-primary-green bg-green-50"
+              : "border-gray-200 hover:border-gray-300"
               }`}
           >
             <input
@@ -511,8 +532,8 @@ function InterestsSection({ form, onChange }: SectionProps) {
           <label
             key={item.field}
             className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form[item.field]
-                ? "border-primary-green bg-green-50"
-                : "border-gray-200 hover:border-gray-300"
+              ? "border-primary-green bg-green-50"
+              : "border-gray-200 hover:border-gray-300"
               }`}
           >
             <input
@@ -548,8 +569,8 @@ function FavoriteColorsSection({
             <label
               key={color}
               className={`px-3 py-1.5 rounded-full border-2 cursor-pointer transition-colors text-sm ${isSelected
-                  ? "border-primary-green bg-green-50 text-primary-green"
-                  : "border-gray-200 hover:border-gray-300 text-gray-700"
+                ? "border-primary-green bg-green-50 text-primary-green"
+                : "border-gray-200 hover:border-gray-300 text-gray-700"
                 }`}
             >
               <input

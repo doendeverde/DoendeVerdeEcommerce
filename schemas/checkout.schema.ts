@@ -73,7 +73,28 @@ export const preferencesSchema = z.object({
   notes: z.string().max(500).optional().nullable(),
 });
 
-export const preferencesUpdateSchema = preferencesSchema.partial();
+// Schema de update mais permissivo - aceita campos opcionais e arrays podem ser vazios
+export const preferencesUpdateSchema = z.object({
+  yearsSmoking: z.number().int().min(0).max(100).optional().nullable(),
+  favoritePaperType: paperTypeEnum.optional().nullable(),
+  favoritePaperSize: paperSizeEnum.optional().nullable(),
+  paperFilterSize: filterPaperSizeEnum.optional().nullable(),
+  glassFilterSize: glassFilterSizeEnum.optional().nullable(),
+  glassFilterThickness: glassFilterThicknessEnum.optional().nullable(),
+  favoriteColors: z.array(z.string()).optional(),
+  tobaccoUsage: tobaccoUsageEnum.optional().nullable(),
+  consumptionFrequency: consumptionFrequencyEnum.optional().nullable(),
+  consumptionMoment: z.array(consumptionMomentEnum).optional(),
+  consumesFlower: z.boolean().optional(),
+  consumesSkunk: z.boolean().optional(),
+  consumesHash: z.boolean().optional(),
+  consumesExtracts: z.boolean().optional(),
+  consumesOilEdibles: z.boolean().optional(),
+  likesAccessories: z.boolean().optional(),
+  likesCollectibles: z.boolean().optional(),
+  likesPremiumItems: z.boolean().optional(),
+  notes: z.string().max(500).optional().nullable(),
+});
 
 export type PreferencesInput = z.infer<typeof preferencesSchema>;
 export type PreferencesUpdateInput = z.infer<typeof preferencesUpdateSchema>;
