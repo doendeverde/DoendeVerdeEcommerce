@@ -36,8 +36,9 @@ export default async function ProductCheckoutPage() {
   // 4. Validate cart (check stock, prices)
   const cartValidation = await cartService.validateCartForCheckout(session.user.id);
   if (!cartValidation.valid) {
-    // Redirect to cart page with validation errors
-    redirect("/cart?validation=failed");
+    // Redirect to products page - cart validation failed (stock/price issues)
+    // User will see cart drawer to review items
+    redirect("/products?message=cart_validation_failed");
   }
 
   // 5. Get user addresses
@@ -68,6 +69,7 @@ export default async function ProductCheckoutPage() {
     discountPercent: subscriptionDiscount.discountPercent,
     total: Math.round((cart.subtotal - discountAmount) * 100) / 100, // subtotal + shipping - discount
     hasAddress: addresses.length > 0,
+    userEmail: session.user.email || undefined, // For payment brick pre-fill
     addresses: addresses.map((a) => ({
       id: a.id,
       label: a.label || undefined,

@@ -82,6 +82,17 @@ export function CardPaymentBrick({
       return;
     }
 
+    // Validação: verificar se está usando credenciais corretas
+    const isProduction = process.env.MP_USE_PRODUCTION === "true";
+    if (isProduction && !publicKey.startsWith("APP_USR-")) {
+      console.error("⚠️  AVISO: MP_USE_PRODUCTION=true mas public key não começa com APP_USR-");
+    } else if (!isProduction && !publicKey.startsWith("TEST-")) {
+      console.error("⚠️  AVISO: MP_USE_PRODUCTION=false mas public key não começa com TEST-");
+    }
+
+    console.log(`[CardPaymentBrick] Inicializando em modo: ${isProduction ? "PRODUÇÃO" : "TESTE"}`);
+    console.log(`[CardPaymentBrick] Public Key: ${publicKey.substring(0, 20)}...`);
+
     if (!brickContainerRef.current) return;
 
     let isMounted = true;

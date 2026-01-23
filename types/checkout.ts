@@ -73,10 +73,20 @@ export type PaymentMethod = "credit_card" | "debit_card" | "pix";
 
 export interface PaymentFormData {
   method: PaymentMethod;
-  // Credit/Debit card fields (via Mercado Pago SDK)
+  
+  // New fields (aligned with Zod schema)
+  token?: string;
+  paymentMethodId?: string;
+  issuerId?: number;
+  payerEmail?: string;
+  identificationType?: string;
+  identificationNumber?: string;
+  
+  // Legacy fields (keep for compatibility)
   cardToken?: string;
   cardBrand?: string;
   cardLastFour?: string;
+  
   installments?: number;
   // PIX doesn't need additional fields
 }
@@ -191,6 +201,8 @@ export interface CartCheckoutData {
   discountPercent?: number;
   total: number;
   hasAddress: boolean;
+  /** User email for payment brick pre-fill */
+  userEmail?: string;
   addresses: {
     id: string;
     label?: string;

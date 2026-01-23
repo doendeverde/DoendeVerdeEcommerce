@@ -8,15 +8,39 @@
  */
 
 import { MercadoPagoConfig, Preference, Payment } from "mercadopago";
+import { 
+  MP_ACCESS_TOKEN, 
+  MP_PUBLIC_KEY, 
+  validateMercadoPagoConfig,
+  IS_MP_PRODUCTION 
+} from "./mercadopago-config";
 
-// Validate environment variables
-if (!process.env.ACCESS_TOKEN_MP) {
-  throw new Error("ACCESS_TOKEN_MP environment variable is required");
+// ─────────────────────────────────────────────────────────────────────────────
+// Environment Configuration
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Valida configuração na inicialização
+validateMercadoPagoConfig();
+
+/**
+ * Obtém a Public Key do Mercado Pago (exportado para uso no frontend).
+ */
+export function getMercadoPagoPublicKey(): string {
+  if (!MP_PUBLIC_KEY) {
+    throw new Error("NEXT_PUBLIC_MP_PUBLIC_KEY não configurado no .env");
+  }
+  
+  return MP_PUBLIC_KEY;
 }
+
+/**
+ * Indica se está usando credenciais de produção.
+ */
+export const isMercadoPagoProduction = IS_MP_PRODUCTION;
 
 // Initialize Mercado Pago client
 export const mercadoPagoClient = new MercadoPagoConfig({
-  accessToken: process.env.ACCESS_TOKEN_MP,
+  accessToken: MP_ACCESS_TOKEN!,
   options: {
     timeout: 5000, // 5 seconds timeout
   },
@@ -144,5 +168,15 @@ export async function getPaymentById(paymentId: string) {
  * Check if we're in sandbox/test mode
  */
 export function isTestMode(): boolean {
-  return process.env.ACCESS_TOKEN_MP?.startsWith("TEST-") ?? false;
+  return !IS_MP_PRODUCTION;
+}
+
+/**
+ * Get Mercado Pago Access Token
+ */
+export function getAccessToken(): string {
+  if (!MP_ACCESS_TOKEN) {
+    throw new Error("Mercado Pago Access Token não configurado");
+  }
+  return MP_ACCESS_TOKEN;
 }

@@ -315,7 +315,7 @@ async function createPixPayment(
 
 /**
  * Process card payment (credit/debit)
- * TODO: Implement Mercado Pago SDK integration
+ * Integrates with Mercado Pago SDK for real card processing
  */
 async function processCardPayment(
   orderId: string,
@@ -324,33 +324,85 @@ async function processCardPayment(
   paymentData: SubscriptionCheckoutRequest["paymentData"],
   user: UserCheckoutData
 ): Promise<{ success: boolean; transactionId?: string; payload?: any; error?: string }> {
-  // TODO: Integrate with Mercado Pago SDK
-  // const mp = new MercadoPago(process.env.MERCADO_PAGO_ACCESS_TOKEN);
-  // const payment = await mp.payment.create({
-  //   transaction_amount: amount,
-  //   token: paymentData.cardToken,
-  //   installments: paymentData.installments || 1,
-  //   payment_method_id: paymentData.method === 'credit_card' ? 'visa' : 'debvisa',
-  //   payer: { email: user.email },
-  //   external_reference: orderId,
-  // });
+  const { createCardPayment, buildCardPaymentRequest, isPaymentApproved } = 
+    await import("./mercadopago.service");
 
-  // Placeholder - in production, this should call Mercado Pago API
-  if (!paymentData.cardToken) {
+  console.log("[MercadoPago] Creating card payment:", {
+    amount,
+    externalReference: orderId,
+    email: user.email,
+    paymentMethodId: paymentData.paymentMethodId,
+    installments: paymentData.installments,
+  });
+
+  // Validate required fields
+  if (!paymentData.token) {
     return { success: false, error: "Token do cartão não fornecido" };
   }
 
-  // Simulate successful payment for development
-  // In production: Check payment.status from MP response
+  if (!paymentData.paymentMethodId) {
+    return { success: false, error: "Método de pagamento não fornecido" };
+  }
+
+  // 1. Build base payment request (payer info, amount, etc.)
+  const baseRequest = {
+    amount,
+    description: `Pedido ${orderId}`,
+    externalReference: orderId,
+    payer: {
+      email: user.email,
+      firstName: user.fullName?.split(' ')[0] || undefined,
+      lastName: user.fullName?.split(' ').slice(1).join(' ') || undefined,
+    },
+    metadata: {
+      payment_id: paymentId,
+      type: "product",
+      order_id: orderId,
+    },
+  };
+
+  // 2. Build card data (token, installments, etc.)
+  // Force installments to 1 for debit cards
+  const cardData = {
+    token: paymentData.token,
+    paymentMethodId: paymentData.paymentMethodId,
+    issuerId: paymentData.issuerId || 0,
+    installments: paymentData.method === 'debit_card' ? 1 : (paymentData.installments || 1),
+    payerEmail: user.email,
+    identificationType: paymentData.identificationType,
+    identificationNumber: paymentData.identificationNumber,
+  };
+
+  // 3. Build full payment request with both arguments
+  const paymentRequest = buildCardPaymentRequest(cardData, baseRequest);
+
+  // Create payment via Mercado Pago
+  const mpPayment = await createCardPayment(paymentRequest);
+
+  console.log("[MercadoPago] Card payment created:", {
+    id: mpPayment.paymentId,
+    status: mpPayment.status,
+    statusDetail: mpPayment.statusDetail,
+  });
+
+  if (!mpPayment.success) {
+    return { 
+      success: false, 
+      error: mpPayment.error || "Erro ao processar pagamento com cartão" 
+    };
+  }
+
   return {
-    success: true,
-    transactionId: `mp_${Date.now()}`,
+    success: isPaymentApproved(mpPayment.status),
+    transactionId: mpPayment.transactionId || mpPayment.paymentId,
     payload: {
       method: paymentData.method,
-      brand: paymentData.cardBrand,
-      lastFour: paymentData.cardLastFour,
+      brand: mpPayment.cardBrand,
+      lastFour: mpPayment.cardLastFour,
       installments: paymentData.installments,
       orderId,
+      status: mpPayment.status,
+      statusDetail: mpPayment.statusDetail,
     },
   };
 }

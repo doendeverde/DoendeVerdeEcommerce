@@ -45,19 +45,17 @@
 import { Payment, MercadoPagoConfig } from "mercadopago";
 import { randomUUID } from "crypto";
 import type { CardPaymentData } from "@/schemas/payment.schema";
+import { MP_ACCESS_TOKEN, validateMercadoPagoConfig } from "@/lib/mercadopago-config";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Configuration
 // ─────────────────────────────────────────────────────────────────────────────
 
-const accessToken = process.env.ACCESS_TOKEN_MP;
-
-if (!accessToken) {
-  console.error("[MercadoPago] ACCESS_TOKEN_MP não configurado!");
-}
+// Valida configuração na inicialização
+validateMercadoPagoConfig();
 
 const client = new MercadoPagoConfig({
-  accessToken: accessToken || "",
+  accessToken: MP_ACCESS_TOKEN || "",
   options: {
     timeout: 10000, // 10 segundos
     idempotencyKey: randomUUID(), // Será sobrescrito por request

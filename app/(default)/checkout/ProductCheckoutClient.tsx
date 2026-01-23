@@ -12,7 +12,7 @@
 
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -103,6 +103,11 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
   // PIX specific state
   const [pixData, setPixData] = useState<PixPaymentData | null>(null);
   const [isRegeneratingPix, setIsRegeneratingPix] = useState(false);
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentStep]);
 
   // Navigation Handlers
   const goToPayment = useCallback(() => setCurrentStep("payment"), []);
@@ -234,9 +239,13 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
             addressId: selectedAddressId,
             paymentData: {
               method: paymentMethod,
-              cardToken: cardData.token,
-              cardBrand: cardData.paymentMethodId,
+              token: cardData.token,
+              paymentMethodId: cardData.paymentMethodId,
+              issuerId: cardData.issuerId,
               installments: cardData.installments || 1,
+              payerEmail: cardData.payerEmail,
+              identificationType: cardData.identificationType,
+              identificationNumber: cardData.identificationNumber,
             },
             shippingOption: selectedShippingOption,
           }),
@@ -389,6 +398,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
             onBack={goBackToAddress}
             isProcessing={isProcessing}
             amount={roundMoney(data.subtotal - data.discount + (selectedShippingOption?.price || 0))}
+            payerEmail={data.userEmail}
             isSubscription={false}
           />
         )}

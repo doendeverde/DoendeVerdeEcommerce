@@ -14,6 +14,7 @@
 
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { toast } from 'sonner';
 import { ProductListItem, CategoryItem } from '@/types/product';
 import {
   ProductGrid,
@@ -101,6 +102,27 @@ export function ProductCatalog({
   const sortBy = (searchParams.get('sortBy') as 'price' | 'name' | 'createdAt') || 'createdAt';
   const sortOrder = (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc';
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
+  const message = searchParams.get('message');
+
+  // Show toast messages from URL params (e.g., validation errors from checkout redirect)
+  useEffect(() => {
+    if (message) {
+      const messages: Record<string, { type: 'error' | 'warning' | 'info'; text: string }> = {
+        cart_empty: { type: 'info', text: 'Seu carrinho está vazio. Adicione produtos para continuar.' },
+        cart_validation_failed: { type: 'error', text: 'Alguns itens do carrinho não estão mais disponíveis. Revise seu carrinho.' },
+        checkout_error: { type: 'error', text: 'Erro ao processar checkout. Tente novamente.' },
+      };
+
+      const msg = messages[message];
+      if (msg) {
+        toast[msg.type](msg.text);
+        // Remove message from URL after showing
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete('message');
+        router.replace(`${pathname}${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false });
+      }
+    }
+  }, [message, searchParams, router, pathname]);
 
   // Update URL params
   const updateParams = useCallback(

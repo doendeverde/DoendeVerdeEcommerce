@@ -140,8 +140,11 @@ export function PaymentStep({
   // Cartão precisa do Brick (o botão do Brick faz o submit)
   const canSubmitPix = selectedMethod === "pix";
 
-  // Max installments: 1 para assinatura, 12 para produtos
-  const maxInstallments = isSubscription ? 1 : 12;
+  // Max installments:
+  // - Assinatura: sempre 1 (cobrança recorrente)
+  // - Débito: sempre 1 (não tem parcelamento)
+  // - Crédito produtos: até 12x
+  const maxInstallments = isSubscription || selectedMethod === "debit_card" ? 1 : 12;
 
   /**
    * Handler para quando o Brick do Mercado Pago retorna dados tokenizados.
@@ -245,7 +248,9 @@ export function PaymentStep({
             <span>Preencha os dados do cartão de forma segura</span>
           </div>
 
+          {/* Key force re-render when switching credit/debit */}
           <CardPaymentBrick
+            key={`card-brick-${selectedMethod}`}
             amount={amount}
             payerEmail={payerEmail}
             onSubmit={handleCardPaymentSubmit}

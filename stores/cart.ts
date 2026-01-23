@@ -137,7 +137,8 @@ export const useCartStore = create<CartStore>((set, get) => ({
         return false;
       }
 
-      set({ cart: data.cart, isDrawerOpen: true });
+      // Only update cart, don't auto-open drawer (toast notification is shown by component)
+      set({ cart: data.cart });
       return true;
     } catch (error) {
       console.error('[CartStore] Error adding item:', error);

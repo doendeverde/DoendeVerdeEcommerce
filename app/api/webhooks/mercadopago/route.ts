@@ -42,16 +42,19 @@ import { subscriptionRepository } from "@/repositories/subscription.repository";
 import * as orderRepository from "@/repositories/order.repository";
 import * as paymentRepository from "@/repositories/payment.repository";
 import crypto from "crypto";
+import { MP_ACCESS_TOKEN, validateMercadoPagoConfig } from "@/lib/mercadopago-config";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Configuration
 // ─────────────────────────────────────────────────────────────────────────────
 
-const accessToken = process.env.ACCESS_TOKEN_MP || "";
+// Valida configuração na inicialização
+validateMercadoPagoConfig();
+
 const webhookSecret = process.env.MP_WEBHOOK_SECRET || "";
 
 const client = new MercadoPagoConfig({
-  accessToken,
+  accessToken: MP_ACCESS_TOKEN || "",
   options: { timeout: 10000 },
 });
 
