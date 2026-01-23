@@ -8,8 +8,8 @@
 
 | Categoria | Total | Corrigidos | Pendentes |
 |-----------|-------|------------|-----------|
-| 🔴 Críticos | 5 | 5 | 0 |
-| 🟠 Importantes | 10 | 3 | 7 |
+| 🔴 Críticos | 8 | 6 | 2 |
+| 🟠 Importantes | 11 | 5 | 6 |
 | 🟡 Melhorias | 8 | 1 | 7 |
 
 **Bugs Corrigidos Hoje:**
@@ -21,6 +21,13 @@
 6. ✅ Scroll checkout - já funcionava (confirmado)
 7. ✅ Email pré-preenchido - passa userEmail para Brick
 8. ✅ Drawer auto-abrir - removido isDrawerOpen: true
+9. ✅ Scroll ao processar pagamento - useEffect com isProcessing
+10. ✅ Dropdown admin cortado - removido overflow-hidden do DataTable
+11. ✅ PATCH /api/user/preferences 400 - schema update mais permissivo
+
+**Novos bugs adicionados:**
+- 🔴 #24 - Bloquear acesso de usuário bloqueado nos endpoints
+- 🔴 #25 - Deslogar usuário bloqueado automaticamente
 
 ---
 
@@ -125,12 +132,15 @@ A função `addItem` fazia `set({ cart: data.cart, isDrawerOpen: true })` ao adi
 
 ---
 
-### 9. ⚠️ Popup de "Ver Mais" no Admin Cortado
-**Arquivo:** `components/admin/ProductCard.tsx` ou similar  
-**Problema:** Menu dropdown do último produto fica cortado pelo scroll
+### 9. ✅ Popup de "Ver Mais" no Admin Cortado (CORRIGIDO)
+**Arquivo:** `components/admin/DataTable.tsx`  
+**Problema:** Menu dropdown do último produto fica cortado pelo container
 
-**Status:** 🟠 PRECISA CORRIGIR  
-**Solução:** Usar portal ou ajustar z-index/overflow
+**Causa Raiz:**
+O container do DataTable tinha `overflow-hidden` que cortava dropdowns posicionados absolutamente.
+
+**Status:** ✅ CORRIGIDO em 23/01/2026  
+**Solução Aplicada:** Removido `overflow-hidden` do container principal, mantendo apenas `overflow-x-auto` para scroll horizontal
 
 ---
 
@@ -261,6 +271,44 @@ O código está correto - `signOut({ callbackUrl: "/" })` usa URL relativa que o
 **Problema:** Se produto muda de preço, carrinho deve atualizar
 
 **Status:** 🟡 PRECISA IMPLEMENTAR
+
+---
+
+### 24. 🔴 Bloquear Acesso de Usuário Bloqueado nos Endpoints
+**Arquivo:** `middleware.ts` + endpoints de API  
+**Problema:** Usuário com status BLOCKED ainda consegue acessar endpoints protegidos
+
+**Status:** 🔴 PRECISA IMPLEMENTAR  
+**Solução:** 
+- Verificar `user.status === "BLOCKED"` em middleware ou em cada endpoint protegido
+- Retornar 403 Forbidden para usuários bloqueados
+
+---
+
+### 25. 🔴 Deslogar Usuário Bloqueado Automaticamente
+**Arquivo:** `lib/auth.ts` (callbacks) + `middleware.ts`  
+**Problema:** Usuário bloqueado deve ser deslogado automaticamente ao tentar acessar o sistema
+
+**Status:** 🔴 PRECISA IMPLEMENTAR  
+**Solução:** 
+- No callback `jwt` ou `session`, verificar status do usuário no banco
+- Se bloqueado, invalidar sessão e redirecionar para /login com mensagem
+
+---
+
+### 26. ✅ Scroll para Cima ao Processar Pagamento (CORRIGIDO)
+**Arquivo:** `components/checkout/subscription/PaymentStep.tsx`  
+**Problema:** Quando o pagamento está processando, a tela não sobe automaticamente para mostrar o estado de loading
+
+**Status:** ✅ CORRIGIDO em 23/01/2026  
+**Solução Aplicada:** 
+```typescript
+useEffect(() => {
+  if (isProcessing) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}, [isProcessing]);
+```
 
 ---
 

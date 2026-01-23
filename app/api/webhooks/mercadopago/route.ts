@@ -355,23 +355,53 @@ export async function POST(request: NextRequest) {
   const requestId = request.headers.get("x-request-id");
   const signature = request.headers.get("x-signature");
   
+  // Check for legacy format in query params (id=X&topic=payment)
+  const url = new URL(request.url);
+  const legacyId = url.searchParams.get("id");
+  const legacyTopic = url.searchParams.get("topic");
+  
+  // Check for new format in query params (data.id=X&type=payment)
+  const newFormatId = url.searchParams.get("data.id");
+  const newFormatType = url.searchParams.get("type");
+  
   console.log("[Webhook] ════════════════════════════════════════════════");
   console.log("[Webhook] Received notification");
   console.log("[Webhook] Request ID:", requestId);
   console.log("[Webhook] Has signature:", !!signature);
+  console.log("[Webhook] Query params - Legacy:", { id: legacyId, topic: legacyTopic });
+  console.log("[Webhook] Query params - New:", { dataId: newFormatId, type: newFormatType });
   console.log("[Webhook] ════════════════════════════════════════════════");
 
   try {
     // Parse body
-    const body = await request.json() as WebhookPayload;
+    let body: WebhookPayload;
+    try {
+      body = await request.json() as WebhookPayload;
+    } catch {
+      // Body pode estar vazio no formato legado
+      body = {} as WebhookPayload;
+    }
     
-    console.log("[Webhook] Type:", body.type);
+    // Determine dataId and type from either format
+    // Priority: body > new query params > legacy query params
+    const dataId = String(body.data?.id || newFormatId || legacyId || "");
+    const notificationType = body.type || newFormatType || legacyTopic || "";
+    
+    console.log("[Webhook] Type:", notificationType);
     console.log("[Webhook] Action:", body.action);
-    console.log("[Webhook] Data ID:", body.data?.id);
+    console.log("[Webhook] Data ID (resolved):", dataId);
     console.log("[Webhook] Live mode:", body.live_mode);
 
-    // Valida assinatura
-    const dataId = String(body.data?.id || "");
+    // Se não temos dataId, não podemos processar
+    if (!dataId) {
+      console.error("[Webhook] ❌ No payment ID found in request");
+      return NextResponse.json(
+        { error: "No payment ID provided" },
+        { status: 400 }
+      );
+    }
+
+    // Valida assinatura usando o dataId resolvido
     const isValid = validateWebhookSignature(signature, requestId, dataId, body);
     
     if (!isValid) {
@@ -385,11 +415,11 @@ export async function POST(request: NextRequest) {
     console.log("[Webhook] ✅ Signature valid");
 
     // Processa por tipo de notificação
-    if (body.type === "payment") {
+    if (notificationType === "payment") {
       const result = await processPaymentNotification(dataId);
       console.log("[Webhook] Payment processing result:", result);
     } else {
-      console.log("[Webhook] Unhandled notification type:", body.type);
+      console.log("[Webhook] Unhandled notification type:", notificationType);
     }
 
     // Sempre retorna 200 para evitar retentativas desnecessárias

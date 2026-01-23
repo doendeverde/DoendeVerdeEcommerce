@@ -132,6 +132,35 @@ const DEFAULT_RATE: RegionalShippingRate = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Dev Free Shipping Helper
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * 🚀 DEV ONLY: Add free shipping option in development environment
+ * This option should NEVER appear in production
+ */
+function addDevFreeShipping(options: ShippingOption[]): ShippingOption[] {
+  if (process.env.NODE_ENV === "production") {
+    return options;
+  }
+  
+  const freeShippingOption: ShippingOption = {
+    id: "dev_free",
+    carrier: "DEV",
+    service: "Grátis",
+    name: "🚀 Frete Grátis (DEV ONLY)",
+    price: 0,
+    deliveryDays: 0,
+    estimatedDays: 0,
+    deliveryTime: "Imediato (apenas desenvolvimento)",
+    recommended: true,
+  };
+  
+  logSuccess("✅ Opção de frete grátis adicionada (DEV MODE)");
+  return [freeShippingOption, ...options];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // CEP Utilities
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -295,11 +324,15 @@ export async function calculateShipping(
             prazo: o.deliveryTime,
           })),
         });
+        
+        // 🚀 DEV ONLY: Add free shipping option in development
+        const finalOptions = addDevFreeShipping(externalOptions);
+        
         return {
           success: true,
           zipCode: formatCep(cep),
           location: state || undefined,
-          options: externalOptions,
+          options: finalOptions,
           quotedAt: new Date().toISOString(),
         };
       }
@@ -528,7 +561,8 @@ function calculateFallbackRates(
     },
   });
 
-  return [pacOption, sedexOption];
+  // 🚀 DEV ONLY: Add free shipping option in development
+  return addDevFreeShipping([pacOption, sedexOption]);
 }
 
 /**

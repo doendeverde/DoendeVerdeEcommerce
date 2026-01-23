@@ -10,6 +10,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { MP_ACCESS_TOKEN } from "@/lib/mercadopago-config";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mercado Pago Payment Status
@@ -19,10 +20,10 @@ async function getPaymentStatusFromMP(paymentId: string): Promise<{
   status: "pending" | "approved" | "rejected" | "cancelled" | "in_process";
   statusDetail: string;
 }> {
-  const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+  const accessToken = MP_ACCESS_TOKEN;
   
   if (!accessToken) {
-    throw new Error("MERCADO_PAGO_ACCESS_TOKEN not configured");
+    throw new Error("MP_ACCESS_TOKEN not configured");
   }
 
   const response = await fetch(
