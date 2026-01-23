@@ -4,7 +4,7 @@ import { adminService } from "@/services/admin.service";
 import { z } from "zod";
 
 const updateStatusSchema = z.object({
-  status: z.enum(["ACTIVE", "PAUSED", "CANCELED"]),
+  status: z.enum(["ACTIVE", "CANCELED"]),
 });
 
 /**

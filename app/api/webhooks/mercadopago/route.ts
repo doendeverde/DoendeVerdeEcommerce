@@ -245,13 +245,19 @@ async function processPaymentNotification(paymentId: string) {
 
     // Se é uma assinatura, cria UserSubscription
     const type = metadata?.type as string;
+    console.log("[Webhook] Payment type from metadata:", type);
+    console.log("[Webhook] Full metadata:", JSON.stringify(metadata, null, 2));
+    
     if (type === "subscription") {
-      const planId = metadata?.planId as string;
-      const userId = metadata?.userId as string;
+      const planId = metadata?.planId as string || metadata?.plan_id as string;
+      const userId = metadata?.userId as string || metadata?.user_id as string;
+
+      console.log("[Webhook] Subscription metadata - planId:", planId, "userId:", userId);
 
       if (planId && userId) {
         // Verifica se já existe subscription ativa
         const existingSub = await subscriptionRepository.userHasAnyActiveSubscription(userId);
+        console.log("[Webhook] User has existing subscription:", existingSub);
         
         if (!existingSub) {
           console.log("[Webhook] Creating subscription for user:", userId);
@@ -270,11 +276,15 @@ async function processPaymentNotification(paymentId: string) {
             paymentId: payment.id,
           });
 
-          console.log("[Webhook] Subscription created:", subscription.id);
+          console.log("[Webhook] ✅ Subscription created successfully:", subscription.id);
         } else {
-          console.log("[Webhook] User already has active subscription");
+          console.log("[Webhook] ⚠️ User already has active subscription, skipping creation");
         }
+      } else {
+        console.log("[Webhook] ❌ Missing planId or userId in metadata, cannot create subscription");
       }
+    } else {
+      console.log("[Webhook] Not a subscription payment, skipping subscription creation");
     }
 
     return { success: true, action: "payment_approved" };
@@ -325,7 +335,7 @@ async function processPaymentNotification(paymentId: string) {
           where: {
             userId,
             planId,
-            status: { in: ["ACTIVE", "PAUSED"] },
+            status: "ACTIVE",
           },
         });
 

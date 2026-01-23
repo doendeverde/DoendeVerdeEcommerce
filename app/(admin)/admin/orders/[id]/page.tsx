@@ -6,6 +6,7 @@ import { formatCurrency, formatDateTime } from "@/lib/utils";
 import { OrderStatusUpdater } from "./OrderStatusUpdater";
 import { cn } from "@/lib/utils";
 import { PaymentStatus, ShipmentStatus, PaymentProvider } from "@prisma/client";
+import { ApprovePaymentButton } from "@/components/admin/orders/ApprovePaymentButton";
 
 export const dynamic = "force-dynamic";
 
@@ -203,22 +204,33 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                         </p>
                       )}
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-text-primary">
-                        {formatCurrency(payment.amount)}
-                      </p>
-                      <span
-                        className={cn(
-                          "text-xs px-2 py-0.5 rounded-full",
-                          payment.status === "PAID"
-                            ? "bg-green-100 text-green-800"
-                            : payment.status === "PENDING"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
-                        )}
-                      >
-                        {paymentStatusLabels[payment.status]}
-                      </span>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-sm font-semibold text-text-primary">
+                          {formatCurrency(payment.amount)}
+                        </p>
+                        <span
+                          className={cn(
+                            "text-xs px-2 py-0.5 rounded-full",
+                            payment.status === "PAID"
+                              ? "bg-green-100 text-green-800"
+                              : payment.status === "PENDING"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                          )}
+                        >
+                          {paymentStatusLabels[payment.status]}
+                        </span>
+                      </div>
+                      {/* Botão para aprovar pagamento manualmente (só aparece se PENDING) */}
+                      {payment.status === "PENDING" && (
+                        <ApprovePaymentButton
+                          orderId={order.id}
+                          paymentId={payment.id}
+                          transactionId={payment.transactionId}
+                          currentStatus={payment.status}
+                        />
+                      )}
                     </div>
                   </div>
                 ))}

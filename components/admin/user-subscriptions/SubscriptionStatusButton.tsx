@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Play, Pause, XCircle, MoreHorizontal } from "lucide-react";
+import { Play, XCircle, MoreHorizontal } from "lucide-react";
 
 interface SubscriptionStatusButtonProps {
   subscriptionId: string;
@@ -11,6 +11,7 @@ interface SubscriptionStatusButtonProps {
 
 /**
  * Botão com dropdown para alterar status da assinatura
+ * Status disponíveis: ACTIVE, CANCELED
  */
 export function SubscriptionStatusButton({
   subscriptionId,
@@ -46,7 +47,7 @@ export function SubscriptionStatusButton({
     setIsOpen(false);
   };
 
-  // Opções disponíveis com base no status atual
+  // Opções disponíveis com base no status atual (apenas ACTIVE e CANCELED)
   const getAvailableActions = () => {
     const actions = [];
 
@@ -56,15 +57,6 @@ export function SubscriptionStatusButton({
         label: "Ativar",
         icon: <Play className="w-4 h-4" />,
         className: "text-green-600 hover:bg-green-50",
-      });
-    }
-
-    if (currentStatus !== "PAUSED") {
-      actions.push({
-        status: "PAUSED",
-        label: "Pausar",
-        icon: <Pause className="w-4 h-4" />,
-        className: "text-yellow-600 hover:bg-yellow-50",
       });
     }
 

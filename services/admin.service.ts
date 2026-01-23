@@ -1628,11 +1628,13 @@ async function getUserSubscriptions(filters: UserSubscriptionFilters = {}) {
 }
 
 async function updateUserSubscriptionStatus(id: string, status: string) {
+  const validStatus = status as "ACTIVE" | "CANCELED";
+  
   return prisma.subscription.update({
     where: { id },
     data: { 
-      status: status as "ACTIVE" | "PAUSED" | "CANCELED",
-      ...(status === "CANCELED" ? { canceledAt: new Date() } : {}),
+      status: validStatus,
+      ...(status === "CANCELED" ? { canceledAt: new Date() } : { canceledAt: null }),
     },
   });
 }

@@ -205,25 +205,21 @@ export const subscriptionRepository = {
   },
 
   /**
-   * Pause subscription
+   * Reactivate subscription (from CANCELED to ACTIVE)
    */
-  async pauseSubscription(subscriptionId: string) {
-    return prisma.subscription.update({
-      where: { id: subscriptionId },
-      data: {
-        status: "PAUSED",
-      },
-    });
-  },
+  async reactivateSubscription(subscriptionId: string) {
+    const now = new Date();
+    const nextBilling = new Date(now);
+    nextBilling.setMonth(nextBilling.getMonth() + 1);
+    nextBilling.setDate(1);
+    nextBilling.setHours(0, 0, 0, 0);
 
-  /**
-   * Resume subscription
-   */
-  async resumeSubscription(subscriptionId: string) {
     return prisma.subscription.update({
       where: { id: subscriptionId },
       data: {
         status: "ACTIVE",
+        canceledAt: null,
+        nextBillingAt: nextBilling,
       },
     });
   },
