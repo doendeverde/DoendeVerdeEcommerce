@@ -150,8 +150,8 @@ export function AddressStep({
   }, [form, onAddressCreate, onAddressSelect]);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+    <div className="bg-surface rounded-xl shadow-sm p-6">
+      <h2 className="text-lg font-semibold text-default mb-4 flex items-center gap-2">
         <MapPin className="w-5 h-5 text-primary-green" />
         Endereço de entrega
       </h2>
@@ -197,7 +197,7 @@ export function AddressStep({
         <div className="flex gap-3 mt-4">
           <button
             onClick={onBack}
-            className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+            className="flex-1 py-3 border-default text-muted rounded-lg font-medium hover-bg transition-colors"
           >
             Voltar
           </button>
@@ -233,8 +233,8 @@ function AddressList({ addresses, selectedId, onSelect, onShowForm }: AddressLis
         <label
           key={address.id}
           className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors ${selectedId === address.id
-            ? "border-primary-green bg-green-50"
-            : "border-gray-200 hover:border-gray-300"
+            ? "border-primary-green bg-primary-green/10"
+            : "border-default hover:border-gray-400 dark:hover:border-gray-500"
             }`}
         >
           <input
@@ -247,16 +247,16 @@ function AddressList({ addresses, selectedId, onSelect, onShowForm }: AddressLis
           />
           <div className="flex-1">
             {address.label && (
-              <span className="text-sm font-medium text-gray-900">{address.label}</span>
+              <span className="text-sm font-medium text-default">{address.label}</span>
             )}
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted">
               {address.street}, {address.number}
               {address.complement && ` - ${address.complement}`}
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted">
               {address.neighborhood} - {address.city}/{address.state}
             </p>
-            <p className="text-sm text-gray-500">CEP: {address.zipCode}</p>
+            <p className="text-sm text-muted">CEP: {address.zipCode}</p>
           </div>
           {address.isDefault && (
             <span className="text-xs bg-primary-green/10 text-primary-green px-2 py-1 rounded-full">
@@ -267,7 +267,7 @@ function AddressList({ addresses, selectedId, onSelect, onShowForm }: AddressLis
       ))}
       <button
         onClick={onShowForm}
-        className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-primary-green hover:text-primary-green transition-colors"
+        className="w-full p-4 border-2 border-dashed border-default rounded-lg text-muted hover:border-primary-green hover:text-primary-green transition-colors"
       >
         + Adicionar novo endereço
       </button>
@@ -300,7 +300,7 @@ function AddressForm({
         <button
           type="button"
           onClick={onCancel}
-          className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+          className="text-sm text-muted hover:text-default flex items-center gap-1"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar para endereços salvos
@@ -308,7 +308,7 @@ function AddressForm({
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-muted mb-1">
           Apelido (opcional)
         </label>
         <input
@@ -316,13 +316,13 @@ function AddressForm({
           value={form.label}
           onChange={(e) => onChange("label", e.target.value)}
           placeholder="Ex: Casa, Trabalho"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+          className="input-default"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-muted mb-1">
             CEP *
           </label>
           <input
@@ -332,11 +332,11 @@ function AddressForm({
             onBlur={onCepBlur}
             placeholder="00000-000"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+            className="input-default"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-muted mb-1">
             Estado *
           </label>
           <input
@@ -346,13 +346,13 @@ function AddressForm({
             placeholder="UF"
             required
             maxLength={2}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+            className="input-default"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-muted mb-1">
           Cidade *
         </label>
         <input
@@ -360,12 +360,12 @@ function AddressForm({
           value={form.city}
           onChange={(e) => onChange("city", e.target.value)}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+          className="input-default"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-muted mb-1">
           Bairro *
         </label>
         <input
@@ -373,13 +373,13 @@ function AddressForm({
           value={form.neighborhood}
           onChange={(e) => onChange("neighborhood", e.target.value)}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+          className="input-default"
         />
       </div>
 
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-muted mb-1">
             Rua *
           </label>
           <input
@@ -387,11 +387,11 @@ function AddressForm({
             value={form.street}
             onChange={(e) => onChange("street", e.target.value)}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+            className="input-default"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-muted mb-1">
             Número *
           </label>
           <input
@@ -399,13 +399,13 @@ function AddressForm({
             value={form.number}
             onChange={(e) => onChange("number", e.target.value)}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+            className="input-default"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-muted mb-1">
           Complemento
         </label>
         <input
@@ -413,7 +413,7 @@ function AddressForm({
           value={form.complement}
           onChange={(e) => onChange("complement", e.target.value)}
           placeholder="Apto, Bloco, etc."
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+          className="input-default"
         />
       </div>
 

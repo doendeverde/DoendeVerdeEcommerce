@@ -31,7 +31,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-bg">
+    <div className="min-h-screen bg-page">
       {/* Sidebar fixa */}
       <AdminSidebar user={session.user} />
 

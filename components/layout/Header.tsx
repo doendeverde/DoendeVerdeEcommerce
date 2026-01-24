@@ -3,6 +3,7 @@ import { Navbar } from "./Navbar";
 import { CartButton } from "./CartButton";
 import { UserDropdown } from "./UserDropdown";
 import { MobileMenu } from "./MobileMenu";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
@@ -17,7 +18,7 @@ export function Header({ className }: HeaderProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full bg-white border-b border-gray-border",
+        "sticky top-0 z-40 w-full bg-[var(--card-bg)] border-b border-[var(--gray-border)] transition-colors",
         className
       )}
     >
@@ -31,8 +32,9 @@ export function Header({ className }: HeaderProps) {
         {/* Center: Navigation (hidden on mobile) */}
         <Navbar />
 
-        {/* Right Section: Cart + User */}
+        {/* Right Section: Theme Toggle + Cart + User */}
         <div className="flex items-center gap-1">
+          <ThemeToggle />
           <CartButton />
           <UserDropdown />
         </div>

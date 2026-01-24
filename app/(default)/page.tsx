@@ -73,22 +73,22 @@ export default async function HomePage() {
       {/* Benefits Bar */}
       {showBenefits && (
         <section className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+          <div className="flex items-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
               <Truck className="h-5 w-5 text-primary-green" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900">Frete Grátis</p>
-              <p className="text-xs text-gray-500">Acima de R$ 150</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Frete Grátis</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Acima de R$ 150</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+          <div className="flex items-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
               <Shield className="h-5 w-5 text-primary-green" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900">Compra Segura</p>
-              <p className="text-xs text-gray-500">Garantia de 7 dias</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Compra Segura</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Garantia de 7 dias</p>
             </div>
           </div>
           {/* FEATURE DISABLED: Points card will be implemented in the future */}
@@ -97,17 +97,17 @@ export default async function HomePage() {
             <Gift className="h-5 w-5 text-primary-purple" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-900">Ganhe Pontos</p>
-            <p className="text-xs text-gray-500">A cada compra</p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Ganhe Pontos</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">A cada compra</p>
           </div>
         </div> */}
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+          <div className="flex items-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
               <Crown className="h-5 w-5 text-primary-purple" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900">Planos VIP</p>
-              <p className="text-xs text-gray-500">Descontos exclusivos</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Planos VIP</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Descontos exclusivos</p>
             </div>
           </div>
         </section>
@@ -118,7 +118,7 @@ export default async function HomePage() {
       {false && (
         <section>
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">Categorias</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Categorias</h2>
             <Link
               href="/products"
               className="text-sm font-medium text-primary-green hover:underline"
@@ -134,8 +134,8 @@ export default async function HomePage() {
       <section>
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Produtos em Destaque</h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Produtos em Destaque</h2>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Os mais pedidos pelos nossos clientes
             </p>
           </div>
@@ -150,11 +150,11 @@ export default async function HomePage() {
         {products.length > 0 ? (
           <ProductGrid products={products} />
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 py-16 text-center">
-            <p className="text-lg font-medium text-gray-600">
+          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16 text-center">
+            <p className="text-lg font-medium text-gray-600 dark:text-gray-400">
               Nenhum produto cadastrado ainda
             </p>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
               Os produtos aparecerão aqui assim que forem adicionados.
             </p>
           </div>

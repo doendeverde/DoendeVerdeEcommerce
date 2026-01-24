@@ -58,12 +58,12 @@ export function CheckoutCartSummary({
     : totalProp;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-surface rounded-xl border border-default overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-gray-100 bg-gray-50">
+      <div className="p-4 border-b border-default bg-page">
         <div className="flex items-center gap-2">
-          <ShoppingBag className="w-5 h-5 text-gray-600" />
-          <h3 className="font-semibold text-gray-900">Resumo do Pedido</h3>
+          <ShoppingBag className="w-5 h-5 text-muted" />
+          <h3 className="font-semibold text-default">Resumo do Pedido</h3>
         </div>
       </div>
 
@@ -75,7 +75,7 @@ export function CheckoutCartSummary({
             className="flex gap-3"
           >
             {/* Image */}
-            <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+            <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-page">
               {item.image ? (
                 <Image
                   src={item.image}
@@ -86,20 +86,20 @@ export function CheckoutCartSummary({
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <Package className="w-6 h-6 text-gray-400" />
+                  <Package className="w-6 h-6 text-muted" />
                 </div>
               )}
             </div>
 
             {/* Details */}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium text-default truncate">
                 {item.name}
               </p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-muted mt-0.5">
                 Qtd: {item.quantity} × {formatPrice(item.unitPrice)}
               </p>
-              <p className="text-sm font-semibold text-gray-900 mt-1">
+              <p className="text-sm font-semibold text-default mt-1">
                 {formatPrice(item.totalPrice)}
               </p>
             </div>
@@ -108,21 +108,21 @@ export function CheckoutCartSummary({
       </div>
 
       {/* Totals */}
-      <div className="p-4 border-t border-gray-100 space-y-3">
+      <div className="p-4 border-t border-default space-y-3">
         {/* Subtotal */}
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Subtotal</span>
-          <span className="text-gray-900">{formatPrice(subtotal)}</span>
+          <span className="text-muted">Subtotal</span>
+          <span className="text-default">{formatPrice(subtotal)}</span>
         </div>
 
         {/* Shipping */}
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600 flex items-center gap-1">
+          <span className="text-muted flex items-center gap-1">
             <Truck className="w-4 h-4" />
             Frete
           </span>
           {isLoadingShipping ? (
-            <span className="text-gray-400 flex items-center gap-1">
+            <span className="text-muted flex items-center gap-1">
               <Loader2 className="w-3 h-3 animate-spin" />
               Calculando...
             </span>
@@ -130,16 +130,16 @@ export function CheckoutCartSummary({
             shippingPrice === 0 ? (
               <span className="text-primary-green font-medium">Grátis</span>
             ) : (
-              <span className="text-gray-900">{formatPrice(shippingPrice)}</span>
+              <span className="text-default">{formatPrice(shippingPrice)}</span>
             )
           ) : (
-            <span className="text-gray-400 text-xs">Selecione o endereço</span>
+            <span className="text-muted text-xs">Selecione o endereço</span>
           )}
         </div>
 
         {/* Shipping details */}
         {shippingOption && (
-          <div className="flex justify-between text-xs text-gray-500 bg-gray-50 rounded-lg p-2 -mx-2">
+          <div className="flex justify-between text-xs text-muted bg-page rounded-lg p-2 -mx-2">
             <span>{shippingOption.name}</span>
             <span>
               {shippingOption.deliveryDays === 1
@@ -163,10 +163,10 @@ export function CheckoutCartSummary({
         )}
 
         {/* Divider */}
-        <div className="border-t border-gray-200 pt-3 mt-3">
+        <div className="border-t border-default pt-3 mt-3">
           <div className="flex justify-between">
-            <span className="font-semibold text-gray-900">Total</span>
-            <span className="text-xl font-bold text-gray-900">
+            <span className="font-semibold text-default">Total</span>
+            <span className="text-xl font-bold text-default">
               {formatPrice(total)}
             </span>
           </div>
@@ -175,7 +175,7 @@ export function CheckoutCartSummary({
 
       {/* Security Badge */}
       <div className="px-4 pb-4">
-        <div className="flex items-center justify-center gap-2 p-3 bg-gray-50 rounded-lg text-xs text-gray-500">
+        <div className="flex items-center justify-center gap-2 p-3 bg-page rounded-lg text-xs text-muted">
           <svg
             className="w-4 h-4"
             fill="none"

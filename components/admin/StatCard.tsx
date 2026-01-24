@@ -55,20 +55,20 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "bg-white rounded-xl border border-gray-border p-5",
+        "bg-surface rounded-xl border-default p-5",
         className
       )}
     >
       <div className="flex items-start justify-between">
         <div className="flex flex-col">
-          <span className="text-sm font-medium text-text-secondary">
+          <span className="text-sm font-medium text-muted">
             {title}
           </span>
-          <span className="mt-1 text-2xl font-bold text-text-primary">
+          <span className="mt-1 text-2xl font-bold text-default">
             {value}
           </span>
           {description && (
-            <span className="mt-1 text-xs text-text-secondary">
+            <span className="mt-1 text-xs text-muted">
               {description}
             </span>
           )}
@@ -91,7 +91,7 @@ export function StatCard({
           >
             {trend.isPositive ? "+" : ""}{trend.value}%
           </span>
-          <span className="text-xs text-text-secondary">vs. mês anterior</span>
+          <span className="text-xs text-muted">vs. mês anterior</span>
         </div>
       )}
     </div>

@@ -339,19 +339,19 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={() => router.push("/cart")}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-full hover-bg transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-default" />
           </button>
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary-green/10 rounded-lg">
               <ShoppingBag className="w-6 h-6 text-primary-green" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">
+              <h1 className="text-xl font-semibold text-default">
                 Finalizar Compra
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted">
                 {data.items.length}{" "}
                 {data.items.length === 1 ? "item" : "itens"} no carrinho
               </p>
@@ -368,7 +368,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
 
         {/* Error Alert (non-blocking errors) */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-lg p-4 text-red-700 dark:text-red-400 text-sm">
             {error}
           </div>
         )}

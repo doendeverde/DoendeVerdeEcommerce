@@ -10,7 +10,7 @@
 |-----------|-------|------------|-----------|
 | 🔴 Críticos | 8 | 8 | 0 |
 | 🟠 Importantes | 11 | 6 | 5 |
-| 🟡 Melhorias | 8 | 1 | 7 |
+| 🟡 Melhorias | 8 | 2 | 6 |
 
 **Bugs Corrigidos Hoje:**
 1. ✅ `buildCardPaymentRequest` - argumentos separados
@@ -27,6 +27,7 @@
 12. ✅ Bloquear usuário BLOCKED nos endpoints - middleware + api-auth helper
 13. ✅ Deslogar usuário bloqueado - revalidação de status no JWT callback
 14. ✅ Mostrar apenas 5 opções de frete - com botão "Ver mais"
+15. ✅ Dark Mode - next-themes + componentes atualizados
 
 ---
 
@@ -261,11 +262,26 @@ O código está correto - `signOut({ callbackUrl: "/" })` usa URL relativa que o
 
 ---
 
-### 22. 💡 Dark Mode
-**Arquivo:** Tema + configuração  
+### 22. ✅ Dark Mode (IMPLEMENTADO)
+**Arquivo:** Tema + componentes  
 **Problema:** Implementar suporte a dark mode
 
-**Status:** 🟡 BAIXA PRIORIDADE
+**Status:** ✅ IMPLEMENTADO em 23/01/2026  
+**Solução Aplicada:**
+- Instalado `next-themes` para gerenciamento de tema
+- Criado `ThemeProvider.tsx` com suporte a system/light/dark
+- Criado `ThemeToggle.tsx` com botão de alternância
+- Atualizado `globals.css` com variáveis CSS para dark mode
+- Atualizado `Header.tsx` com toggle de tema
+- Atualizado layouts principais (`default`, `protected`, `auth`)
+- Componentes atualizados com classes dark:*:
+  - ProductCard, ProductGrid, ProductImageGallery
+  - PriceDisplay, CompactPriceDisplay, SubscriptionDiscountBadge
+  - CartDrawer, CartItem, CartSummary
+  - Modal, AuthModal
+  - SearchBar, CategoryChips
+  - OrderCard, OrdersList
+  - Páginas de produtos, checkout e detalhes
 
 ---
 

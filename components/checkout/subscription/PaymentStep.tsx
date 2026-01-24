@@ -203,8 +203,8 @@ export function PaymentStep({
   }, [canSubmitPix, onSubmit]);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+    <div className="bg-surface rounded-xl shadow-sm p-6">
+      <h2 className="text-lg font-semibold text-default mb-4 flex items-center gap-2">
         <CreditCard className="w-5 h-5 text-primary-green" />
         Método de pagamento
       </h2>
@@ -249,8 +249,8 @@ export function PaymentStep({
         - Mesmo nível de segurança (PCI compliance via MP)
       */}
       {isCardMethod && (
-        <div className="mt-6 border-t border-gray-200 pt-6">
-          <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
+        <div className="mt-6 border-t border-default pt-6">
+          <div className="flex items-center gap-2 mb-4 text-sm text-muted">
             <ShieldCheck className="w-4 h-4 text-primary-green" />
             <span>Preencha os dados do cartão de forma segura</span>
           </div>
@@ -273,7 +273,7 @@ export function PaymentStep({
         <button
           onClick={onBack}
           disabled={isProcessing || cardSubmitted}
-          className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 py-3 border-default text-muted rounded-lg font-medium hover-bg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Voltar
         </button>
@@ -304,7 +304,7 @@ export function PaymentStep({
 
         {/* Indicador de processamento para cartão */}
         {isCardMethod && (isProcessing || cardSubmitted) && (
-          <div className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-lg font-medium flex items-center justify-center gap-2">
+          <div className="flex-1 py-3 bg-page text-muted rounded-lg font-medium flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin" />
             Processando pagamento...
           </div>
@@ -334,8 +334,8 @@ function PaymentOptionCard({ option, isSelected, onSelect, disabled, isSubscript
     <label
       className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-colors ${disabled ? "opacity-50 cursor-not-allowed" : ""
         } ${isSelected
-          ? "border-primary-green bg-green-50"
-          : "border-gray-200 hover:border-gray-300"
+          ? "border-primary-green bg-primary-green/10"
+          : "border-default hover:border-gray-400 dark:hover:border-gray-500"
         }`}
     >
       <input
@@ -348,8 +348,8 @@ function PaymentOptionCard({ option, isSelected, onSelect, disabled, isSubscript
         className="text-primary-green focus:ring-primary-green"
       />
       <div className="flex-1">
-        <span className="font-medium text-gray-900">{option.title}</span>
-        <p className="text-sm text-gray-500">{description}</p>
+        <span className="font-medium text-default">{option.title}</span>
+        <p className="text-sm text-muted">{description}</p>
       </div>
       {badge && (
         <div className="bg-green-100 text-primary-green text-xs px-2 py-1 rounded-full font-medium">

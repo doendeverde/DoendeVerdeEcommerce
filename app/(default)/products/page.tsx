@@ -84,14 +84,14 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+          <h1 className="text-2xl font-bold text-default sm:text-3xl">
             Nossos Produtos
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-muted">
             Encontre os melhores acessórios para você
           </p>
         </div>

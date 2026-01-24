@@ -36,12 +36,19 @@ export function ProductCard({ product }: ProductCardProps) {
   // Use client-side discount calculation
   const subscriptionDiscount = useProductDiscount(product.basePrice);
 
-  // Merge: prefer product data (from SSR) over client-side calculation
+  // Merge: prefer client-side (realtime) over SSR data for discount
+  // Client-side is more accurate as it reflects current subscription status
   const discountInfo = {
-    finalPrice: product.finalPrice ?? subscriptionDiscount.finalPrice,
-    discountPercent: product.subscriptionDiscountPercent ?? subscriptionDiscount.discountPercent,
-    hasSubscriptionDiscount: product.hasSubscriptionDiscount ?? subscriptionDiscount.hasSubscriptionDiscount,
-    discountLabel: product.subscriptionDiscountLabel ?? subscriptionDiscount.discountLabel,
+    finalPrice: subscriptionDiscount.hasSubscriptionDiscount
+      ? subscriptionDiscount.finalPrice
+      : (product.finalPrice ?? product.basePrice),
+    discountPercent: subscriptionDiscount.hasSubscriptionDiscount
+      ? subscriptionDiscount.discountPercent
+      : (product.subscriptionDiscountPercent ?? 0),
+    hasSubscriptionDiscount: subscriptionDiscount.hasSubscriptionDiscount || (product.hasSubscriptionDiscount ?? false),
+    discountLabel: subscriptionDiscount.hasSubscriptionDiscount
+      ? subscriptionDiscount.discountLabel
+      : (product.subscriptionDiscountLabel ?? null),
   };
 
   const isAddingToCart = pendingOperations.has(`add-${product.id}`);
@@ -70,10 +77,10 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-xl bg-white border border-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
+      className="group relative flex flex-col overflow-hidden rounded-xl bg-surface border border-default transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
     >
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-gray-100">
+      <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
         <Image
           src={getSafeImageUrl(product.primaryImage?.url)}
           alt={product.primaryImage?.altText || product.name}
@@ -87,7 +94,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="absolute left-2 top-2 sm:left-3 sm:top-3 flex flex-col gap-1.5 sm:gap-2">
           {/* Category Badge - hidden on mobile for cleaner look */}
           {product.category && (
-            <span className="hidden sm:inline-flex items-center rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-medium text-gray-700 shadow-sm">
+            <span className="hidden sm:inline-flex items-center rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 shadow-sm">
               {product.category.name}
             </span>
           )}
@@ -120,7 +127,7 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Content */}
       <div className="flex flex-1 flex-col p-3 sm:p-4">
         {/* Product Name */}
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 line-clamp-2 group-hover:text-primary-green transition-colors">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-primary-green transition-colors">
           {product.name}
         </h3>
 
@@ -137,7 +144,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart || product.isOutOfStock}
-            className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary-green text-white transition-all hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex-shrink-0"
+            className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary-green text-white transition-all hover:bg-green-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed flex-shrink-0"
             aria-label="Adicionar ao carrinho"
           >
             {isAddingToCart ? (

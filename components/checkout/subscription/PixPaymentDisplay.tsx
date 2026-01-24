@@ -148,17 +148,17 @@ export function PixPaymentDisplay({
   // Render expired state
   if (isExpired) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-surface rounded-xl shadow-sm p-6">
         <div className="flex flex-col items-center text-center space-y-4">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
             <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
 
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-default">
             PIX Expirado
           </h3>
 
-          <p className="text-gray-600">
+          <p className="text-muted">
             O tempo para pagamento expirou. Gere um novo código PIX para continuar.
           </p>
 
@@ -177,22 +177,22 @@ export function PixPaymentDisplay({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
+    <div className="bg-surface rounded-xl shadow-sm p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <QrCode className="w-5 h-5 text-primary-green" />
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-default">
             Pagamento PIX
           </h3>
         </div>
 
         {/* Countdown Timer */}
         <div className="flex items-center gap-2 text-sm">
-          <Clock className="w-4 h-4 text-gray-500" />
+          <Clock className="w-4 h-4 text-muted" />
           <span className={`font-mono font-medium ${parseInt(formattedTime.split(":")[0]) < 5
               ? "text-red-500"
-              : "text-gray-700"
+              : "text-default"
             }`}>
             {formattedTime}
           </span>
@@ -201,13 +201,13 @@ export function PixPaymentDisplay({
 
       {/* Amount */}
       <div className="text-center mb-6">
-        <p className="text-sm text-gray-500 mb-1">Valor a pagar</p>
-        <p className="text-2xl font-bold text-gray-900">{formattedAmount}</p>
+        <p className="text-sm text-muted mb-1">Valor a pagar</p>
+        <p className="text-2xl font-bold text-default">{formattedAmount}</p>
       </div>
 
       {/* QR Code */}
       <div className="flex justify-center mb-6">
-        <div className="p-4 bg-white border-2 border-gray-200 rounded-lg">
+        <div className="p-4 bg-white dark:bg-gray-100 border-2 border-default rounded-lg">
           {pixData.qrCodeBase64 ? (
             <img
               src={`data:image/png;base64,${pixData.qrCodeBase64}`}
@@ -224,7 +224,7 @@ export function PixPaymentDisplay({
 
       {/* Instructions */}
       <div className="text-center mb-6">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted">
           Escaneie o QR Code acima com o app do seu banco
           <br />
           ou copie o código abaixo
@@ -233,7 +233,7 @@ export function PixPaymentDisplay({
 
       {/* PIX Code + Copy Button */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-muted mb-2">
           Pix Copia e Cola
         </label>
         <div className="flex gap-2">
@@ -241,7 +241,7 @@ export function PixPaymentDisplay({
             type="text"
             value={pixData.qrCode}
             readOnly
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-600 truncate"
+            className="flex-1 px-3 py-2 border-default rounded-lg bg-page text-sm text-muted truncate"
           />
           <button
             onClick={handleCopy}
@@ -267,7 +267,7 @@ export function PixPaymentDisplay({
 
       {/* Polling Status */}
       {isPolling && (
-        <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mb-4">
+        <div className="flex items-center justify-center gap-2 text-sm text-muted mb-4">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           Aguardando confirmação do pagamento...
         </div>
@@ -289,8 +289,8 @@ export function PixPaymentDisplay({
       )}
 
       {/* Security Notice */}
-      <div className="mt-6 pt-4 border-t border-gray-200">
-        <p className="text-xs text-gray-500 text-center">
+      <div className="mt-6 pt-4 border-t border-default">
+        <p className="text-xs text-muted text-center">
           🔒 Pagamento processado com segurança pelo Mercado Pago
         </p>
       </div>

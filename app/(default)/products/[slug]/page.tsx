@@ -53,15 +53,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const relatedProducts = product.relatedProducts;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="mb-8 flex items-center gap-2 text-sm">
-          <Link href="/" className="text-gray-500 hover:text-gray-700 transition-colors">
+          <Link href="/" className="text-muted hover:text-default transition-colors">
             Home
           </Link>
           <ChevronRight className="h-4 w-4 text-gray-400" />
-          <Link href="/products" className="text-gray-500 hover:text-gray-700 transition-colors">
+          <Link href="/products" className="text-muted hover:text-default transition-colors">
             Produtos
           </Link>
           {product.category && (
@@ -69,14 +69,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <ChevronRight className="h-4 w-4 text-gray-400" />
               <Link
                 href={`/products?category=${product.category.slug}`}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
+                className="text-muted hover:text-default transition-colors"
               >
                 {product.category.name}
               </Link>
             </>
           )}
           <ChevronRight className="h-4 w-4 text-gray-400" />
-          <span className="text-gray-900 font-medium truncate">{product.name}</span>
+          <span className="text-default font-medium truncate">{product.name}</span>
         </nav>
 
         {/* Product Grid */}
@@ -91,7 +91,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <div className="mb-3">
                 <Link
                   href={`/products?category=${product.category.slug}`}
-                  className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                  className="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-800 px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
                   {product.category.name}
                 </Link>
@@ -99,7 +99,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             )}
 
             {/* Name */}
-            <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">
               {product.name}
             </h1>
 
@@ -148,18 +148,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             {/* Benefits */}
             <div className="mt-8 grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4">
+              <div className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
                 <Truck className="h-6 w-6 text-primary-green" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Frete Grátis</p>
-                  <p className="text-xs text-gray-500">Acima de R$ 150</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Frete Grátis</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Acima de R$ 150</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4">
+              <div className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
                 <Shield className="h-6 w-6 text-primary-green" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Compra Segura</p>
-                  <p className="text-xs text-gray-500">Garantia de 7 dias</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Compra Segura</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Garantia de 7 dias</p>
                 </div>
               </div>
             </div>
@@ -169,10 +169,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Full Description */}
         {product.description && (
           <div className="mt-12">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Descrição</h2>
-            <div className="rounded-xl bg-white border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-default mb-4">Descrição</h2>
+            <div className="rounded-xl bg-surface border border-default p-6">
               <div
-                className="prose prose-gray max-w-none"
+                className="prose prose-gray dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: product.description }}
               />
             </div>
@@ -182,7 +182,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="mt-16">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            <h2 className="text-xl font-semibold text-default mb-6">
               Produtos Relacionados
             </h2>
             <ProductGrid products={relatedProducts} />

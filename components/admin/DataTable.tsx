@@ -41,15 +41,15 @@ export function DataTable<T>({
   // Loading skeleton
   if (isLoading) {
     return (
-      <div className={cn("bg-white rounded-xl border border-gray-border", className)}>
+      <div className={cn("bg-surface rounded-xl border-default", className)}>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-bg">
+              <tr className="bg-page">
                 {columns.map((col) => (
                   <th
                     key={String(col.key)}
-                    className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider"
+                    className="px-4 py-3 text-left text-xs font-semibold text-muted uppercase tracking-wider"
                     style={{ width: col.width }}
                   >
                     {col.header}
@@ -62,7 +62,7 @@ export function DataTable<T>({
                 <tr key={i}>
                   {columns.map((col) => (
                     <td key={String(col.key)} className="px-4 py-4">
-                      <div className="h-4 bg-gray-bg rounded animate-pulse" />
+                      <div className="h-4 skeleton rounded" />
                     </td>
                   ))}
                 </tr>
@@ -77,8 +77,8 @@ export function DataTable<T>({
   // Empty state
   if (data.length === 0) {
     return (
-      <div className={cn("bg-white rounded-xl border border-gray-border p-8 text-center", className)}>
-        <p className="text-text-secondary">{emptyMessage}</p>
+      <div className={cn("bg-surface rounded-xl border-default p-8 text-center", className)}>
+        <p className="text-muted">{emptyMessage}</p>
       </div>
     );
   }
@@ -100,15 +100,15 @@ export function DataTable<T>({
   };
 
   return (
-    <div className={cn("bg-white rounded-xl border border-gray-border", className)}>
+    <div className={cn("bg-surface rounded-xl border-default", className)}>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-bg">
+            <tr className="bg-page">
               {columns.map((col) => (
                 <th
                   key={String(col.key)}
-                  className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider"
+                  className="px-4 py-3 text-left text-xs font-semibold text-muted uppercase tracking-wider"
                   style={{ width: col.width }}
                 >
                   {col.header}
@@ -122,14 +122,14 @@ export function DataTable<T>({
                 key={keyExtractor(item)}
                 onClick={() => onRowClick?.(item)}
                 className={cn(
-                  "hover:bg-gray-bg/50 transition-colors",
+                  "hover-bg transition-colors",
                   onRowClick && "cursor-pointer"
                 )}
               >
                 {columns.map((col) => (
                   <td
                     key={String(col.key)}
-                    className="px-4 py-4 text-sm text-text-primary"
+                    className="px-4 py-4 text-sm text-default"
                   >
                     {col.render
                       ? col.render(item)
@@ -145,7 +145,7 @@ export function DataTable<T>({
       {/* Pagination */}
       {pagination && totalPages > 1 && (
         <div className="flex items-center justify-between px-4 py-3 border-t border-gray-border">
-          <span className="text-sm text-text-secondary">
+          <span className="text-sm text-muted">
             Mostrando {((pagination.page - 1) * pagination.pageSize) + 1} a{" "}
             {Math.min(pagination.page * pagination.pageSize, pagination.total)} de{" "}
             {pagination.total} resultados
@@ -154,17 +154,17 @@ export function DataTable<T>({
             <button
               onClick={() => pagination.onPageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="p-1.5 rounded-lg hover:bg-gray-bg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg hover-bg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="text-sm text-text-primary">
+            <span className="text-sm text-default">
               Página {pagination.page} de {totalPages}
             </span>
             <button
               onClick={() => pagination.onPageChange(pagination.page + 1)}
               disabled={pagination.page >= totalPages}
-              className="p-1.5 rounded-lg hover:bg-gray-bg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg hover-bg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

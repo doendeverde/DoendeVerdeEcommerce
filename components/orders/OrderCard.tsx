@@ -203,7 +203,7 @@ export function OrderCard({ order }: OrderCardProps) {
   const hasMultipleProducts = order.items.length > 1;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:shadow-md">
+    <div className="bg-surface rounded-xl shadow-sm border border-default overflow-hidden transition-all duration-200 hover:shadow-md">
       {/* Compact View - Always visible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
@@ -212,7 +212,7 @@ export function OrderCard({ order }: OrderCardProps) {
         <div className="p-4 sm:p-5">
           <div className="flex items-center gap-4">
             {/* Product Image */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
               {firstProduct?.product.images?.[0]?.url ? (
                 <img
                   src={firstProduct.product.images[0].url}
@@ -227,17 +227,17 @@ export function OrderCard({ order }: OrderCardProps) {
             {/* Order Info */}
             <div className="flex-1 min-w-0">
               {/* Product Name(s) */}
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
                 {firstProduct?.product.name || "Pedido"}
                 {hasMultipleProducts && (
-                  <span className="text-gray-500 font-normal text-sm ml-2">
+                  <span className="text-gray-500 dark:text-gray-400 font-normal text-sm ml-2">
                     +{order.items.length - 1} {order.items.length === 2 ? "item" : "itens"}
                   </span>
                 )}
               </h3>
 
               {/* Quantity and Date */}
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500 dark:text-gray-400">
                 <span className="flex items-center gap-1">
                   <Package className="w-4 h-4" />
                   {totalItems} {totalItems === 1 ? "item" : "itens"}

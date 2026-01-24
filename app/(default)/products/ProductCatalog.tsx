@@ -328,7 +328,7 @@ export function ProductCatalog({
 
       {/* Results Count */}
       {!isLoading && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           {pagination.total === 0
             ? 'Nenhum produto encontrado'
             : `${pagination.total} produto${pagination.total > 1 ? 's' : ''} encontrado${pagination.total > 1 ? 's' : ''}`}
@@ -344,7 +344,7 @@ export function ProductCatalog({
           <button
             onClick={() => handlePageChange(page - 1)}
             disabled={!pagination.hasPrev}
-            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Anterior
           </button>
@@ -372,7 +372,7 @@ export function ProductCatalog({
                     onClick={() => handlePageChange(p)}
                     className={`h-10 min-w-[2.5rem] rounded-lg text-sm font-medium transition-colors ${p === page
                       ? 'bg-primary-green text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }`}
                   >
                     {p}
@@ -384,7 +384,7 @@ export function ProductCatalog({
           <button
             onClick={() => handlePageChange(page + 1)}
             disabled={!pagination.hasNext}
-            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Próximo
           </button>

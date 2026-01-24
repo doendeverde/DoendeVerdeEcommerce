@@ -108,7 +108,7 @@ export function Modal({
         ref={modalRef}
         tabIndex={-1}
         className={cn(
-          "relative w-full max-w-md bg-white rounded-xl shadow-2xl",
+          "relative w-full max-w-md bg-surface rounded-xl shadow-2xl",
           "max-h-[90vh] overflow-y-auto",
           "focus:outline-none",
           className
@@ -117,9 +117,9 @@ export function Modal({
       >
         {/* Header com botão fechar */}
         {(title || !preventClose) && (
-          <div className="sticky top-0 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-border rounded-t-xl">
+          <div className="sticky top-0 flex items-center justify-between px-6 py-4 bg-surface border-b border-default rounded-t-xl">
             {title && (
-              <h2 id="modal-title" className="text-xl font-semibold text-gray-900">
+              <h2 id="modal-title" className="text-xl font-semibold text-default">
                 {title}
               </h2>
             )}
@@ -128,7 +128,7 @@ export function Modal({
             {!preventClose && (
               <button
                 onClick={onClose}
-                className="p-1 text-gray-400 hover:text-gray-600 transition-colors rounded-md hover:bg-gray-100"
+                className="p-1 text-muted hover:text-default transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
                 aria-label="Fechar modal"
               >
                 <X size={20} />
@@ -142,10 +142,10 @@ export function Modal({
 
         {/* Overlay de loading quando preventClose está ativo */}
         {preventClose && (
-          <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center rounded-xl">
+          <div className="absolute inset-0 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm flex items-center justify-center rounded-xl">
             <div className="flex flex-col items-center gap-3">
               <div className="w-10 h-10 border-4 border-primary-green border-t-transparent rounded-full animate-spin" />
-              <p className="text-sm text-gray-600 font-medium">
+              <p className="text-sm text-muted font-medium">
                 Processando...
               </p>
             </div>

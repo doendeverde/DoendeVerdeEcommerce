@@ -27,7 +27,7 @@ export function ProductGrid({ products, isLoading }: ProductGridProps) {
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="mb-4 rounded-full bg-gray-100 p-4">
+        <div className="mb-4 rounded-full bg-gray-100 dark:bg-gray-800 p-4">
           <svg
             className="h-12 w-12 text-gray-400"
             fill="none"
@@ -42,10 +42,10 @@ export function ProductGrid({ products, isLoading }: ProductGridProps) {
             />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           Nenhum produto encontrado
         </h3>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Tente ajustar os filtros ou buscar por outro termo.
         </p>
       </div>
@@ -63,23 +63,23 @@ export function ProductGrid({ products, isLoading }: ProductGridProps) {
 
 function ProductCardSkeleton() {
   return (
-    <div className="animate-pulse overflow-hidden rounded-xl bg-white border border-gray-200">
+    <div className="animate-pulse overflow-hidden rounded-xl bg-surface border border-default">
       {/* Image */}
-      <div className="aspect-square bg-gray-200" />
+      <div className="aspect-square bg-gray-200 dark:bg-gray-800" />
 
       {/* Content */}
       <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
         {/* Name */}
-        <div className="h-4 sm:h-5 w-3/4 rounded bg-gray-200" />
-        <div className="h-4 sm:h-5 w-1/2 rounded bg-gray-200" />
+        <div className="h-4 sm:h-5 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
+        <div className="h-4 sm:h-5 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
 
         {/* Price */}
         <div className="flex items-end justify-between pt-1 sm:pt-2">
           <div className="space-y-1">
-            <div className="h-3 sm:h-4 w-12 sm:w-16 rounded bg-gray-200" />
-            <div className="h-5 sm:h-6 w-16 sm:w-24 rounded bg-gray-200" />
+            <div className="h-3 sm:h-4 w-12 sm:w-16 rounded bg-gray-200 dark:bg-gray-700" />
+            <div className="h-5 sm:h-6 w-16 sm:w-24 rounded bg-gray-200 dark:bg-gray-700" />
           </div>
-          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-200" />
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-200 dark:bg-gray-700" />
         </div>
       </div>
     </div>

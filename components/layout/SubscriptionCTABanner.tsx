@@ -109,7 +109,7 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
 
       {/* Content */}
       <div className="relative z-10 p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row items-centerjustify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Left: Plan info */}
           <div className="flex-1">
             {/* Badge */}

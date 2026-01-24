@@ -40,13 +40,13 @@ export function CartItem({ item }: CartItemProps) {
   return (
     <div
       className={`flex gap-4 rounded-lg border p-3 transition-all ${isPending ? 'opacity-60' : ''
-        } ${item.isOutOfStock ? 'border-red-200 bg-red-50' : 'border-gray-200 bg-white'}`}
+        } ${item.isOutOfStock ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/30' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'}`}
     >
       {/* Image */}
       <Link
         href={`/products/${item.product.slug}`}
         onClick={closeDrawer}
-        className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
+        className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700"
       >
         <Image
           src={getSafeImageUrl(item.product.image?.url)}
@@ -64,21 +64,21 @@ export function CartItem({ item }: CartItemProps) {
         <Link
           href={`/products/${item.product.slug}`}
           onClick={closeDrawer}
-          className="text-sm font-medium text-gray-900 line-clamp-2 hover:text-primary-green transition-colors"
+          className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2 hover:text-primary-green transition-colors"
         >
           {item.product.name}
         </Link>
 
         {/* Warnings */}
         {item.isOutOfStock && (
-          <div className="mt-1 flex items-center gap-1 text-xs text-red-600">
+          <div className="mt-1 flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
             <AlertCircle className="h-3 w-3" />
             <span>Produto indisponível</span>
           </div>
         )}
 
         {item.priceChanged && !item.isOutOfStock && (
-          <div className="mt-1 flex items-center gap-1 text-xs text-amber-600">
+          <div className="mt-1 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
             <AlertCircle className="h-3 w-3" />
             <span>Preço atualizado para R$ {item.currentPrice.toFixed(2)}</span>
           </div>
@@ -87,7 +87,7 @@ export function CartItem({ item }: CartItemProps) {
         {/* Price and Quantity */}
         <div className="mt-auto flex items-end justify-between">
           {/* Price */}
-          <div className="text-sm font-semibold text-gray-900">
+          <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
             R$ {item.totalPrice.toFixed(2)}
           </div>
 
@@ -96,20 +96,20 @@ export function CartItem({ item }: CartItemProps) {
             <button
               onClick={handleDecrease}
               disabled={isPending || item.quantity <= 1}
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition-colors hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Diminuir quantidade"
             >
               <Minus className="h-3.5 w-3.5" />
             </button>
 
-            <span className="min-w-[2rem] text-center text-sm font-medium text-gray-900">
+            <span className="min-w-[2rem] text-center text-sm font-medium text-gray-900 dark:text-gray-100">
               {item.quantity}
             </span>
 
             <button
               onClick={handleIncrease}
               disabled={isPending || item.quantity >= item.maxQuantity}
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition-colors hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Aumentar quantidade"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -118,7 +118,7 @@ export function CartItem({ item }: CartItemProps) {
             <button
               onClick={handleRemove}
               disabled={isPending}
-              className="ml-2 flex h-7 w-7 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+              className="ml-2 flex h-7 w-7 items-center justify-center rounded-full text-gray-400 dark:text-gray-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 disabled:opacity-50"
               aria-label="Remover item"
             >
               <Trash2 className="h-4 w-4" />

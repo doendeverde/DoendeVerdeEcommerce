@@ -69,10 +69,10 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       {/* Mobile toggle button */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="fixed top-4 left-4 z-40 lg:hidden p-2 bg-white rounded-lg shadow-md border border-gray-border"
+        className="fixed top-4 left-4 z-40 lg:hidden p-2 bg-surface rounded-lg shadow-md border border-default"
         aria-label="Abrir menu"
       >
-        <Menu className="w-5 h-5 text-text-primary" />
+        <Menu className="w-5 h-5 text-default" />
       </button>
 
       {/* Mobile overlay */}
@@ -86,33 +86,33 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-border",
+          "fixed top-0 left-0 z-50 h-full w-64 bg-surface border-r border-default",
           "transform transition-transform duration-300 ease-in-out",
           "lg:translate-x-0",
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-border">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-default">
           <Link href="/admin" className="flex items-center gap-2">
             <div className="flex items-center justify-center w-9 h-9 bg-primary-green rounded-lg">
               <Leaf className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-text-primary">
+              <span className="text-sm font-semibold text-default">
                 Doende
               </span>
-              <span className="text-xs text-text-secondary">Admin</span>
+              <span className="text-xs text-muted">Admin</span>
             </div>
           </Link>
 
           {/* Close button (mobile) */}
           <button
             onClick={() => setIsMobileOpen(false)}
-            className="lg:hidden p-1.5 rounded-lg hover:bg-gray-bg transition-colors"
+            className="lg:hidden p-1.5 rounded-lg hover-bg transition-colors"
             aria-label="Fechar menu"
           >
-            <X className="w-5 h-5 text-text-secondary" />
+            <X className="w-5 h-5 text-muted" />
           </button>
         </div>
 
@@ -132,7 +132,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                   "text-sm font-medium",
                   active
                     ? "bg-primary-purple/10 text-primary-purple"
-                    : "text-text-secondary hover:bg-gray-bg hover:text-text-primary"
+                    : "text-muted hover-bg hover:text-default"
                 )}
               >
                 <Icon className={cn("w-5 h-5", active && "text-primary-purple")} />
@@ -148,10 +148,10 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         </nav>
 
         {/* Back to store link */}
-        <div className="p-4 border-t border-gray-border">
+        <div className="p-4 border-t border-default">
           <Link
             href="/"
-            className="flex items-center gap-2 px-3 py-2 text-sm text-text-secondary hover:text-text-primary transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-muted hover:text-default transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Voltar à loja</span>

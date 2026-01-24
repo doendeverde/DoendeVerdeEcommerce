@@ -42,16 +42,16 @@ export function AdminPageHeader({
         {back && (
           <Link
             href={back.href}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover-bg rounded-lg transition-colors"
             title={back.label || "Voltar"}
           >
-            <ArrowLeft className="w-5 h-5 text-text-secondary" />
+            <ArrowLeft className="w-5 h-5 text-muted" />
           </Link>
         )}
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">{title}</h1>
+          <h1 className="text-2xl font-bold text-default">{title}</h1>
           {description && (
-            <p className="mt-1 text-sm text-text-secondary">{description}</p>
+            <p className="mt-1 text-sm text-muted">{description}</p>
           )}
         </div>
       </div>

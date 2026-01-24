@@ -177,13 +177,13 @@ export function PreferencesStep({
   }, [form, hasMinimumPreferences, onContinue]);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+    <div className="bg-surface rounded-xl shadow-sm p-6">
+      <h2 className="text-lg font-semibold text-default mb-4 flex items-center gap-2">
         <Settings className="w-5 h-5 text-primary-green" />
         {hasExistingPreferences ? "Revisar suas Preferências" : "Definir Preferências"}
       </h2>
 
-      <p className="text-gray-600 mb-6">
+      <p className="text-muted mb-6">
         {hasExistingPreferences
           ? "Confira se suas preferências estão atualizadas. Você pode editá-las antes de continuar."
           : "Para personalizar sua experiência e kit, precisamos conhecer suas preferências."}
@@ -227,8 +227,8 @@ export function PreferencesStep({
 
       {/* Validation Message */}
       {!hasMinimumPreferences && (
-        <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-          <p className="text-sm text-yellow-800">
+        <div className="mt-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+          <p className="text-sm text-yellow-800 dark:text-yellow-200">
             Selecione pelo menos sua frequência de consumo para continuar.
           </p>
         </div>
@@ -273,11 +273,11 @@ function ConsumptionSection({
 }: SectionProps & { onMomentToggle: (moment: ConsumptionMoment, checked: boolean) => void }) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-gray-800 border-b pb-2">Sobre seu consumo</h3>
+      <h3 className="font-medium text-default border-b border-default pb-2">Sobre seu consumo</h3>
 
       {/* Consumption Frequency */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-muted mb-2">
           Frequência de consumo *
         </label>
         <select
@@ -285,7 +285,7 @@ function ConsumptionSection({
           onChange={(e) =>
             onChange("consumptionFrequency", (e.target.value as ConsumptionFrequency) || null)
           }
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+          className="input-default"
         >
           <option value="">Selecione...</option>
           <option value="OCCASIONAL">Ocasional</option>
@@ -297,7 +297,7 @@ function ConsumptionSection({
 
       {/* Consumption Moments */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-muted mb-2">
           Quando você costuma consumir?
         </label>
         <div className="grid grid-cols-2 gap-2">
@@ -305,8 +305,8 @@ function ConsumptionSection({
             <label
               key={moment.value}
               className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form.consumptionMoment.includes(moment.value)
-                ? "border-primary-green bg-green-50"
-                : "border-gray-200 hover:border-gray-300"
+                ? "border-primary-green bg-primary-green/10"
+                : "border-default hover:border-gray-400 dark:hover:border-gray-500"
                 }`}
             >
               <input
@@ -315,7 +315,7 @@ function ConsumptionSection({
                 onChange={(e) => onMomentToggle(moment.value, e.target.checked)}
                 className="text-primary-green focus:ring-primary-green rounded"
               />
-              <span className="text-sm text-gray-700">{moment.label}</span>
+              <span className="text-sm text-muted">{moment.label}</span>
             </label>
           ))}
         </div>
@@ -323,7 +323,7 @@ function ConsumptionSection({
 
       {/* Years Smoking */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-muted mb-2">
           Há quantos anos você fuma?
         </label>
         <input
@@ -336,9 +336,9 @@ function ConsumptionSection({
             onChange("yearsSmoking", value);
           }}
           placeholder="Ex: 5"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent ${form.yearsSmoking !== null && form.yearsSmoking > 100
-              ? "border-red-500 bg-red-50"
-              : "border-gray-300"
+          className={`input-default ${form.yearsSmoking !== null && form.yearsSmoking > 100
+              ? "!border-red-500 !bg-red-50 dark:!bg-red-900/20"
+              : ""
             }`}
         />
         {form.yearsSmoking !== null && form.yearsSmoking > 100 ? (
@@ -346,7 +346,7 @@ function ConsumptionSection({
             🤣 Você nem tem 100 anos, como assim você fuma a mais de 100 anos??? Tá chapando kkkk
           </p>
         ) : (
-          <p className="text-xs text-gray-500 mt-1">Máximo 100 anos</p>
+          <p className="text-xs text-muted mt-1">Máximo 100 anos</p>
         )}
       </div>
     </div>
@@ -356,14 +356,14 @@ function ConsumptionSection({
 function WhatYouConsumeSection({ form, onChange }: SectionProps) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-gray-800 border-b pb-2">O que você consome?</h3>
+      <h3 className="font-medium text-default border-b border-default pb-2">O que você consome?</h3>
       <div className="grid grid-cols-2 gap-2">
         {CONSUMPTION_TYPES.map((item) => (
           <label
             key={item.field}
             className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form[item.field]
-              ? "border-primary-green bg-green-50"
-              : "border-gray-200 hover:border-gray-300"
+              ? "border-primary-green bg-primary-green/10"
+              : "border-default hover:border-gray-400 dark:hover:border-gray-500"
               }`}
           >
             <input
@@ -372,7 +372,7 @@ function WhatYouConsumeSection({ form, onChange }: SectionProps) {
               onChange={(e) => onChange(item.field, e.target.checked)}
               className="text-primary-green focus:ring-primary-green rounded"
             />
-            <span className="text-sm text-gray-700">{item.label}</span>
+            <span className="text-sm text-muted">{item.label}</span>
           </label>
         ))}
       </div>
@@ -383,11 +383,11 @@ function WhatYouConsumeSection({ form, onChange }: SectionProps) {
 function PaperPreferencesSection({ form, onChange }: SectionProps) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-gray-800 border-b pb-2">Preferências de seda</h3>
+      <h3 className="font-medium text-default border-b border-default pb-2">Preferências de seda</h3>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-muted mb-2">
             Tipo de seda preferido
           </label>
           <select
@@ -395,7 +395,7 @@ function PaperPreferencesSection({ form, onChange }: SectionProps) {
             onChange={(e) =>
               onChange("favoritePaperType", (e.target.value as PaperType) || null)
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+            className="input-default"
           >
             <option value="">Selecione...</option>
             <option value="WHITE">Branca</option>
@@ -406,7 +406,7 @@ function PaperPreferencesSection({ form, onChange }: SectionProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-muted mb-2">
             Tamanho preferido
           </label>
           <select
@@ -414,7 +414,7 @@ function PaperPreferencesSection({ form, onChange }: SectionProps) {
             onChange={(e) =>
               onChange("favoritePaperSize", (e.target.value as PaperSize) || null)
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+            className="input-default"
           >
             <option value="">Selecione...</option>
             <option value="MINI">Mini</option>
@@ -427,7 +427,7 @@ function PaperPreferencesSection({ form, onChange }: SectionProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-muted mb-2">
           Tamanho de filtro de papel
         </label>
         <select
@@ -435,7 +435,7 @@ function PaperPreferencesSection({ form, onChange }: SectionProps) {
           onChange={(e) =>
             onChange("paperFilterSize", (e.target.value as FilterPaperSize) || null)
           }
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+          className="input-default"
         >
           <option value="">Selecione...</option>
           <option value="SHORT">Curto</option>
@@ -452,11 +452,11 @@ function PaperPreferencesSection({ form, onChange }: SectionProps) {
 function GlassFilterSection({ form, onChange }: SectionProps) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-gray-800 border-b pb-2">Piteira de vidro</h3>
+      <h3 className="font-medium text-default border-b border-default pb-2">Piteira de vidro</h3>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-muted mb-2">
             Tamanho
           </label>
           <select
@@ -464,7 +464,7 @@ function GlassFilterSection({ form, onChange }: SectionProps) {
             onChange={(e) =>
               onChange("glassFilterSize", (e.target.value as GlassFilterSize) || null)
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+            className="input-default"
           >
             <option value="">Selecione...</option>
             <option value="SHORT">Curta (2-4cm)</option>
@@ -475,7 +475,7 @@ function GlassFilterSection({ form, onChange }: SectionProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-muted mb-2">
             Espessura
           </label>
           <select
@@ -483,7 +483,7 @@ function GlassFilterSection({ form, onChange }: SectionProps) {
             onChange={(e) =>
               onChange("glassFilterThickness", (e.target.value as GlassFilterThickness) || null)
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+            className="input-default"
           >
             <option value="">Selecione...</option>
             <option value="THIN">Fina (2-4mm)</option>
@@ -500,9 +500,9 @@ function GlassFilterSection({ form, onChange }: SectionProps) {
 function TobaccoSection({ form, onChange }: SectionProps) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-gray-800 border-b pb-2">Tabaco</h3>
+      <h3 className="font-medium text-default border-b border-default pb-2">Tabaco</h3>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-muted mb-2">
           Você usa tabaco?
         </label>
         <select
@@ -510,7 +510,7 @@ function TobaccoSection({ form, onChange }: SectionProps) {
           onChange={(e) =>
             onChange("tobaccoUsage", (e.target.value as TobaccoUsage) || null)
           }
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+          className="input-default"
         >
           <option value="">Selecione...</option>
           <option value="FULL_TIME">Sempre</option>
@@ -525,14 +525,14 @@ function TobaccoSection({ form, onChange }: SectionProps) {
 function InterestsSection({ form, onChange }: SectionProps) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-gray-800 border-b pb-2">Seus interesses</h3>
+      <h3 className="font-medium text-default border-b border-default pb-2">Seus interesses</h3>
       <div className="grid grid-cols-1 gap-2">
         {INTERESTS.map((item) => (
           <label
             key={item.field}
             className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form[item.field]
-              ? "border-primary-green bg-green-50"
-              : "border-gray-200 hover:border-gray-300"
+              ? "border-primary-green bg-primary-green/10"
+              : "border-default hover:border-gray-400 dark:hover:border-gray-500"
               }`}
           >
             <input
@@ -541,7 +541,7 @@ function InterestsSection({ form, onChange }: SectionProps) {
               onChange={(e) => onChange(item.field, e.target.checked)}
               className="text-primary-green focus:ring-primary-green rounded"
             />
-            <span className="text-sm text-gray-700">{item.label}</span>
+            <span className="text-sm text-muted">{item.label}</span>
           </label>
         ))}
       </div>
@@ -558,7 +558,7 @@ function FavoriteColorsSection({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-muted mb-2">
         Cores favoritas (para acessórios)
       </label>
       <div className="flex flex-wrap gap-2">
@@ -568,8 +568,8 @@ function FavoriteColorsSection({
             <label
               key={color}
               className={`px-3 py-1.5 rounded-full border-2 cursor-pointer transition-colors text-sm ${isSelected
-                ? "border-primary-green bg-green-50 text-primary-green"
-                : "border-gray-200 hover:border-gray-300 text-gray-700"
+                ? "border-primary-green bg-primary-green/10 text-primary-green"
+                : "border-default hover:border-gray-400 dark:hover:border-gray-500 text-muted"
                 }`}
             >
               <input
@@ -596,7 +596,7 @@ function NotesSection({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+      <label className="block text-sm font-medium text-muted mb-1">
         Observações adicionais
       </label>
       <textarea
@@ -604,7 +604,7 @@ function NotesSection({
         onChange={(e) => onChange(e.target.value || null)}
         placeholder="Algo mais que devemos saber sobre suas preferências?"
         rows={3}
-        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent resize-none"
+        className="input-default resize-none"
       />
     </div>
   );

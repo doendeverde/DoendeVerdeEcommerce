@@ -183,19 +183,19 @@ export function ShippingSelector({
 
   return (
     <div
-      className={`bg-white rounded-xl border border-gray-200 p-5 ${className}`}
+      className={`bg-surface rounded-xl border-default p-5 ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Truck className="w-5 h-5 text-primary-green" />
-          <h3 className="font-semibold text-gray-900">Opções de Entrega</h3>
+          <h3 className="font-semibold text-default">Opções de Entrega</h3>
         </div>
         {hasLoaded && !isLoading && (
           <button
             type="button"
             onClick={fetchShippingOptions}
-            className="p-1.5 text-gray-400 hover:text-primary-green hover:bg-gray-50 rounded-lg transition-colors"
+            className="p-1.5 text-muted hover:text-primary-green hover-bg rounded-lg transition-colors"
             title="Recalcular frete"
           >
             <RefreshCw className="w-4 h-4" />
@@ -205,7 +205,7 @@ export function ShippingSelector({
 
       {/* Loading State */}
       {isLoading && (
-        <div className="flex items-center justify-center py-8 text-gray-500">
+        <div className="flex items-center justify-center py-8 text-muted">
           <Loader2 className="w-6 h-6 animate-spin mr-2" />
           <span>Calculando frete...</span>
         </div>
@@ -213,7 +213,7 @@ export function ShippingSelector({
 
       {/* Error State */}
       {error && !isLoading && (
-        <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 rounded-lg p-3">
+        <div className="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm bg-red-50 dark:bg-red-900/20 rounded-lg p-3">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
           <button
@@ -237,8 +237,8 @@ export function ShippingSelector({
                 type="button"
                 onClick={() => handleSelectOption(option)}
                 className={`w-full flex items-center justify-between p-4 rounded-lg border-2 transition-all ${isSelected
-                  ? "border-primary-green bg-green-50"
-                  : "border-gray-200 hover:border-primary-green/50"
+                  ? "border-primary-green bg-primary-green/10"
+                  : "border-default hover:border-primary-green/50"
                   }`}
               >
                 <div className="flex items-center gap-3">
@@ -249,12 +249,12 @@ export function ShippingSelector({
                   )}
                   <div className="text-left">
                     <p
-                      className={`font-medium ${isSelected ? "text-primary-green" : "text-gray-900"
+                      className={`font-medium ${isSelected ? "text-primary-green" : "text-default"
                         }`}
                     >
                       {option.name}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted">
                       {option.estimatedDays === 1
                         ? "Entrega em 1 dia útil"
                         : `Entrega em até ${option.estimatedDays} dias úteis`}
@@ -266,7 +266,7 @@ export function ShippingSelector({
                     <span className="font-bold text-primary-green">Grátis</span>
                   ) : (
                     <span
-                      className={`font-bold ${isSelected ? "text-primary-green" : "text-gray-900"
+                      className={`font-bold ${isSelected ? "text-primary-green" : "text-default"
                         }`}
                     >
                       {formatPrice(option.price)}
@@ -282,7 +282,7 @@ export function ShippingSelector({
             <button
               type="button"
               onClick={() => setShowAllOptions(!showAllOptions)}
-              className="w-full flex items-center justify-center gap-2 py-3 text-sm text-gray-600 hover:text-primary-green transition-colors"
+              className="w-full flex items-center justify-center gap-2 py-3 text-sm text-muted hover:text-primary-green transition-colors"
             >
               {showAllOptions ? (
                 <>
@@ -302,7 +302,7 @@ export function ShippingSelector({
 
       {/* No Options State */}
       {!isLoading && !error && hasLoaded && options.length === 0 && (
-        <div className="text-center py-6 text-gray-500">
+        <div className="text-center py-6 text-muted">
           <Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
           <p className="text-sm">Nenhuma opção de frete disponível</p>
         </div>

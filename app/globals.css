@@ -42,6 +42,48 @@
 
   /* ─── Header ─── */
   --header-height: 64px;
+
+  /* ─── Cards & Surfaces ─── */
+  --card-bg: #ffffff;
+  --card-border: #E5E7EB;
+  
+  /* Hover states */
+  --hover-bg: #f3f4f6;
+}
+
+/* ─── Dark Mode Variables ─── */
+/* Tons de cinza com bom contraste (WCAG AA) */
+.dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+
+  --primary-green: #4ade80;
+  --primary-green-hover: #22c55e;
+  --primary-green-light: #14532d;
+
+  --primary-purple: #a78bfa;
+  --primary-purple-hover: #8b5cf6;
+  --primary-purple-dark: #7c3aed;
+
+  /* Tons de cinza - escala neutra */
+  --gray-bg: #18181b;
+  --gray-border: #27272a;
+  --gray-muted: #71717a;
+
+  /* Texto com bom contraste */
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --error: #f87171;
+  --info: #60a5fa;
+
+  --card-bg: #18181b;
+  --card-border: #27272a;
+  
+  /* Hover states */
+  --hover-bg: #27272a;
 }
 
 @theme inline {
@@ -72,15 +114,28 @@
   --color-error: var(--error);
   --color-info: var(--info);
 
+  /* Cards */
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+
   /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
 body {
-  background: var(--background);
-  color: var(--text-primary);
+  background-color: var(--background);
+  color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ─── Utility Classes ─── */
@@ -114,4 +169,69 @@ body {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* ─── Dynamic Theme Utilities ─── */
+/* These use CSS variables that change with .dark class */
+.bg-surface {
+  background-color: var(--card-bg);
+}
+
+.bg-page {
+  background-color: var(--gray-bg);
+}
+
+.border-default {
+  border-color: var(--gray-border);
+}
+
+.text-default {
+  color: var(--text-primary);
+}
+
+.text-muted {
+  color: var(--text-secondary);
+}
+
+/* Hover backgrounds */
+.hover-bg:hover {
+  background-color: var(--hover-bg);
+}
+
+/* Input styles for dark mode */
+.input-default {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--gray-border);
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-default::placeholder {
+  color: var(--gray-muted);
+}
+
+.input-default:focus {
+  border-color: var(--primary-green);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+/* Borders with width */
+.border-default {
+  border: 1px solid var(--gray-border);
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, var(--gray-border) 25%, var(--hover-bg) 50%, var(--gray-border) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

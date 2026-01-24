@@ -42,7 +42,7 @@ export function MobileMenu({ className }: MobileMenuProps) {
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="p-2 text-text-secondary hover:text-text-primary hover:bg-gray-bg rounded-lg transition-colors"
+        className="p-2 text-text-secondary hover:text-text-primary hover:bg-gray-bg dark:hover:bg-gray-800 rounded-lg transition-colors"
         aria-label="Abrir menu"
       >
         <Menu className="w-5 h-5" />
@@ -60,18 +60,18 @@ export function MobileMenu({ className }: MobileMenuProps) {
       {/* Drawer */}
       <div
         className={cn(
-          "fixed top-0 left-0 bottom-0 w-72 bg-white z-50 transform transition-transform duration-300 ease-in-out",
+          "fixed top-0 left-0 bottom-0 w-72 bg-surface z-50 transform transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-border">
+        <div className="flex items-center justify-between p-4 border-b border-default">
           <span className="text-lg font-semibold text-text-primary">
             Menu
           </span>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-2 text-text-secondary hover:text-text-primary hover:bg-gray-bg rounded-lg transition-colors"
+            className="p-2 text-text-secondary hover:text-text-primary hover:bg-gray-bg dark:hover:bg-gray-800 rounded-lg transition-colors"
             aria-label="Fechar menu"
           >
             <X className="w-5 h-5" />
@@ -91,8 +91,8 @@ export function MobileMenu({ className }: MobileMenuProps) {
                     className={cn(
                       "block px-4 py-3 text-sm font-medium rounded-lg transition-colors",
                       isActive
-                        ? "text-primary-green bg-primary-green-light"
-                        : "text-text-primary hover:bg-gray-bg"
+                        ? "text-primary-green bg-primary-green-light dark:bg-green-950"
+                        : "text-text-primary hover:bg-gray-bg dark:hover:bg-gray-800"
                     )}
                   >
                     {item.label}

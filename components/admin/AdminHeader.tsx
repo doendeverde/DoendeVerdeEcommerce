@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { Bell, Search, LogOut, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface AdminHeaderProps {
   user: {
@@ -66,14 +67,14 @@ export function AdminHeader({ user }: AdminHeaderProps) {
     .toUpperCase() || "A";
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white border-b border-gray-border">
+    <header className="sticky top-0 z-30 h-16 bg-surface border-b border-default">
       <div className="flex items-center justify-between h-full px-4 lg:px-8">
         {/* Left: Page title and breadcrumbs */}
         <div className="flex flex-col justify-center">
-          <h1 className="text-lg font-semibold text-text-primary">
+          <h1 className="text-lg font-semibold text-default">
             {pageTitle}
           </h1>
-          <nav className="hidden sm:flex items-center gap-1 text-xs text-text-secondary">
+          <nav className="hidden sm:flex items-center gap-1 text-xs text-muted">
             {breadcrumbs.map((crumb, index) => (
               <span key={crumb.href} className="flex items-center">
                 {index > 0 && <span className="mx-1">/</span>}
@@ -81,7 +82,7 @@ export function AdminHeader({ user }: AdminHeaderProps) {
                   className={cn(
                     index === breadcrumbs.length - 1
                       ? "text-primary-purple font-medium"
-                      : "hover:text-text-primary"
+                      : "hover:text-default"
                   )}
                 >
                   {crumb.label}
@@ -95,28 +96,31 @@ export function AdminHeader({ user }: AdminHeaderProps) {
         <div className="flex items-center gap-2">
           {/* Search button (placeholder) */}
           <button
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 text-sm text-text-secondary bg-gray-bg rounded-lg hover:bg-gray-border transition-colors"
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 text-sm text-muted bg-page rounded-lg hover-bg transition-colors"
             title="Buscar"
           >
             <Search className="w-4 h-4" />
             <span>Buscar...</span>
-            <kbd className="hidden lg:inline-flex items-center gap-1 px-1.5 py-0.5 text-xs bg-white rounded border border-gray-border">
+            <kbd className="hidden lg:inline-flex items-center gap-1 px-1.5 py-0.5 text-xs bg-surface rounded border border-default">
               ⌘K
             </kbd>
           </button>
 
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
           {/* Notifications */}
           <button
-            className="relative p-2 rounded-lg hover:bg-gray-bg transition-colors"
+            className="relative p-2 rounded-lg hover-bg transition-colors"
             title="Notificações"
           >
-            <Bell className="w-5 h-5 text-text-secondary" />
+            <Bell className="w-5 h-5 text-muted" />
             {/* Badge de notificações */}
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
           </button>
 
           {/* User menu */}
-          <div className="flex items-center gap-3 pl-2 ml-2 border-l border-gray-border">
+          <div className="flex items-center gap-3 pl-2 ml-2 border-l border-default">
             {/* Avatar */}
             {user.image ? (
               <img
@@ -132,10 +136,10 @@ export function AdminHeader({ user }: AdminHeaderProps) {
 
             {/* Info (hidden on mobile) */}
             <div className="hidden md:flex flex-col">
-              <span className="text-sm font-medium text-text-primary">
+              <span className="text-sm font-medium text-default">
                 {user.name}
               </span>
-              <span className="text-xs text-text-secondary">
+              <span className="text-xs text-muted">
                 Administrador
               </span>
             </div>
@@ -143,10 +147,10 @@ export function AdminHeader({ user }: AdminHeaderProps) {
             {/* Logout */}
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="p-2 rounded-lg hover:bg-gray-bg transition-colors"
+              className="p-2 rounded-lg hover-bg transition-colors"
               title="Sair"
             >
-              <LogOut className="w-4 h-4 text-text-secondary" />
+              <LogOut className="w-4 h-4 text-muted" />
             </button>
           </div>
         </div>

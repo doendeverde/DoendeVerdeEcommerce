@@ -75,7 +75,7 @@ export function PriceDisplay({
       <div className={cn('flex items-baseline gap-2', className)}>
         <span
           className={cn(
-            'font-bold text-gray-900',
+            'font-bold text-gray-900 dark:text-gray-100',
             size === 'sm' && 'text-sm',
             size === 'md' && 'text-lg',
             size === 'lg' && 'text-3xl'
@@ -94,7 +94,7 @@ export function PriceDisplay({
         {/* Preço original riscado */}
         <span
           className={cn(
-            'text-gray-400 line-through',
+            'text-gray-400 dark:text-gray-500 line-through',
             size === 'sm' && 'text-xs',
             size === 'md' && 'text-sm',
             size === 'lg' && 'text-lg'
@@ -107,7 +107,7 @@ export function PriceDisplay({
         <div className="flex items-center gap-2">
           <span
             className={cn(
-              'font-bold text-gray-900',
+              'font-bold text-gray-900 dark:text-gray-100',
               size === 'sm' && 'text-sm',
               size === 'md' && 'text-lg',
               size === 'lg' && 'text-3xl'
@@ -133,7 +133,7 @@ export function PriceDisplay({
     <div className={cn('flex items-baseline gap-2 flex-wrap', className)}>
       <span
         className={cn(
-          'font-bold text-gray-900',
+          'font-bold text-gray-900 dark:text-gray-100',
           size === 'sm' && 'text-sm',
           size === 'md' && 'text-lg',
           size === 'lg' && 'text-3xl'
@@ -144,7 +144,7 @@ export function PriceDisplay({
 
       <span
         className={cn(
-          'text-gray-400 line-through',
+          'text-gray-400 dark:text-gray-500 line-through',
           size === 'sm' && 'text-xs',
           size === 'md' && 'text-sm',
           size === 'lg' && 'text-lg'
@@ -214,7 +214,7 @@ export function CompactPriceDisplay({
 }: CompactPriceDisplayProps) {
   if (!hasDiscount || !finalPrice || discountPercent <= 0) {
     return (
-      <span className={cn('text-sm sm:text-lg font-bold text-gray-900', className)}>
+      <span className={cn('text-sm sm:text-lg font-bold text-gray-900 dark:text-gray-100', className)}>
         {formatCurrency(basePrice)}
       </span>
     );
@@ -222,10 +222,10 @@ export function CompactPriceDisplay({
 
   return (
     <div className={cn('flex flex-col', className)}>
-      <span className="text-xs sm:text-sm text-gray-400 line-through">
+      <span className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 line-through">
         {formatCurrency(basePrice)}
       </span>
-      <span className="text-sm sm:text-lg font-bold text-gray-900">
+      <span className="text-sm sm:text-lg font-bold text-gray-900 dark:text-gray-100">
         {formatCurrency(finalPrice)}
       </span>
     </div>
@@ -250,7 +250,7 @@ export function SavingsSummary({ totalDiscount, discountLabel, className }: Savi
         Você economiza {formatCurrency(totalDiscount)}
       </span>
       {discountLabel && (
-        <span className="text-xs text-gray-500">({discountLabel})</span>
+        <span className="text-xs text-gray-500 dark:text-gray-400">({discountLabel})</span>
       )}
     </div>
   );

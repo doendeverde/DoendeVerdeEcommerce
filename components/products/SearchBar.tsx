@@ -77,13 +77,13 @@ export function SearchBar({
 
   return (
     <div
-      className={`relative flex items-center rounded-full border-2 bg-white transition-all ${isFocused
+      className={`relative flex items-center rounded-full border-2 bg-surface transition-all ${isFocused
         ? 'border-primary-green shadow-sm ring-2 ring-primary-green/20'
-        : 'border-gray-200'
+        : 'border-gray-200 dark:border-gray-700'
         }`}
     >
       <Search
-        className={`ml-4 h-5 w-5 flex-shrink-0 transition-colors ${isFocused ? 'text-primary-green' : 'text-gray-400'
+        className={`ml-4 h-5 w-5 flex-shrink-0 transition-colors ${isFocused ? 'text-primary-green' : 'text-gray-400 dark:text-gray-500'
           }`}
       />
       <input
@@ -94,12 +94,12 @@ export function SearchBar({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
-        className="flex-1 bg-transparent px-3 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none"
+        className="flex-1 bg-transparent px-3 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 outline-none"
       />
       {localValue && (
         <button
           onClick={handleClear}
-          className="mr-2 flex h-7 w-7 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+          className="mr-2 flex h-7 w-7 items-center justify-center rounded-full text-gray-400 dark:text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
           aria-label="Limpar busca"
         >
           <X className="h-4 w-4" />

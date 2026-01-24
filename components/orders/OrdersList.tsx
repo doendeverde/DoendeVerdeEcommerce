@@ -146,7 +146,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
       />
 
       {/* Results count */}
-      <div className="text-sm text-gray-500">
+      <div className="text-sm text-gray-500 dark:text-gray-400">
         {filteredOrders.length === initialOrders.length ? (
           <span>Mostrando {filteredOrders.length} pedidos</span>
         ) : (
@@ -158,8 +158,8 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
 
       {/* Orders */}
       {filteredOrders.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-          <p className="text-gray-500">
+        <div className="bg-surface rounded-xl shadow-sm border border-default p-8 text-center">
+          <p className="text-muted">
             Nenhum pedido encontrado com os filtros selecionados.
           </p>
           <button
@@ -186,7 +186,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
           <button
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -198,7 +198,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
                 onClick={() => setCurrentPage(page)}
                 className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === page
                   ? "bg-primary-green text-white"
-                  : "hover:bg-gray-100 text-gray-700"
+                  : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                   }`}
               >
                 {page}
@@ -209,7 +209,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
           <button
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight className="w-5 h-5" />
           </button>

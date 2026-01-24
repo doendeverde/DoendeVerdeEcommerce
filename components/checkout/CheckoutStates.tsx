@@ -20,10 +20,10 @@ export interface ProcessingStateProps {
 
 export function ProcessingState({ message = "Processando..." }: ProcessingStateProps) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
+    <div className="bg-surface rounded-2xl shadow-sm p-8 text-center">
       <Loader2 className="w-12 h-12 text-primary-green animate-spin mx-auto mb-4" />
-      <h1 className="text-xl font-bold text-gray-900 mb-2">{message}</h1>
-      <p className="text-gray-600">
+      <h1 className="text-xl font-bold text-default mb-2">{message}</h1>
+      <p className="text-muted">
         Aguarde enquanto processamos sua solicitação.
       </p>
     </div>
@@ -70,35 +70,35 @@ export function GenericSuccessState({
   }[icon];
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
-      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+    <div className="bg-surface rounded-2xl shadow-sm p-8 text-center">
+      <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
         <IconComponent className="w-8 h-8 text-primary-green" />
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">
+      <h1 className="text-2xl font-bold text-default mb-2">
         {title}
       </h1>
 
-      <p className="text-gray-600 mb-2">{message}</p>
+      <p className="text-muted mb-2">{message}</p>
 
       {orderId && (
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-muted mb-6">
           Pedido: <span className="font-mono font-medium">{orderId.slice(0, 8).toUpperCase()}</span>
         </p>
       )}
 
       {items && items.length > 0 && (
-        <div className="bg-green-50 rounded-xl p-4 mb-6 text-left max-w-md mx-auto">
-          <h3 className="font-semibold text-gray-900 mb-2">Incluído no pedido:</h3>
+        <div className="bg-primary-green/10 rounded-xl p-4 mb-6 text-left max-w-md mx-auto">
+          <h3 className="font-semibold text-default mb-2">Incluído no pedido:</h3>
           <ul className="space-y-1">
             {items.slice(0, 5).map((item, i) => (
-              <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
+              <li key={i} className="flex items-center gap-2 text-sm text-muted">
                 <Check className="w-4 h-4 text-primary-green flex-shrink-0" />
                 {item}
               </li>
             ))}
             {items.length > 5 && (
-              <li className="text-sm text-gray-500 italic">
+              <li className="text-sm text-muted italic">
                 +{items.length - 5} mais itens
               </li>
             )}
@@ -110,7 +110,7 @@ export function GenericSuccessState({
         {secondaryAction && (
           <button
             onClick={() => router.push(secondaryAction.href)}
-            className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+            className="px-6 py-3 bg-page text-muted rounded-lg font-medium hover-bg transition-colors"
           >
             {secondaryAction.label}
           </button>
@@ -154,22 +154,22 @@ export function GenericErrorState({
   const router = useRouter();
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
-      <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+    <div className="bg-surface rounded-2xl shadow-sm p-8 text-center">
+      <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
         <AlertCircle className="w-8 h-8 text-red-500" />
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">
+      <h1 className="text-2xl font-bold text-default mb-2">
         {title}
       </h1>
 
-      <p className="text-gray-600 mb-6">{message}</p>
+      <p className="text-muted mb-6">{message}</p>
 
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         {showBackButton && (
           <button
             onClick={() => router.push(backHref)}
-            className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+            className="px-6 py-3 bg-page text-muted rounded-lg font-medium hover-bg transition-colors"
           >
             {backLabel}
           </button>
@@ -198,11 +198,11 @@ export interface InlineErrorAlertProps {
 
 export function InlineErrorAlert({ error, onDismiss }: InlineErrorAlertProps) {
   return (
-    <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 flex items-start gap-3">
       <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
       <div className="flex-1">
-        <p className="text-red-800 font-medium">Erro</p>
-        <p className="text-red-600 text-sm">{error}</p>
+        <p className="text-red-800 dark:text-red-200 font-medium">Erro</p>
+        <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
       </div>
       {onDismiss && (
         <button
