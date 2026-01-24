@@ -52,7 +52,7 @@ export default function AdminSettingsPage() {
           return (
             <div
               key={section.title}
-              className="bg-white rounded-xl border border-gray-border p-6"
+              className="bg-surface rounded-xl border border-default p-6"
             >
               <div className="flex items-start gap-4">
                 <div className="p-3 rounded-lg bg-primary-purple/10">
@@ -83,7 +83,7 @@ export default function AdminSettingsPage() {
         })}
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-700">
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 text-sm text-blue-700 dark:text-blue-300">
         <strong>Nota:</strong> As configurações serão implementadas em fases posteriores.
         Esta página serve como preview das funcionalidades planejadas.
       </div>

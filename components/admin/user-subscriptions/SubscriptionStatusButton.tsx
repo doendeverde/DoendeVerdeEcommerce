@@ -56,7 +56,7 @@ export function SubscriptionStatusButton({
         status: "ACTIVE",
         label: "Ativar",
         icon: <Play className="w-4 h-4" />,
-        className: "text-green-600 hover:bg-green-50",
+        className: "text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30",
       });
     }
 
@@ -65,7 +65,7 @@ export function SubscriptionStatusButton({
         status: "CANCELED",
         label: "Cancelar",
         icon: <XCircle className="w-4 h-4" />,
-        className: "text-red-600 hover:bg-red-50",
+        className: "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30",
       });
     }
 
@@ -93,7 +93,7 @@ export function SubscriptionStatusButton({
           />
 
           {/* Dropdown */}
-          <div className="absolute right-0 top-full mt-1 z-20 w-40 bg-white border border-gray-border rounded-lg shadow-lg overflow-hidden">
+          <div className="absolute right-0 top-full mt-1 z-20 w-40 bg-surface border border-default rounded-lg shadow-lg overflow-hidden">
             {actions.map((action) => (
               <button
                 key={action.status}

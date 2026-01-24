@@ -52,7 +52,7 @@ export function OrderSummary({
       <h3 className="font-semibold text-default mb-4">Resumo</h3>
 
       {/* Plan Info */}
-      <div className="flex items-start gap-3 pb-4 border-b border-default">
+      <div className="flex items-start gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
         <div className="w-12 h-12 bg-primary-green/10 rounded-xl flex items-center justify-center">
           <Crown className="w-6 h-6 text-primary-green" />
         </div>
@@ -62,8 +62,8 @@ export function OrderSummary({
           {plan.badge && (
             <span
               className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full ${plan.badge === "premium"
-                ? "bg-purple-100 text-primary-purple"
-                : "bg-green-100 text-primary-green"
+                ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                : "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
                 }`}
             >
               {plan.badge === "premium" ? "Premium" : "Mais popular"}
@@ -73,7 +73,7 @@ export function OrderSummary({
       </div>
 
       {/* Benefits preview */}
-      <div className="py-4 border-b border-default">
+      <div className="py-4 border-b border-gray-200 dark:border-gray-700">
         <p className="text-sm font-medium text-muted mb-2">Inclui:</p>
         <ul className="space-y-1">
           {plan.benefits.slice(0, 3).map((benefit, i) => (
@@ -143,7 +143,7 @@ export function OrderSummary({
         )}
 
         {/* Total */}
-        <div className="flex justify-between text-lg font-bold pt-2 border-t border-default">
+        <div className="flex justify-between text-lg font-bold pt-2 border-t ">
           <span>Total</span>
           <span className="text-primary-green">
             {formatPrice(total)}/mês
@@ -158,7 +158,7 @@ export function OrderSummary({
       </div>
 
       {/* Trust badges */}
-      <div className="mt-4 pt-4 border-t border-default">
+      <div className="mt-4 pt-4 border-t">
         <div className="flex items-center gap-2 text-xs text-muted">
           <Check className="w-4 h-4 text-primary-green" />
           Cancele quando quiser

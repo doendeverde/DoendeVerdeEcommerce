@@ -45,8 +45,8 @@ export default async function AdminSubscriptionPlansPage() {
       {/* Header com botão de criar */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Planos de Assinatura</h1>
-          <p className="text-neutral-400 text-sm">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Planos de Assinatura</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             {plans.length} plano(s) cadastrado(s)
           </p>
         </div>
@@ -61,9 +61,9 @@ export default async function AdminSubscriptionPlansPage() {
 
       {/* Grid de Planos */}
       {plans.length === 0 ? (
-        <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-12 text-center">
-          <CreditCard className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
-          <p className="text-neutral-400 mb-4">Nenhum plano de assinatura cadastrado</p>
+        <div className="bg-surface rounded-xl border border-default p-12 text-center">
+          <CreditCard className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
+          <p className="text-gray-500 dark:text-gray-400 mb-4">Nenhum plano de assinatura cadastrado</p>
           <Link
             href="/admin/subscriptions/new"
             className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm font-medium rounded-lg transition-colors"
@@ -77,9 +77,9 @@ export default async function AdminSubscriptionPlansPage() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`bg-neutral-900 rounded-xl border overflow-hidden transition-all ${plan.isFeatured
-                  ? "border-purple-500/50 ring-1 ring-purple-500/20"
-                  : "border-neutral-800"
+              className={`bg-surface rounded-xl border overflow-hidden transition-all ${plan.isFeatured
+                ? "border-purple-500/50 ring-1 ring-purple-500/20"
+                : "border-default"
                 }`}
             >
               {/* Imagem ou Placeholder */}
@@ -102,7 +102,7 @@ export default async function AdminSubscriptionPlansPage() {
                     </span>
                   )}
                   {!plan.isActive && (
-                    <span className="px-2 py-1 bg-neutral-800/90 text-neutral-400 text-xs font-medium rounded-full">
+                    <span className="px-2 py-1 bg-gray-200/90 dark:bg-gray-800/90 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-full">
                       Inativo
                     </span>
                   )}
@@ -112,7 +112,7 @@ export default async function AdminSubscriptionPlansPage() {
                 <div className="absolute top-3 right-3 flex gap-1">
                   <Link
                     href={`/admin/subscriptions/${plan.id}`}
-                    className="p-2 bg-neutral-900/80 hover:bg-neutral-800 text-white rounded-lg transition-colors"
+                    className="p-2 bg-white/80 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-white rounded-lg transition-colors"
                     title="Editar"
                   >
                     <Pencil className="w-4 h-4" />
@@ -129,9 +129,9 @@ export default async function AdminSubscriptionPlansPage() {
               <div className="p-4 space-y-4">
                 {/* Nome e Preço */}
                 <div>
-                  <h3 className="text-lg font-semibold text-white">{plan.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{plan.name}</h3>
                   {plan.shortDescription && (
-                    <p className="text-sm text-neutral-400 mt-1 line-clamp-2">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
                       {plan.shortDescription}
                     </p>
                   )}
@@ -139,10 +139,10 @@ export default async function AdminSubscriptionPlansPage() {
 
                 {/* Preço */}
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-white">
+                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                     {formatCurrency(plan.price)}
                   </span>
-                  <span className="text-sm text-neutral-500">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
                     / {getCycleText(plan.billingCycle).toLowerCase()}
                   </span>
                 </div>
@@ -153,14 +153,14 @@ export default async function AdminSubscriptionPlansPage() {
                     {plan.features.slice(0, 3).map((feature, index) => (
                       <li
                         key={index}
-                        className="flex items-center gap-2 text-sm text-neutral-400"
+                        className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
                       >
                         <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
                         {feature}
                       </li>
                     ))}
                     {plan.features.length > 3 && (
-                      <li className="text-xs text-neutral-500">
+                      <li className="text-xs text-gray-500 dark:text-gray-500">
                         +{plan.features.length - 3} mais benefícios
                       </li>
                     )}
@@ -168,18 +168,18 @@ export default async function AdminSubscriptionPlansPage() {
                 )}
 
                 {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-neutral-800">
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                   <Link
                     href={`/admin/user-subscriptions?plan=${plan.id}`}
-                    className="flex items-center gap-1 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                    className="flex items-center gap-1 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 transition-colors"
                   >
                     <Users className="w-4 h-4" />
                     {plan.subscribersCount} assinante(s)
                   </Link>
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded-full ${plan.isActive
-                        ? "bg-green-500/20 text-green-400"
-                        : "bg-neutral-700 text-neutral-400"
+                      ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400"
+                      : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                       }`}
                   >
                     {plan.isActive ? "Ativo" : "Inativo"}

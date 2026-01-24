@@ -152,15 +152,15 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
       <div className="flex items-center gap-4">
         <Link
           href="/admin/subscriptions"
-          className="p-2 hover:bg-neutral-800 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
         >
-          <ArrowLeft className="w-5 h-5 text-neutral-400" />
+          <ArrowLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {mode === "create" ? "Novo Plano de Assinatura" : "Editar Plano"}
           </h1>
-          <p className="text-neutral-400 text-sm">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             {mode === "create"
               ? "Preencha os dados para criar um novo plano"
               : `Editando: ${initialData?.name}`}
@@ -180,12 +180,12 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
           {/* Coluna Principal */}
           <div className="lg:col-span-2 space-y-6">
             {/* Informações Básicas */}
-            <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-white">Informações Básicas</h2>
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Informações Básicas</h2>
 
               {/* Nome */}
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-neutral-300 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
                   Nome do Plano *
                 </label>
                 <input
@@ -195,14 +195,14 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   value={formData.name}
                   onChange={handleNameChange}
                   required
-                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   placeholder="Ex: Plano Premium"
                 />
               </div>
 
               {/* Slug */}
               <div>
-                <label htmlFor="slug" className="block text-sm font-medium text-neutral-300 mb-2">
+                <label htmlFor="slug" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
                   Slug (URL)
                 </label>
                 <input
@@ -211,14 +211,14 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   name="slug"
                   value={formData.slug}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   placeholder="plano-premium"
                 />
               </div>
 
               {/* Descrição Curta */}
               <div>
-                <label htmlFor="shortDescription" className="block text-sm font-medium text-neutral-300 mb-2">
+                <label htmlFor="shortDescription" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
                   Descrição Curta
                 </label>
                 <input
@@ -227,14 +227,14 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   name="shortDescription"
                   value={formData.shortDescription}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   placeholder="Uma frase resumindo o plano"
                 />
               </div>
 
               {/* Descrição Completa */}
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-neutral-300 mb-2">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
                   Descrição Completa
                 </label>
                 <textarea
@@ -243,20 +243,20 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   value={formData.description}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
                   placeholder="Descrição detalhada do plano..."
                 />
               </div>
             </div>
 
             {/* Preço e Ciclo */}
-            <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-white">Preço e Ciclo de Cobrança</h2>
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Preço e Ciclo de Cobrança</h2>
 
               <div className="grid grid-cols-2 gap-4">
                 {/* Preço */}
                 <div>
-                  <label htmlFor="price" className="block text-sm font-medium text-neutral-300 mb-2">
+                  <label htmlFor="price" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
                     Preço (R$) *
                   </label>
                   <input
@@ -268,16 +268,16 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                     required
                     min="0"
                     step="0.01"
-                    className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
-                  <p className="mt-1 text-xs text-neutral-500">
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     {formData.price > 0 && `Valor: ${formatCurrency(formData.price)}`}
                   </p>
                 </div>
 
                 {/* Ciclo */}
                 <div>
-                  <label htmlFor="billingCycle" className="block text-sm font-medium text-neutral-300 mb-2">
+                  <label htmlFor="billingCycle" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
                     Ciclo de Cobrança
                   </label>
                   <select
@@ -285,7 +285,7 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                     name="billingCycle"
                     value={formData.billingCycle}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   >
                     <option value="MONTHLY">Mensal</option>
                     <option value="QUARTERLY">Trimestral</option>
@@ -297,8 +297,8 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
             </div>
 
             {/* Features */}
-            <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-white">Benefícios do Plano</h2>
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Benefícios do Plano</h2>
 
               {/* Adicionar Feature */}
               <div className="flex gap-2">
@@ -307,7 +307,7 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   value={newFeature}
                   onChange={(e) => setNewFeature(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addFeature())}
-                  className="flex-1 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   placeholder="Ex: Frete grátis em todas as entregas"
                 />
                 <button
@@ -325,13 +325,13 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   {formData.features.map((feature, index) => (
                     <li
                       key={index}
-                      className="flex items-center justify-between px-4 py-2 bg-neutral-800 rounded-lg"
+                      className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg"
                     >
-                      <span className="text-neutral-300">{feature}</span>
+                      <span className="text-gray-600 dark:text-gray-300">{feature}</span>
                       <button
                         type="button"
                         onClick={() => removeFeature(index)}
-                        className="p-1 text-neutral-500 hover:text-red-400 transition-colors"
+                        className="p-1 text-gray-500 dark:text-gray-400 hover:text-red-400 transition-colors"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -339,7 +339,7 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-neutral-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Adicione benefícios para destacar o plano
                 </p>
               )}
@@ -349,8 +349,8 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
           {/* Coluna Lateral */}
           <div className="space-y-6">
             {/* Status */}
-            <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-white">Status</h2>
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Status</h2>
 
               {/* Ativo */}
               <label className="flex items-center gap-3 cursor-pointer">
@@ -362,10 +362,10 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                     onChange={handleChange}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-neutral-700 rounded-full peer peer-checked:bg-green-500 transition-colors" />
+                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-checked:bg-green-500 transition-colors" />
                   <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5" />
                 </div>
-                <span className="text-neutral-300">Plano ativo</span>
+                <span className="text-gray-600 dark:text-gray-300">Plano ativo</span>
               </label>
 
               {/* Destaque */}
@@ -378,21 +378,21 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                     onChange={handleChange}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-neutral-700 rounded-full peer peer-checked:bg-purple-500 transition-colors" />
+                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-checked:bg-purple-500 transition-colors" />
                   <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-neutral-300">Plano em destaque</span>
+                  <span className="text-gray-600 dark:text-gray-300">Plano em destaque</span>
                   <Star className="w-4 h-4 text-purple-400" />
                 </div>
               </label>
             </div>
 
             {/* Imagem */}
-            <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6">
-              <h2 className="text-lg font-semibold text-white mb-4">Imagem</h2>
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Imagem</h2>
               <div>
-                <label htmlFor="imageUrl" className="block text-sm font-medium text-neutral-300 mb-2">
+                <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
                   URL da Imagem
                 </label>
                 <input
@@ -401,7 +401,7 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   name="imageUrl"
                   value={formData.imageUrl}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   placeholder="https://exemplo.com/imagem.jpg"
                 />
               </div>
@@ -409,7 +409,7 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
               {/* Preview */}
               <div className="mt-4">
                 {formData.imageUrl ? (
-                  <div className="relative aspect-video rounded-lg overflow-hidden bg-neutral-800">
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={formData.imageUrl}
@@ -421,17 +421,17 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                     />
                   </div>
                 ) : (
-                  <div className="aspect-video rounded-lg bg-neutral-800 flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-neutral-600" />
+                  <div className="aspect-video rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                    <ImageIcon className="w-8 h-8 text-gray-400 dark:text-gray-600" />
                   </div>
                 )}
               </div>
             </div>
 
             {/* Shipping Profile */}
-            <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-white">Frete</h2>
-              <p className="text-sm text-neutral-400">
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Frete</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Selecione um perfil de frete para calcular o envio dos kits desta assinatura.
               </p>
               <ShippingProfileSelector
@@ -444,9 +444,9 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
 
             {/* Preview do Preço */}
             <div className="bg-gradient-to-br from-purple-600/20 to-green-600/20 rounded-xl border border-purple-500/30 p-6">
-              <h2 className="text-lg font-semibold text-white mb-2">Preview</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Preview</h2>
               <div className="text-center">
-                <p className="text-sm text-neutral-400">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   {formData.billingCycle === "MONTHLY"
                     ? "por mês"
                     : formData.billingCycle === "QUARTERLY"
@@ -455,7 +455,7 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                         ? "por semestre"
                         : "por ano"}
                 </p>
-                <p className="text-3xl font-bold text-white mt-1">
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                   {formatCurrency(formData.price)}
                 </p>
               </div>
@@ -464,10 +464,10 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
         </div>
 
         {/* Ações */}
-        <div className="flex items-center justify-end gap-4 pt-4 border-t border-neutral-800">
+        <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
           <Link
             href="/admin/subscriptions"
-            className="px-6 py-3 text-neutral-400 hover:text-white transition-colors"
+            className="px-6 py-3 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
           >
             Cancelar
           </Link>

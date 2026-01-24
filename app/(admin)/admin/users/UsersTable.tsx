@@ -43,8 +43,8 @@ const statusLabels: Record<UserStatus, string> = {
 };
 
 const statusStyles: Record<UserStatus, string> = {
-  ACTIVE: "bg-green-100 text-green-800",
-  BLOCKED: "bg-red-100 text-red-800",
+  ACTIVE: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400",
+  BLOCKED: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400",
 };
 
 /**
@@ -110,7 +110,7 @@ export function UsersTable({ users, pagination, filters }: UsersTableProps) {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-border p-4">
+      <div className="bg-surface rounded-xl border border-default p-4">
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search */}
           <form onSubmit={handleSearch} className="flex-1">
@@ -121,7 +121,7 @@ export function UsersTable({ users, pagination, filters }: UsersTableProps) {
                 placeholder="Buscar por nome ou email..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 text-sm bg-gray-bg border-0 rounded-lg focus:ring-2 focus:ring-primary-purple/20 focus:bg-white transition-colors"
+                className="w-full pl-9 pr-4 py-2 text-sm bg-gray-bg border-0 rounded-lg focus:ring-2 focus:ring-primary-purple/20 focus:bg-surface transition-colors"
               />
             </div>
           </form>
@@ -140,7 +140,7 @@ export function UsersTable({ users, pagination, filters }: UsersTableProps) {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-border overflow-hidden">
+      <div className="bg-surface rounded-xl border border-default overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

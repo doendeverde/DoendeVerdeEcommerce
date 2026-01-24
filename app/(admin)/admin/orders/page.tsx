@@ -47,27 +47,27 @@ export default async function AdminOrdersPage({
 
       {/* Status Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-gray-border p-4">
+        <div className="bg-surface rounded-xl border border-default p-4">
           <span className="text-sm text-text-secondary">Total</span>
           <p className="text-2xl font-bold text-text-primary mt-1">
             {ordersData.total}
           </p>
         </div>
-        <div className="bg-yellow-50 rounded-xl border border-yellow-200 p-4">
-          <span className="text-sm text-yellow-700">Pendentes</span>
-          <p className="text-2xl font-bold text-yellow-800 mt-1">
+        <div className="bg-yellow-100 dark:bg-yellow-900/30 rounded-xl border border-yellow-200 dark:border-yellow-800 p-4">
+          <span className="text-sm text-yellow-700 dark:text-yellow-400">Pendentes</span>
+          <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-300 mt-1">
             {statusCounts.pending}
           </p>
         </div>
-        <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
-          <span className="text-sm text-blue-700">Pagos</span>
-          <p className="text-2xl font-bold text-blue-800 mt-1">
+        <div className="bg-blue-100 dark:bg-blue-900/30 rounded-xl border border-blue-200 dark:border-blue-800 p-4">
+          <span className="text-sm text-blue-700 dark:text-blue-400">Pagos</span>
+          <p className="text-2xl font-bold text-blue-800 dark:text-blue-300 mt-1">
             {statusCounts.paid}
           </p>
         </div>
-        <div className="bg-purple-50 rounded-xl border border-purple-200 p-4">
-          <span className="text-sm text-purple-700">Enviados</span>
-          <p className="text-2xl font-bold text-purple-800 mt-1">
+        <div className="bg-purple-100 dark:bg-purple-900/30 rounded-xl border border-purple-200 dark:border-purple-800 p-4">
+          <span className="text-sm text-purple-700 dark:text-purple-400">Enviados</span>
+          <p className="text-2xl font-bold text-purple-800 dark:text-purple-300 mt-1">
             {statusCounts.shipped}
           </p>
         </div>

@@ -89,13 +89,13 @@ export default async function AdminDashboardPage() {
 
       {/* Alerts */}
       {stats.lowStockProducts > 0 && (
-        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+        <div className="bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 rounded-xl p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-400 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="text-sm font-semibold text-orange-800">
+            <h3 className="text-sm font-semibold text-orange-800 dark:text-orange-300">
               Produtos com estoque baixo
             </h3>
-            <p className="text-sm text-orange-700 mt-1">
+            <p className="text-sm text-orange-700 dark:text-orange-400 mt-1">
               {stats.lowStockProducts} produto(s) estão com estoque abaixo do limite.{" "}
               <Link href="/admin/products?lowStock=true" className="underline font-medium">
                 Ver produtos
@@ -108,8 +108,8 @@ export default async function AdminDashboardPage() {
       {/* Two columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Orders */}
-        <div className="bg-white rounded-xl border border-gray-border">
-          <div className="flex items-center justify-between p-4 border-b border-gray-border">
+        <div className="bg-surface rounded-xl border border-default">
+          <div className="flex items-center justify-between p-4 border-b border-default">
             <h2 className="text-lg font-semibold text-text-primary">
               Pedidos Recentes
             </h2>
@@ -120,7 +120,7 @@ export default async function AdminDashboardPage() {
               Ver todos
             </Link>
           </div>
-          <div className="divide-y divide-gray-border">
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {recentOrders.length === 0 ? (
               <div className="p-8 text-center text-text-secondary">
                 Nenhum pedido ainda
@@ -153,8 +153,8 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Top Products */}
-        <div className="bg-white rounded-xl border border-gray-border">
-          <div className="flex items-center justify-between p-4 border-b border-gray-border">
+        <div className="bg-surface rounded-xl border border-default">
+          <div className="flex items-center justify-between p-4 border-b border-default">
             <h2 className="text-lg font-semibold text-text-primary">
               Produtos Mais Vendidos
             </h2>
@@ -165,7 +165,7 @@ export default async function AdminDashboardPage() {
               Ver todos
             </Link>
           </div>
-          <div className="divide-y divide-gray-border">
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {topProducts.length === 0 ? (
               <div className="p-8 text-center text-text-secondary">
                 Nenhuma venda registrada
@@ -228,11 +228,11 @@ export default async function AdminDashboardPage() {
 // Status badge component
 function OrderStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    PENDING: "bg-yellow-100 text-yellow-800",
-    PAID: "bg-blue-100 text-blue-800",
-    SHIPPED: "bg-purple-100 text-purple-800",
-    DELIVERED: "bg-green-100 text-green-800",
-    CANCELED: "bg-red-100 text-red-800",
+    PENDING: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+    PAID: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+    SHIPPED: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+    DELIVERED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+    CANCELED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
   };
 
   const labels: Record<string, string> = {
@@ -245,7 +245,7 @@ function OrderStatusBadge({ status }: { status: string }) {
 
   return (
     <span
-      className={`px-2 py-0.5 text-xs font-medium rounded-full ${styles[status] || "bg-gray-100 text-gray-800"}`}
+      className={`px-2 py-0.5 text-xs font-medium rounded-full ${styles[status] || "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300"}`}
     >
       {labels[status] || status}
     </span>

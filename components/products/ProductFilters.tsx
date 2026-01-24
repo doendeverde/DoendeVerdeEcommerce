@@ -82,8 +82,8 @@ export function ProductFilters({
       <button
         onClick={() => setIsOpen(true)}
         className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${hasActiveFilters
-            ? 'bg-primary-purple text-white'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          ? 'bg-primary-purple text-white'
+          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
       >
         <SlidersHorizontal className="h-4 w-4" />
@@ -100,7 +100,7 @@ export function ProductFilters({
         <select
           value={`${sortBy}-${sortOrder}`}
           onChange={(e) => handleSortChange(e.target.value)}
-          className="appearance-none rounded-full border border-gray-200 bg-white px-4 py-2 pr-10 text-sm font-medium text-gray-700 outline-none transition-all hover:border-gray-300 focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
+          className="appearance-none rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 pr-10 text-sm font-medium text-gray-700 dark:text-gray-300 outline-none transition-all hover:border-gray-300 dark:hover:border-gray-600 focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
         >
           {sortOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -121,7 +121,7 @@ export function ProductFilters({
           />
 
           {/* Modal */}
-          <div className="fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-auto rounded-t-2xl bg-white p-6 shadow-xl md:inset-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl">
+          <div className="fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-auto rounded-t-2xl bg-white dark:bg-gray-900 p-6 shadow-xl md:inset-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl">
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Filtros</h2>
@@ -148,7 +148,7 @@ export function ProductFilters({
                     value={localMinPrice}
                     onChange={(e) => setLocalMinPrice(e.target.value)}
                     placeholder="Min"
-                    className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm outline-none transition-all focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-2 pl-9 pr-3 text-sm outline-none transition-all focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
                   />
                 </div>
                 <span className="text-gray-400">—</span>
@@ -161,7 +161,7 @@ export function ProductFilters({
                     value={localMaxPrice}
                     onChange={(e) => setLocalMaxPrice(e.target.value)}
                     placeholder="Max"
-                    className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm outline-none transition-all focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-2 pl-9 pr-3 text-sm outline-none transition-all focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
                   />
                 </div>
               </div>
@@ -190,7 +190,7 @@ export function ProductFilters({
             <div className="flex gap-3">
               <button
                 onClick={handleClear}
-                className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Limpar
               </button>

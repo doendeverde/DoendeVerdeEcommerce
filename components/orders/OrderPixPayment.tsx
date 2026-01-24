@@ -183,7 +183,7 @@ export function OrderPixPayment({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-emerald-500 to-green-600 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2 text-white">
@@ -203,8 +203,8 @@ export function OrderPixPayment({
       <div className="p-4 space-y-4">
         {/* Amount */}
         <div className="text-center">
-          <p className="text-sm text-gray-500">Valor a pagar</p>
-          <p className="text-2xl font-bold text-gray-900">{formatCurrency(amount)}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Valor a pagar</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(amount)}</p>
         </div>
 
         {/* Timer */}
@@ -223,7 +223,7 @@ export function OrderPixPayment({
         {/* QR Code */}
         {!isExpired && currentPixData.qrCodeBase64 && (
           <div className="flex justify-center">
-            <div className="p-3 bg-white border-2 border-gray-100 rounded-xl">
+            <div className="p-3 bg-white dark:bg-gray-100 border-2 border-gray-100 dark:border-gray-200 rounded-xl">
               <img
                 src={`data:image/png;base64,${currentPixData.qrCodeBase64}`}
                 alt="QR Code PIX"
@@ -251,7 +251,7 @@ export function OrderPixPayment({
                 href={currentPixData.ticketUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
                 Abrir no Mercado Pago

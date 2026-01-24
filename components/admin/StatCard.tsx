@@ -16,24 +16,24 @@ interface StatCardProps {
 
 const variantStyles = {
   default: {
-    bg: "bg-gray-bg",
-    icon: "text-text-secondary",
+    bg: "bg-gray-100 dark:bg-gray-800",
+    icon: "text-gray-600 dark:text-gray-400",
   },
   green: {
-    bg: "bg-primary-green/10",
-    icon: "text-primary-green",
+    bg: "bg-green-100 dark:bg-green-900/30",
+    icon: "text-green-600 dark:text-green-400",
   },
   purple: {
-    bg: "bg-primary-purple/10",
-    icon: "text-primary-purple",
+    bg: "bg-purple-100 dark:bg-purple-900/30",
+    icon: "text-purple-600 dark:text-purple-400",
   },
   orange: {
-    bg: "bg-orange-100",
-    icon: "text-orange-600",
+    bg: "bg-orange-100 dark:bg-orange-900/30",
+    icon: "text-orange-600 dark:text-orange-400",
   },
   red: {
-    bg: "bg-red-100",
-    icon: "text-red-600",
+    bg: "bg-red-100 dark:bg-red-900/30",
+    icon: "text-red-600 dark:text-red-400",
   },
 };
 

@@ -36,14 +36,14 @@ const benefits = [
 
 export function WhySubscribe() {
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 px-6 py-12 sm:px-12">
+    <div className="rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-6 py-12 sm:px-12">
       <h2
         id="benefits-heading"
-        className="text-center text-2xl font-bold text-gray-900"
+        className="text-center text-2xl font-bold text-default"
       >
         Por que assinar?
       </h2>
-      <p className="mx-auto mt-2 max-w-xl text-center text-gray-600">
+      <p className="mx-auto mt-2 max-w-xl text-center text-muted">
         Vantagens exclusivas para membros da comunidade Doende Verde
       </p>
 
@@ -53,18 +53,18 @@ export function WhySubscribe() {
           return (
             <div
               key={index}
-              className="flex flex-col items-center rounded-xl bg-white p-6 text-center shadow-sm"
+              className="flex flex-col items-center rounded-xl bg-white dark:bg-gray-900 p-6 text-center shadow-sm"
             >
               <div
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-primary-green"
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400"
                 aria-hidden="true"
               >
                 <Icon className="h-6 w-6" />
               </div>
-              <h3 className="mt-4 text-base font-semibold text-gray-900">
+              <h3 className="mt-4 text-base font-semibold text-default">
                 {benefit.title}
               </h3>
-              <p className="mt-2 text-sm text-gray-600">{benefit.description}</p>
+              <p className="mt-2 text-sm text-muted">{benefit.description}</p>
             </div>
           );
         })}

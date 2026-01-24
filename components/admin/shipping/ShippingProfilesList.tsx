@@ -102,10 +102,10 @@ export function ShippingProfilesList() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+      <div className="bg-surface rounded-lg shadow-sm p-8 text-center">
         <div className="animate-pulse flex flex-col items-center gap-4">
-          <div className="w-12 h-12 bg-gray-200 rounded-full" />
-          <div className="h-4 w-32 bg-gray-200 rounded" />
+          <div className="w-12 h-12 bg-gray-bg rounded-full" />
+          <div className="h-4 w-32 bg-gray-bg rounded" />
         </div>
       </div>
     );
@@ -113,8 +113,8 @@ export function ShippingProfilesList() {
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-8">
-        <div className="flex items-center gap-3 text-red-600">
+      <div className="bg-surface rounded-lg shadow-sm p-8">
+        <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
         </div>
@@ -124,8 +124,8 @@ export function ShippingProfilesList() {
 
   if (profiles.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-        <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+      <div className="bg-surface rounded-lg shadow-sm p-8 text-center">
+        <Package className="w-12 h-12 text-muted mx-auto mb-4" />
         <h3 className="text-lg font-medium text-text-primary mb-2">
           Nenhum perfil de frete
         </h3>
@@ -143,10 +143,10 @@ export function ShippingProfilesList() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-surface rounded-lg shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-border">
+          <thead className="bg-gray-bg border-b border-default">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                 Nome
@@ -168,7 +168,7 @@ export function ShippingProfilesList() {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-border">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {profiles.map((profile) => {
               const totalUsage =
                 (profile._count?.products ?? 0) +
@@ -177,7 +177,7 @@ export function ShippingProfilesList() {
               return (
                 <tr
                   key={profile.id}
-                  className={`hover:bg-gray-50 ${!profile.isActive ? "opacity-60" : ""}`}
+                  className={`hover-bg ${!profile.isActive ? "opacity-60" : ""}`}
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
@@ -223,8 +223,8 @@ export function ShippingProfilesList() {
                       onClick={() => handleToggleActive(profile.id)}
                       disabled={actionLoading === profile.id}
                       className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium transition-colors ${profile.isActive
-                          ? "bg-green-100 text-green-700 hover:bg-green-200"
-                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50"
+                        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                         }`}
                     >
                       {profile.isActive ? (

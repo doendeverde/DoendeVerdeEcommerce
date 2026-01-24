@@ -17,8 +17,8 @@ export default async function AdminCategoriesPage() {
       {/* Header com botão de criar */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Categorias</h1>
-          <p className="text-neutral-400 text-sm">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Categorias</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             {categories.length} categoria(s) cadastrada(s)
           </p>
         </div>
@@ -32,34 +32,34 @@ export default async function AdminCategoriesPage() {
       </div>
 
       {/* Tabela de categorias */}
-      <div className="bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden">
+      <div className="bg-surface rounded-xl border border-default overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-neutral-800/50">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+              <tr className="bg-gray-50 dark:bg-gray-800/50">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Categoria
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Slug
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Produtos
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Ações
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-800">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {categories.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-4 py-12 text-center">
-                    <Tag className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
-                    <p className="text-neutral-400 mb-4">Nenhuma categoria cadastrada</p>
+                    <Tag className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">Nenhuma categoria cadastrada</p>
                     <Link
                       href="/admin/categories/new"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm font-medium rounded-lg transition-colors"
@@ -73,7 +73,7 @@ export default async function AdminCategoriesPage() {
                 categories.map((category) => (
                   <tr
                     key={category.id}
-                    className="hover:bg-neutral-800/50 transition-colors"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                   >
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
@@ -85,16 +85,16 @@ export default async function AdminCategoriesPage() {
                             className="w-10 h-10 rounded-lg object-cover"
                           />
                         ) : (
-                          <div className="w-10 h-10 bg-neutral-800 rounded-lg flex items-center justify-center">
-                            <Tag className="w-5 h-5 text-neutral-500" />
+                          <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+                            <Tag className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                           </div>
                         )}
                         <div>
-                          <p className="text-sm font-medium text-white">
+                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             {category.name}
                           </p>
                           {category.description && (
-                            <p className="text-xs text-neutral-400 truncate max-w-xs">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">
                               {category.description}
                             </p>
                           )}
@@ -102,7 +102,7 @@ export default async function AdminCategoriesPage() {
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm text-neutral-400 font-mono bg-neutral-800 px-2 py-1 rounded">
+                      <span className="text-sm text-gray-600 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                         {category.slug}
                       </span>
                     </td>
@@ -118,8 +118,8 @@ export default async function AdminCategoriesPage() {
                     <td className="px-4 py-4">
                       <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${category.isActive
-                            ? "bg-green-500/20 text-green-400"
-                            : "bg-neutral-700 text-neutral-400"
+                          ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400"
+                          : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                           }`}
                       >
                         {category.isActive ? "Ativa" : "Inativa"}
@@ -129,7 +129,7 @@ export default async function AdminCategoriesPage() {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           href={`/admin/categories/${category.id}`}
-                          className="p-2 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
+                          className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                           title="Editar"
                         >
                           <Pencil className="w-4 h-4" />

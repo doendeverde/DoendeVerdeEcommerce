@@ -51,8 +51,8 @@ export function CategoryDeleteButton({
       <button
         onClick={() => setIsOpen(true)}
         className={`p-2 rounded-lg transition-colors ${canDelete
-            ? "text-neutral-400 hover:text-red-400 hover:bg-red-500/10"
-            : "text-neutral-600 cursor-not-allowed"
+          ? "text-gray-500 dark:text-gray-400 hover:text-red-400 hover:bg-red-500/10"
+          : "text-gray-400 dark:text-gray-600 cursor-not-allowed"
           }`}
         title={canDelete ? "Excluir" : "Não é possível excluir categoria com produtos"}
         disabled={!canDelete}
@@ -70,11 +70,11 @@ export function CategoryDeleteButton({
           />
 
           {/* Modal */}
-          <div className="relative bg-neutral-900 rounded-xl border border-neutral-800 p-6 w-full max-w-md">
+          <div className="relative bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 w-full max-w-md">
             {/* Close button */}
             <button
               onClick={() => !isDeleting && setIsOpen(false)}
-              className="absolute top-4 right-4 p-1 text-neutral-500 hover:text-white transition-colors"
+              className="absolute top-4 right-4 p-1 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               disabled={isDeleting}
             >
               <X className="w-5 h-5" />
@@ -86,12 +86,12 @@ export function CategoryDeleteButton({
                 <AlertTriangle className="w-6 h-6 text-red-400" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-white mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                   Excluir Categoria
                 </h3>
-                <p className="text-neutral-400 text-sm mb-4">
+                <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
                   Tem certeza que deseja excluir a categoria{" "}
-                  <span className="text-white font-medium">{categoryName}</span>?
+                  <span className="text-gray-900 dark:text-gray-100 font-medium">{categoryName}</span>?
                   Esta ação não pode ser desfeita.
                 </p>
 
@@ -105,7 +105,7 @@ export function CategoryDeleteButton({
                   <button
                     onClick={() => setIsOpen(false)}
                     disabled={isDeleting}
-                    className="px-4 py-2 text-neutral-400 hover:text-white transition-colors"
+                    className="px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
                   >
                     Cancelar
                   </button>

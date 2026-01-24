@@ -58,19 +58,19 @@ export default async function AdminProductsPage({
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-gray-border p-4">
+        <div className="bg-surface rounded-xl border border-default p-4">
           <span className="text-sm text-text-secondary">Total de Produtos</span>
           <p className="text-2xl font-bold text-text-primary mt-1">
             {totalProducts}
           </p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-border p-4">
+        <div className="bg-surface rounded-xl border border-default p-4">
           <span className="text-sm text-text-secondary">Em Estoque</span>
           <p className="text-2xl font-bold text-primary-green mt-1">
             {activeCount}
           </p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-border p-4">
+        <div className="bg-surface rounded-xl border border-default p-4">
           <span className="text-sm text-text-secondary">Estoque Baixo</span>
           <p className="text-2xl font-bold text-orange-600 mt-1">
             {lowStockCount}

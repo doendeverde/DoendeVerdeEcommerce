@@ -52,8 +52,8 @@ export function UserRoleButton({ userId, currentRole }: UserRoleButtonProps) {
         onClick={() => setShowConfirm(true)}
         disabled={isPending}
         className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 ${isAdmin
-            ? "bg-gray-100 hover:bg-gray-200 text-text-secondary border border-gray-border"
-            : "bg-primary-purple hover:bg-primary-purple/90 text-white"
+          ? "bg-gray-bg hover-bg text-text-secondary border border-default"
+          : "bg-primary-purple hover:bg-primary-purple/90 text-white"
           }`}
       >
         {isAdmin ? (
@@ -77,7 +77,7 @@ export function UserRoleButton({ userId, currentRole }: UserRoleButtonProps) {
             onClick={() => setShowConfirm(false)}
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-white border border-gray-border rounded-xl p-6 max-w-sm w-full shadow-xl">
+            <div className="bg-surface border border-default rounded-xl p-6 max-w-sm w-full shadow-xl">
               <h3 className="text-lg font-semibold text-text-primary mb-2">
                 {isAdmin ? "Remover permissão de Admin?" : "Tornar Admin?"}
               </h3>
@@ -97,7 +97,7 @@ export function UserRoleButton({ userId, currentRole }: UserRoleButtonProps) {
                 <button
                   onClick={() => setShowConfirm(false)}
                   disabled={isPending}
-                  className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-text-primary rounded-lg transition-colors disabled:opacity-50 border border-gray-border"
+                  className="flex-1 px-4 py-2 bg-gray-bg hover-bg text-text-primary rounded-lg transition-colors disabled:opacity-50 border border-default"
                 >
                   Cancelar
                 </button>
@@ -105,8 +105,8 @@ export function UserRoleButton({ userId, currentRole }: UserRoleButtonProps) {
                   onClick={handleRoleChange}
                   disabled={isPending}
                   className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 ${isAdmin
-                      ? "bg-red-600 hover:bg-red-500 text-white"
-                      : "bg-primary-purple hover:bg-primary-purple/90 text-white"
+                    ? "bg-red-600 hover:bg-red-500 text-white"
+                    : "bg-primary-purple hover:bg-primary-purple/90 text-white"
                     }`}
                 >
                   {isPending ? "Salvando..." : "Confirmar"}

@@ -33,7 +33,7 @@ export default async function EditShippingProfilePage({
       <div className="flex items-center gap-4">
         <Link
           href="/admin/shipping"
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-lg hover-bg transition-colors"
         >
           <ArrowLeft className="w-5 h-5 text-text-muted" />
         </Link>
@@ -50,7 +50,7 @@ export default async function EditShippingProfilePage({
       {/* Show linked items */}
       {(profile._count?.products ?? 0) > 0 ||
         (profile._count?.subscriptionPlans ?? 0) > 0 ? (
-        <div className="max-w-2xl bg-white rounded-lg shadow-sm p-6">
+        <div className="max-w-2xl bg-surface rounded-lg shadow-sm p-6">
           <h3 className="font-medium text-text-primary mb-4">
             Itens Vinculados
           </h3>
@@ -85,7 +85,7 @@ export default async function EditShippingProfilePage({
                 {profile.products.map((p) => (
                   <span
                     key={p.id}
-                    className="px-2 py-1 bg-gray-100 rounded text-xs text-text-secondary"
+                    className="px-2 py-1 bg-gray-bg rounded text-xs text-text-secondary"
                   >
                     {p.name}
                   </span>

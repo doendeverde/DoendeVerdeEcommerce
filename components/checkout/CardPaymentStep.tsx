@@ -150,7 +150,7 @@ export function CardPaymentStep({
   // Success State
   if (state === "success") {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-8 text-center">
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <CheckCircle className="w-8 h-8 text-green-600" />
         </div>
@@ -172,7 +172,7 @@ export function CardPaymentStep({
   // Awaiting Confirmation State
   if (state === "awaiting_confirmation") {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-8 text-center">
         <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <Clock className="w-8 h-8 text-yellow-600" />
         </div>
@@ -197,8 +197,8 @@ export function CardPaymentStep({
   // Error State (can retry)
   if (state === "error" && error) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div>
@@ -218,7 +218,7 @@ export function CardPaymentStep({
 
         <button
           onClick={onBack}
-          className="w-full mt-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+          className="w-full mt-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar
@@ -229,7 +229,7 @@ export function CardPaymentStep({
 
   // Default: Show Payment Brick
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">
         Dados do Cartão
       </h2>
@@ -260,7 +260,7 @@ export function CardPaymentStep({
       <button
         onClick={onBack}
         disabled={state === "processing"}
-        className="w-full mt-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full mt-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <ArrowLeft className="w-4 h-4" />
         Voltar

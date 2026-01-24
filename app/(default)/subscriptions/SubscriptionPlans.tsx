@@ -34,25 +34,25 @@ const planColors: Record<
   { icon: string; badge: string; button: string; border: string }
 > = {
   gratuito: {
-    icon: "bg-gray-100 text-gray-600",
+    icon: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
     badge: "",
-    button: "bg-gray-100 text-gray-700 hover:bg-gray-200",
-    border: "border-gray-200 hover:border-gray-300",
+    button: "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700",
+    border: "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600",
   },
   "doende-x": {
-    icon: "bg-green-100 text-primary-green",
+    icon: "bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400",
     badge: "",
     button: "bg-primary-green text-white hover:bg-green-600",
-    border: "border-gray-200 hover:border-primary-green",
+    border: "border-gray-200 dark:border-gray-700 hover:border-primary-green",
   },
   "doende-bronze": {
-    icon: "bg-green-100 text-primary-green",
+    icon: "bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400",
     badge: "bg-primary-green",
     button: "bg-primary-green text-white hover:bg-green-600",
     border: "border-primary-green",
   },
   "doende-prata": {
-    icon: "bg-purple-100 text-primary-purple",
+    icon: "bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400",
     badge: "bg-primary-purple",
     button: "bg-primary-purple text-white hover:bg-purple-700",
     border: "border-primary-purple",
@@ -208,7 +208,7 @@ export function SubscriptionPlans({
                 }
               }}
               className={`
-                        relative flex flex-col rounded-2xl border-2 bg-white p-6 
+                        relative flex flex-col rounded-2xl border-2 bg-surface p-6 
                         transition-all duration-200 hover:shadow-lg
                         ${colors.border}
                         flex-shrink-0 w-[85vw] max-w-[320px]
@@ -238,28 +238,28 @@ export function SubscriptionPlans({
 
               {/* Plan Name & Price */}
               <div className="mt-4">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-default">
                   {plan.name}
                 </h3>
                 <div className="mt-2 flex items-baseline gap-1">
                   {plan.price === 0 ? (
-                    <span className="text-3xl font-bold text-gray-900">
+                    <span className="text-3xl font-bold text-default">
                       Grátis
                     </span>
                   ) : (
                     <>
-                      <span className="text-sm text-gray-500">R$</span>
-                      <span className="text-3xl font-bold text-gray-900">
+                      <span className="text-sm text-muted">R$</span>
+                      <span className="text-3xl font-bold text-default">
                         {plan.price.toFixed(2).replace(".", ",")}
                       </span>
-                      <span className="text-sm text-gray-500">/mês</span>
+                      <span className="text-sm text-muted">/mês</span>
                     </>
                   )}
                 </div>
 
                 {/* Discount Badge */}
                 {plan.discountPercent > 0 && (
-                  <div className="mt-2 inline-flex rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-primary-green">
+                  <div className="mt-2 inline-flex rounded-full bg-green-100 dark:bg-green-900/40 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:text-green-400">
                     {plan.discountPercent}% de desconto permanente
                   </div>
                 )}
@@ -279,14 +279,14 @@ export function SubscriptionPlans({
                   return (
                     <li key={index} className="flex items-start gap-2">
                       <Check
-                        className={`h-5 w-5 flex-shrink-0 ${isHighlight ? "text-primary-green" : "text-gray-400"
+                        className={`h-5 w-5 flex-shrink-0 ${isHighlight ? "text-primary-green" : "text-muted"
                           }`}
                         aria-hidden="true"
                       />
                       <span
                         className={`${isSmallHeight ? 'text-base' : 'text-sm'} ${isHighlight
-                          ? "font-medium text-gray-900"
-                          : "text-gray-600"
+                          ? "font-medium text-default"
+                          : "text-muted"
                           }`}
                       >
                         {benefit}
@@ -301,7 +301,7 @@ export function SubscriptionPlans({
                 {isCurrentPlan ? (
                   <button
                     disabled
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-500 cursor-not-allowed"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-bg px-4 py-3 text-sm font-semibold text-muted cursor-not-allowed"
                     aria-label={`${plan.name} é seu plano atual`}
                   >
                     Plano atual

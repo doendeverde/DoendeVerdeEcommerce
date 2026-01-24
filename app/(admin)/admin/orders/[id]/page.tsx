@@ -112,14 +112,14 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Items */}
-          <div className="bg-white rounded-xl border border-gray-border overflow-hidden">
-            <div className="p-4 border-b border-gray-border">
+          <div className="bg-surface rounded-xl border border-default overflow-hidden">
+            <div className="p-4 border-b border-default">
               <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <Package className="w-5 h-5" />
                 Itens do Pedido
               </h2>
             </div>
-            <div className="divide-y divide-gray-border">
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {items.map((item: OrderItem) => (
                 <div key={item.id} className="p-4 flex gap-4">
                   {item.imageUrl ? (
@@ -175,7 +175,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                   {order.shippingAmount > 0 ? formatCurrency(order.shippingAmount) : "Grátis"}
                 </span>
               </div>
-              <div className="flex justify-between text-lg font-semibold pt-2 border-t border-gray-border">
+              <div className="flex justify-between text-lg font-semibold pt-2 border-t border-default">
                 <span className="text-text-primary">Total</span>
                 <span className="text-text-primary">{formatCurrency(order.totalAmount)}</span>
               </div>
@@ -184,8 +184,8 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
 
           {/* Payment */}
           {payments.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-border overflow-hidden">
-              <div className="p-4 border-b border-gray-border">
+            <div className="bg-surface rounded-xl border border-default overflow-hidden">
+              <div className="p-4 border-b border-default">
                 <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                   <CreditCard className="w-5 h-5" />
                   Pagamento
@@ -213,10 +213,10 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                           className={cn(
                             "text-xs px-2 py-0.5 rounded-full",
                             payment.status === "PAID"
-                              ? "bg-green-100 text-green-800"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                               : payment.status === "PENDING"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-red-100 text-red-800"
+                                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
                           )}
                         >
                           {paymentStatusLabels[payment.status]}
@@ -240,8 +240,8 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
 
           {/* Shipment */}
           {shipments.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-border overflow-hidden">
-              <div className="p-4 border-b border-gray-border">
+            <div className="bg-surface rounded-xl border border-default overflow-hidden">
+              <div className="p-4 border-b border-default">
                 <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                   <Truck className="w-5 h-5" />
                   Envio
@@ -267,10 +267,10 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                         className={cn(
                           "text-xs px-2 py-0.5 rounded-full",
                           shipment.status === "DELIVERED"
-                            ? "bg-green-100 text-green-800"
+                            ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                             : shipment.status === "IN_TRANSIT"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-gray-100 text-gray-800"
+                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+                              : "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200"
                         )}
                       >
                         {shipmentStatusLabels[shipment.status]}
@@ -286,8 +286,8 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Customer */}
-          <div className="bg-white rounded-xl border border-gray-border overflow-hidden">
-            <div className="p-4 border-b border-gray-border">
+          <div className="bg-surface rounded-xl border border-default overflow-hidden">
+            <div className="p-4 border-b border-default">
               <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <User className="w-5 h-5" />
                 Cliente
@@ -312,8 +312,8 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
 
           {/* Shipping Address */}
           {order.addressSnapshot && (
-            <div className="bg-white rounded-xl border border-gray-border overflow-hidden">
-              <div className="p-4 border-b border-gray-border">
+            <div className="bg-surface rounded-xl border border-default overflow-hidden">
+              <div className="p-4 border-b border-default">
                 <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                   <MapPin className="w-5 h-5" />
                   Endereço de Entrega
@@ -347,8 +347,8 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
 
           {/* Order Notes */}
           {order.notes && (
-            <div className="bg-white rounded-xl border border-gray-border overflow-hidden">
-              <div className="p-4 border-b border-gray-border">
+            <div className="bg-surface rounded-xl border border-default overflow-hidden">
+              <div className="p-4 border-b border-default">
                 <h2 className="text-lg font-semibold text-text-primary">
                   Observações
                 </h2>

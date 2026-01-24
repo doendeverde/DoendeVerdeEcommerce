@@ -49,14 +49,14 @@ export default async function SubscriptionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Header - SEO optimized */}
         <header className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+          <h1 className="text-3xl font-bold text-default sm:text-4xl">
             Escolha seu plano
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted">
             Faça parte da comunidade Doende Verde e aproveite descontos
             exclusivos, acúmulo de pontos e muito mais!
           </p>
@@ -65,7 +65,7 @@ export default async function SubscriptionsPage() {
         {/* Current Plan Badge - Server rendered */}
         {currentPlanSlug && (
           <div className="mt-8 flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-green-50 px-4 py-2 text-sm font-medium text-primary-green">
+            <div className="inline-flex items-center gap-2 rounded-full bg-green-100 dark:bg-green-900/40 px-4 py-2 text-sm font-medium text-green-700 dark:text-green-400">
               <svg
                 className="h-4 w-4"
                 fill="currentColor"

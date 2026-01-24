@@ -113,7 +113,7 @@ export default async function SubscriptionCheckoutPage({ params }: PageProps) {
   };
 
   return (
-    <main className="bg-gray-50 py-8">
+    <main className="bg-page py-8">
       <div className="container mx-auto px-4 max-w-4xl">
         <SubscriptionCheckoutClient data={checkoutData} />
       </div>

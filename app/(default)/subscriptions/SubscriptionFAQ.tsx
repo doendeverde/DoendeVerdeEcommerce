@@ -55,16 +55,16 @@ export function SubscriptionFAQ() {
     <div>
       <h2
         id="faq-heading"
-        className="text-center text-2xl font-bold text-gray-900"
+        className="text-center text-2xl font-bold text-default"
       >
         Perguntas Frequentes
       </h2>
-      <p className="mx-auto mt-2 max-w-xl text-center text-gray-600">
+      <p className="mx-auto mt-2 max-w-xl text-center text-muted">
         Tire suas dúvidas sobre nossos planos de assinatura
       </p>
 
       {/* FAQ List - Semantic structure for SEO */}
-      <dl className="mx-auto mt-10 max-w-3xl divide-y divide-gray-200 rounded-2xl border border-gray-200 bg-white">
+      <dl className="mx-auto mt-10 max-w-3xl divide-y divide-gray-200 dark:divide-gray-700 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         {faqs.map((faq, index) => (
           <div key={index} className="group">
             <dt>
@@ -74,11 +74,11 @@ export function SubscriptionFAQ() {
                 aria-expanded={openIndex === index}
                 aria-controls={`faq-answer-${index}`}
               >
-                <span className="text-base font-medium text-gray-900">
+                <span className="text-base font-medium text-default">
                   {faq.question}
                 </span>
                 <ChevronDown
-                  className={`h-5 w-5 flex-shrink-0 text-gray-500 transition-transform duration-200 ${openIndex === index ? "rotate-180" : ""
+                  className={`h-5 w-5 flex-shrink-0 text-muted transition-transform duration-200 ${openIndex === index ? "rotate-180" : ""
                     }`}
                   aria-hidden="true"
                 />
@@ -89,7 +89,7 @@ export function SubscriptionFAQ() {
               className={`overflow-hidden transition-all duration-200 ${openIndex === index ? "max-h-96" : "max-h-0"
                 }`}
             >
-              <p className="px-6 pb-4 text-sm text-gray-600">{faq.answer}</p>
+              <p className="px-6 pb-4 text-sm text-muted">{faq.answer}</p>
             </dd>
           </div>
         ))}

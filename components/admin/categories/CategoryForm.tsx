@@ -106,15 +106,15 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
       <div className="flex items-center gap-4">
         <Link
           href="/admin/categories"
-          className="p-2 hover:bg-neutral-800 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
         >
-          <ArrowLeft className="w-5 h-5 text-neutral-400" />
+          <ArrowLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {mode === "create" ? "Nova Categoria" : "Editar Categoria"}
           </h1>
-          <p className="text-neutral-400 text-sm">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             {mode === "create"
               ? "Preencha os dados para criar uma nova categoria"
               : `Editando: ${initialData?.name}`}
@@ -133,14 +133,14 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Coluna Principal */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-white">Informações Básicas</h2>
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Informações Básicas</h2>
 
               {/* Nome */}
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-neutral-300 mb-2"
+                  className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2"
                 >
                   Nome da Categoria *
                 </label>
@@ -151,7 +151,7 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
                   value={formData.name}
                   onChange={handleNameChange}
                   required
-                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   placeholder="Ex: Papéis e Sedas"
                 />
               </div>
@@ -160,7 +160,7 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
               <div>
                 <label
                   htmlFor="slug"
-                  className="block text-sm font-medium text-neutral-300 mb-2"
+                  className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2"
                 >
                   Slug (URL)
                 </label>
@@ -170,10 +170,10 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
                   name="slug"
                   value={formData.slug}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   placeholder="papeis-e-sedas"
                 />
-                <p className="mt-1 text-xs text-neutral-500">
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   Identificador único usado na URL. Gerado automaticamente a partir do nome.
                 </p>
               </div>
@@ -182,7 +182,7 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
               <div>
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium text-neutral-300 mb-2"
+                  className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2"
                 >
                   Descrição
                 </label>
@@ -192,7 +192,7 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
                   value={formData.description}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
                   placeholder="Uma breve descrição da categoria..."
                 />
               </div>
@@ -202,8 +202,8 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
           {/* Coluna Lateral */}
           <div className="space-y-6">
             {/* Status */}
-            <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6">
-              <h2 className="text-lg font-semibold text-white mb-4">Status</h2>
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Status</h2>
               <label className="flex items-center gap-3 cursor-pointer">
                 <div className="relative">
                   <input
@@ -213,23 +213,23 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
                     onChange={handleChange}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-neutral-700 rounded-full peer peer-checked:bg-green-500 transition-colors" />
+                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-checked:bg-green-500 transition-colors" />
                   <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5" />
                 </div>
-                <span className="text-neutral-300">Categoria ativa</span>
+                <span className="text-gray-600 dark:text-gray-300">Categoria ativa</span>
               </label>
-              <p className="mt-2 text-xs text-neutral-500">
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 Categorias inativas não aparecem no site.
               </p>
             </div>
 
             {/* Imagem */}
-            <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6">
-              <h2 className="text-lg font-semibold text-white mb-4">Imagem</h2>
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Imagem</h2>
               <div>
                 <label
                   htmlFor="imageUrl"
-                  className="block text-sm font-medium text-neutral-300 mb-2"
+                  className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-2"
                 >
                   URL da Imagem
                 </label>
@@ -239,7 +239,7 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
                   name="imageUrl"
                   value={formData.imageUrl}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   placeholder="https://exemplo.com/imagem.jpg"
                 />
               </div>
@@ -247,7 +247,7 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
               {/* Preview */}
               <div className="mt-4">
                 {formData.imageUrl ? (
-                  <div className="relative aspect-video rounded-lg overflow-hidden bg-neutral-800">
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={formData.imageUrl}
@@ -259,8 +259,8 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
                     />
                   </div>
                 ) : (
-                  <div className="aspect-video rounded-lg bg-neutral-800 flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-neutral-600" />
+                  <div className="aspect-video rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                    <ImageIcon className="w-8 h-8 text-gray-400 dark:text-gray-600" />
                   </div>
                 )}
               </div>
@@ -269,10 +269,10 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
         </div>
 
         {/* Ações */}
-        <div className="flex items-center justify-end gap-4 pt-4 border-t border-neutral-800">
+        <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
           <Link
             href="/admin/categories"
-            className="px-6 py-3 text-neutral-400 hover:text-white transition-colors"
+            className="px-6 py-3 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
           >
             Cancelar
           </Link>

@@ -337,8 +337,8 @@ function ConsumptionSection({
           }}
           placeholder="Ex: 5"
           className={`input-default ${form.yearsSmoking !== null && form.yearsSmoking > 100
-              ? "!border-red-500 !bg-red-50 dark:!bg-red-900/20"
-              : ""
+            ? "!border-red-500 !bg-red-50 dark:!bg-red-900/20"
+            : ""
             }`}
         />
         {form.yearsSmoking !== null && form.yearsSmoking > 100 ? (

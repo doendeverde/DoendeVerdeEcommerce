@@ -225,7 +225,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Basic Info */}
-          <div className="bg-white rounded-xl border border-gray-border p-6 space-y-4">
+          <div className="bg-surface rounded-xl border border-default p-6 space-y-4">
             <h2 className="text-lg font-semibold text-text-primary">
               Informações Básicas
             </h2>
@@ -274,9 +274,9 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
           </div>
 
           {/* Pricing */}
-          <div className="bg-white rounded-xl border border-gray-border p-6 space-y-4">
+          <div className="bg-surface rounded-xl border border-default p-6 space-y-4">
             <h2 className="text-lg font-semibold text-text-primary">Preço</h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted">
               Desconto é aplicado apenas para assinantes. Configure descontos nos planos de assinatura.
             </p>
 
@@ -298,7 +298,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
           </div>
 
           {/* Inventory */}
-          <div className="bg-white rounded-xl border border-gray-border p-6 space-y-4">
+          <div className="bg-surface rounded-xl border border-default p-6 space-y-4">
             <h2 className="text-lg font-semibold text-text-primary">Estoque</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -347,7 +347,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
           </div>
 
           {/* Images */}
-          <div className="bg-white rounded-xl border border-gray-border p-6 space-y-4">
+          <div className="bg-surface rounded-xl border border-default p-6 space-y-4">
             <h2 className="text-lg font-semibold text-text-primary">Imagens</h2>
 
             {/* Image list */}
@@ -374,7 +374,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
                           "p-2 rounded-lg transition-colors",
                           img.isPrimary
                             ? "bg-primary-purple text-white"
-                            : "bg-white text-text-primary hover:bg-gray-bg"
+                            : "bg-surface text-text-primary hover:bg-gray-bg"
                         )}
                         title="Definir como principal"
                       >
@@ -383,7 +383,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
                       <button
                         type="button"
                         onClick={() => removeImage(img.id)}
-                        className="p-2 rounded-lg bg-white text-red-600 hover:bg-red-50 transition-colors"
+                        className="p-2 rounded-lg bg-surface text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
                         title="Remover"
                       >
                         <X className="w-4 h-4" />
@@ -426,7 +426,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Status */}
-          <div className="bg-white rounded-xl border border-gray-border p-6 space-y-4">
+          <div className="bg-surface rounded-xl border border-default p-6 space-y-4">
             <h2 className="text-lg font-semibold text-text-primary">Status</h2>
 
             <div>
@@ -462,7 +462,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
           </div>
 
           {/* Category */}
-          <div className="bg-white rounded-xl border border-gray-border p-6 space-y-4">
+          <div className="bg-surface rounded-xl border border-default p-6 space-y-4">
             <h2 className="text-lg font-semibold text-text-primary">Categoria</h2>
 
             <select
@@ -482,7 +482,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
           </div>
 
           {/* Shipping Profile */}
-          <div className="bg-white rounded-xl border border-gray-border p-6 space-y-4">
+          <div className="bg-surface rounded-xl border border-default p-6 space-y-4">
             <h2 className="text-lg font-semibold text-text-primary">Frete</h2>
             <p className="text-sm text-text-secondary">
               Selecione um perfil de frete para calcular o envio deste produto.
@@ -496,7 +496,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
           </div>
 
           {/* Actions */}
-          <div className="bg-white rounded-xl border border-gray-border p-6">
+          <div className="bg-surface rounded-xl border border-default p-6">
             <button
               type="submit"
               disabled={isSubmitting}

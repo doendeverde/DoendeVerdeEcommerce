@@ -24,7 +24,7 @@ export function CategoryGrid({ categories, maxDisplay = 6 }: CategoryGridProps) 
         <Link
           key={category.id}
           href={`/products?category=${category.slug}`}
-          className="group flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-primary-green hover:shadow-md"
+          className="group flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 transition-all hover:border-primary-green hover:shadow-md"
         >
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-2xl transition-colors group-hover:bg-green-50">
             🌿

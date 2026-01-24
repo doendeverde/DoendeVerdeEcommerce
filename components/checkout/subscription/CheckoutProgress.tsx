@@ -66,7 +66,7 @@ export function CheckoutProgress({ currentStep }: CheckoutProgressProps) {
   return (
     <nav
       aria-label="Progresso do checkout"
-      className="bg-white rounded-xl shadow-sm"
+      className="bg-white dark:bg-gray-900 rounded-xl shadow-sm"
     >
       {/* 
         Layout sem linhas conectoras:
@@ -95,8 +95,8 @@ export function CheckoutProgress({ currentStep }: CheckoutProgressProps) {
                   ${isPast
                     ? "bg-primary-green text-white"
                     : isActive
-                      ? "bg-primary-green/10 text-primary-green ring-2 ring-primary-green ring-offset-1"
-                      : "bg-gray-100 text-gray-400"
+                      ? "bg-primary-green/10 dark:bg-primary-green/20 text-primary-green ring-2 ring-primary-green ring-offset-1 dark:ring-offset-gray-900"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
                   }
                 `}
               >
@@ -115,8 +115,8 @@ export function CheckoutProgress({ currentStep }: CheckoutProgressProps) {
                   ${isActive
                     ? "text-primary-green"
                     : isPast
-                      ? "text-gray-700"
-                      : "text-gray-500"
+                      ? "text-gray-700 dark:text-gray-300"
+                      : "text-gray-500 dark:text-gray-400"
                   }
                 `}
               >

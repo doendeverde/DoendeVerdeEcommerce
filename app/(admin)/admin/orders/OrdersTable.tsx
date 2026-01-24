@@ -42,11 +42,11 @@ const statusLabels: Record<OrderStatus, string> = {
 };
 
 const statusStyles: Record<OrderStatus, string> = {
-  PENDING: "bg-yellow-100 text-yellow-800",
-  PAID: "bg-blue-100 text-blue-800",
-  CANCELED: "bg-red-100 text-red-800",
-  SHIPPED: "bg-purple-100 text-purple-800",
-  DELIVERED: "bg-green-100 text-green-800",
+  PENDING: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+  PAID: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+  CANCELED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+  SHIPPED: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+  DELIVERED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
 };
 
 /**
@@ -87,7 +87,7 @@ export function OrdersTable({ orders, pagination, filters }: OrdersTableProps) {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-border p-4">
+      <div className="bg-surface rounded-xl border border-default p-4">
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search */}
           <form onSubmit={handleSearch} className="flex-1">
@@ -98,7 +98,7 @@ export function OrdersTable({ orders, pagination, filters }: OrdersTableProps) {
                 placeholder="Buscar por ID, email ou nome..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 text-sm bg-gray-bg border-0 rounded-lg focus:ring-2 focus:ring-primary-purple/20 focus:bg-white transition-colors"
+                className="w-full pl-9 pr-4 py-2 text-sm bg-gray-bg border-0 rounded-lg focus:ring-2 focus:ring-primary-purple/20 focus:bg-surface transition-colors"
               />
             </div>
           </form>
@@ -120,7 +120,7 @@ export function OrdersTable({ orders, pagination, filters }: OrdersTableProps) {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-border overflow-hidden">
+      <div className="bg-surface rounded-xl border border-default overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

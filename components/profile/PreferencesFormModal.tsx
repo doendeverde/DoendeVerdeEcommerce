@@ -176,9 +176,9 @@ export function PreferencesFormModal({
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white px-6 py-4 border-b flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white dark:bg-gray-900 px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between z-10">
           <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
             <Settings className="w-5 h-5 text-primary-green" />
             {initialPreferences ? "Editar Preferências" : "Definir Preferências"}
@@ -227,8 +227,8 @@ export function PreferencesFormModal({
                   <label
                     key={moment.value}
                     className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form.consumptionMoment.includes(moment.value)
-                        ? "border-primary-green bg-green-50"
-                        : "border-gray-200 hover:border-gray-300"
+                      ? "border-primary-green bg-green-50"
+                      : "border-gray-200 hover:border-gray-300"
                       }`}
                   >
                     <input
@@ -270,8 +270,8 @@ export function PreferencesFormModal({
                 <label
                   key={item.field}
                   className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form[item.field]
-                      ? "border-primary-green bg-green-50"
-                      : "border-gray-200 hover:border-gray-300"
+                    ? "border-primary-green bg-green-50"
+                    : "border-gray-200 hover:border-gray-300"
                     }`}
                 >
                   <input
@@ -425,8 +425,8 @@ export function PreferencesFormModal({
                 <label
                   key={item.field}
                   className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form[item.field]
-                      ? "border-primary-green bg-green-50"
-                      : "border-gray-200 hover:border-gray-300"
+                    ? "border-primary-green bg-green-50"
+                    : "border-gray-200 hover:border-gray-300"
                     }`}
                 >
                   <input
@@ -451,8 +451,8 @@ export function PreferencesFormModal({
                   <label
                     key={color}
                     className={`px-3 py-1.5 rounded-full border-2 cursor-pointer transition-colors text-sm ${isSelected
-                        ? "border-primary-green bg-green-50 text-primary-green"
-                        : "border-gray-200 hover:border-gray-300 text-gray-700"
+                      ? "border-primary-green bg-green-50 text-primary-green"
+                      : "border-gray-200 hover:border-gray-300 text-gray-700"
                       }`}
                   >
                     <input
@@ -489,7 +489,7 @@ export function PreferencesFormModal({
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white px-6 py-4 border-t flex gap-3">
+        <div className="sticky bottom-0 bg-white dark:bg-gray-900 px-6 py-4 border-t border-gray-200 dark:border-gray-800 flex gap-3">
           <button
             type="button"
             onClick={onClose}

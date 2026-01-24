@@ -79,8 +79,8 @@ export function ShippingProfileSelector({
           value={value || ""}
           onChange={(e) => onChange(e.target.value || null)}
           disabled={disabled}
-          className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-green focus:border-primary-green appearance-none bg-white ${error ? "border-red-500" : "border-gray-border"
-            } ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
+          className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-green focus:border-primary-green appearance-none bg-surface ${error ? "border-red-500" : "border-default"
+            } ${disabled ? "bg-gray-bg cursor-not-allowed" : ""}`}
         >
           <option value="">
             {required ? "Selecione um perfil de frete" : "Sem frete definido"}
@@ -96,7 +96,7 @@ export function ShippingProfileSelector({
 
       {/* Selected profile details */}
       {selectedProfile && (
-        <div className="flex items-center gap-4 text-xs text-text-muted bg-gray-50 rounded-lg px-3 py-2">
+        <div className="flex items-center gap-4 text-xs text-text-muted bg-gray-bg rounded-lg px-3 py-2">
           <span>
             <strong>Peso:</strong> {selectedProfile.weightKg}kg
           </span>

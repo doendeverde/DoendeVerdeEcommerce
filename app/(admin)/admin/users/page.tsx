@@ -40,21 +40,21 @@ export default async function AdminUsersPage({
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-gray-border p-4">
+        <div className="bg-surface rounded-xl border border-default p-4">
           <span className="text-sm text-text-secondary">Total de Usuários</span>
           <p className="text-2xl font-bold text-text-primary mt-1">
             {usersData.total}
           </p>
         </div>
-        <div className="bg-green-50 rounded-xl border border-green-200 p-4">
-          <span className="text-sm text-green-700">Ativos</span>
-          <p className="text-2xl font-bold text-green-800 mt-1">
+        <div className="bg-green-100 dark:bg-green-900/30 rounded-xl border border-green-200 dark:border-green-800 p-4">
+          <span className="text-sm text-green-700 dark:text-green-400">Ativos</span>
+          <p className="text-2xl font-bold text-green-800 dark:text-green-300 mt-1">
             {usersData.users.filter((u) => u.status === "ACTIVE").length}
           </p>
         </div>
-        <div className="bg-red-50 rounded-xl border border-red-200 p-4">
-          <span className="text-sm text-red-700">Bloqueados</span>
-          <p className="text-2xl font-bold text-red-800 mt-1">
+        <div className="bg-red-100 dark:bg-red-900/30 rounded-xl border border-red-200 dark:border-red-800 p-4">
+          <span className="text-sm text-red-700 dark:text-red-400">Bloqueados</span>
+          <p className="text-2xl font-bold text-red-800 dark:text-red-300 mt-1">
             {usersData.users.filter((u) => u.status === "BLOCKED").length}
           </p>
         </div>

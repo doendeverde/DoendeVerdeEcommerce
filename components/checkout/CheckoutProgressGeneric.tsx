@@ -53,7 +53,7 @@ export function CheckoutProgressGeneric({
   return (
     <nav
       aria-label="Progresso do checkout"
-      className="bg-white rounded-xl shadow-sm"
+      className="bg-white dark:bg-gray-900 rounded-xl shadow-sm"
     >
       {/* Layout sem linhas conectoras, com justify-between */}
       <div className="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
@@ -77,8 +77,8 @@ export function CheckoutProgressGeneric({
                   ${isPast
                     ? "bg-primary-green text-white"
                     : isActive
-                      ? "bg-primary-green/10 text-primary-green ring-2 ring-primary-green ring-offset-1"
-                      : "bg-gray-100 text-gray-400"
+                      ? "bg-primary-green/10 dark:bg-primary-green/20 text-primary-green ring-2 ring-primary-green ring-offset-1 dark:ring-offset-gray-900"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
                   }
                 `}
               >
@@ -99,8 +99,8 @@ export function CheckoutProgressGeneric({
                   ${isActive
                     ? "text-primary-green"
                     : isPast
-                      ? "text-gray-700"
-                      : "text-gray-500"
+                      ? "text-gray-700 dark:text-gray-300"
+                      : "text-gray-500 dark:text-gray-400"
                   }
                 `}
               >

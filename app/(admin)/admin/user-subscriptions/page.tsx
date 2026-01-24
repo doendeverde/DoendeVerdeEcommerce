@@ -64,7 +64,7 @@ export default async function AdminUserSubscriptionsPage({ searchParams }: PageP
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-xl border border-gray-border p-4">
+      <div className="bg-surface rounded-xl border border-default p-4">
         <form className="flex flex-wrap gap-4">
           {/* Busca */}
           <div className="flex-1 min-w-[250px]">
@@ -116,7 +116,7 @@ export default async function AdminUserSubscriptionsPage({ searchParams }: PageP
       </div>
 
       {/* Tabela de Assinaturas */}
-      <div className="bg-white rounded-xl border border-gray-border overflow-hidden">
+      <div className="bg-surface rounded-xl border border-default overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -141,7 +141,7 @@ export default async function AdminUserSubscriptionsPage({ searchParams }: PageP
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-border">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {result.subscriptions.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center">
@@ -219,7 +219,7 @@ export default async function AdminUserSubscriptionsPage({ searchParams }: PageP
 
         {/* Paginação */}
         {result.totalPages > 1 && (
-          <div className="px-4 py-3 border-t border-gray-border flex items-center justify-between">
+          <div className="px-4 py-3 border-t border-default flex items-center justify-between">
             <p className="text-sm text-text-secondary">
               Página {result.page} de {result.totalPages}
             </p>

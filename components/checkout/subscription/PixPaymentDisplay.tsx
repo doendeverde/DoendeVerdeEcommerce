@@ -191,8 +191,8 @@ export function PixPaymentDisplay({
         <div className="flex items-center gap-2 text-sm">
           <Clock className="w-4 h-4 text-muted" />
           <span className={`font-mono font-medium ${parseInt(formattedTime.split(":")[0]) < 5
-              ? "text-red-500"
-              : "text-default"
+            ? "text-red-500"
+            : "text-default"
             }`}>
             {formattedTime}
           </span>
@@ -246,8 +246,8 @@ export function PixPaymentDisplay({
           <button
             onClick={handleCopy}
             className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${copied
-                ? "bg-green-100 text-green-700"
-                : "bg-primary-green text-white hover:bg-green-600"
+              ? "bg-green-100 text-green-700"
+              : "bg-primary-green text-white hover:bg-green-600"
               }`}
           >
             {copied ? (

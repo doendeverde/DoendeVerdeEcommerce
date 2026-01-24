@@ -46,9 +46,9 @@ export function AddressCard({
 
   return (
     <div
-      className={`relative bg-white rounded-xl border-2 p-4 transition-all ${address.isDefault
-          ? "border-primary-green bg-green-50/30"
-          : "border-gray-200 hover:border-gray-300"
+      className={`relative bg-white dark:bg-gray-900 rounded-xl border-2 p-4 transition-all ${address.isDefault
+        ? "border-primary-green bg-green-50/30 dark:bg-green-900/20"
+        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
         }`}
     >
       {/* Default Badge */}
@@ -86,7 +86,7 @@ export function AddressCard({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-100">
+      <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
         {!address.isDefault && (
           <button
             onClick={onSetDefault}
