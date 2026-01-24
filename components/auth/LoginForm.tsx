@@ -34,6 +34,10 @@ export function LoginForm({ onSuccess, onSwitchView, callbackUrl: callbackUrlPro
   // Prioriza callbackUrl de prop (modal) sobre searchParams (página)
   const callbackUrl = callbackUrlProp || searchParams?.get("callbackUrl") || "/";
 
+  // Check for blocked user error
+  const errorParam = searchParams?.get("error");
+  const isBlocked = errorParam === "blocked";
+
   const [formData, setFormData] = useState<LoginInput>({
     email: "",
     password: "",
@@ -41,7 +45,9 @@ export function LoginForm({ onSuccess, onSwitchView, callbackUrl: callbackUrlPro
 
   const [errors, setErrors] = useState<Partial<Record<keyof LoginInput, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [generalError, setGeneralError] = useState<string | null>(null);
+  const [generalError, setGeneralError] = useState<string | null>(
+    isBlocked ? "Sua conta foi bloqueada. Entre em contato com o suporte." : null
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

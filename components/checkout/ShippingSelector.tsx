@@ -18,6 +18,8 @@ import {
   Package,
   RefreshCw,
   CheckCircle,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import type { ShippingOption, SelectedShippingOption } from "@/types/shipping";
 
@@ -70,6 +72,10 @@ export function ShippingSelector({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [showAllOptions, setShowAllOptions] = useState(false);
+
+  // Number of options to show before "Ver mais"
+  const VISIBLE_OPTIONS_COUNT = 5;
 
   // Notify parent of loading state changes
   useEffect(() => {
@@ -223,7 +229,7 @@ export function ShippingSelector({
       {/* Shipping Options */}
       {!isLoading && !error && options.length > 0 && (
         <div className="space-y-2">
-          {options.map((option) => {
+          {(showAllOptions ? options : options.slice(0, VISIBLE_OPTIONS_COUNT)).map((option) => {
             const isSelected = selectedOption?.id === option.id;
             return (
               <button
@@ -231,8 +237,8 @@ export function ShippingSelector({
                 type="button"
                 onClick={() => handleSelectOption(option)}
                 className={`w-full flex items-center justify-between p-4 rounded-lg border-2 transition-all ${isSelected
-                    ? "border-primary-green bg-green-50"
-                    : "border-gray-200 hover:border-primary-green/50"
+                  ? "border-primary-green bg-green-50"
+                  : "border-gray-200 hover:border-primary-green/50"
                   }`}
               >
                 <div className="flex items-center gap-3">
@@ -270,6 +276,27 @@ export function ShippingSelector({
               </button>
             );
           })}
+
+          {/* Show More / Show Less Button */}
+          {options.length > VISIBLE_OPTIONS_COUNT && (
+            <button
+              type="button"
+              onClick={() => setShowAllOptions(!showAllOptions)}
+              className="w-full flex items-center justify-center gap-2 py-3 text-sm text-gray-600 hover:text-primary-green transition-colors"
+            >
+              {showAllOptions ? (
+                <>
+                  <ChevronUp className="w-4 h-4" />
+                  Mostrar menos
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4" />
+                  Ver mais {options.length - VISIBLE_OPTIONS_COUNT} opções
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
 

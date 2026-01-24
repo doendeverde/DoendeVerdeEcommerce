@@ -120,12 +120,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return true;
     },
-    async jwt({ token, user }) {
-      // Add custom data to token
+    async jwt({ token, user, trigger }) {
+      // Add custom data to token on initial login
       if (user) {
         token.role = user.role;
         token.status = user.status;
       }
+      
+      // Revalidate user status periodically (every request or on update trigger)
+      // This ensures blocked users are logged out even if blocked after login
+      if (token.sub && (trigger === "update" || !token.statusCheckedAt || 
+          Date.now() - (token.statusCheckedAt as number) > 5 * 60 * 1000)) { // Check every 5 minutes
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.sub },
+            select: { status: true, role: true },
+          });
+          
+          if (dbUser) {
+            token.status = dbUser.status;
+            token.role = dbUser.role;
+            token.statusCheckedAt = Date.now();
+          }
+        } catch (error) {
+          console.error("[Auth] Error checking user status:", error);
+        }
+      }
+      
       return token;
     },
     async session({ session, token }) {

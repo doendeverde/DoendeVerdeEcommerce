@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     console.log("[Checkout Subscription] Starting subscription checkout...");
     
     // ═══════════════════════════════════════════════════════════════════════
-    // 1. AUTENTICAÇÃO
+    // 1. AUTENTICAÇÃO + VERIFICAÇÃO DE BLOQUEIO
     // ═══════════════════════════════════════════════════════════════════════
     const session = await auth();
     
@@ -95,6 +95,19 @@ export async function POST(request: NextRequest) {
           errorCode: "UNAUTHORIZED",
         },
         { status: 401 }
+      );
+    }
+
+    // Check if user is blocked
+    if (session.user.status === "BLOCKED") {
+      console.log("[Checkout Subscription] User is BLOCKED - rejecting");
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "Conta bloqueada. Entre em contato com o suporte.",
+          errorCode: "USER_BLOCKED",
+        },
+        { status: 403 }
       );
     }
 

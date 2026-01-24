@@ -8,8 +8,8 @@
 
 | Categoria | Total | Corrigidos | Pendentes |
 |-----------|-------|------------|-----------|
-| 🔴 Críticos | 8 | 6 | 2 |
-| 🟠 Importantes | 11 | 5 | 6 |
+| 🔴 Críticos | 8 | 8 | 0 |
+| 🟠 Importantes | 11 | 6 | 5 |
 | 🟡 Melhorias | 8 | 1 | 7 |
 
 **Bugs Corrigidos Hoje:**
@@ -24,10 +24,9 @@
 9. ✅ Scroll ao processar pagamento - useEffect com isProcessing
 10. ✅ Dropdown admin cortado - removido overflow-hidden do DataTable
 11. ✅ PATCH /api/user/preferences 400 - schema update mais permissivo
-
-**Novos bugs adicionados:**
-- 🔴 #24 - Bloquear acesso de usuário bloqueado nos endpoints
-- 🔴 #25 - Deslogar usuário bloqueado automaticamente
+12. ✅ Bloquear usuário BLOCKED nos endpoints - middleware + api-auth helper
+13. ✅ Deslogar usuário bloqueado - revalidação de status no JWT callback
+14. ✅ Mostrar apenas 5 opções de frete - com botão "Ver mais"
 
 ---
 
@@ -200,11 +199,15 @@ O código está correto - `signOut({ callbackUrl: "/" })` usa URL relativa que o
 
 ---
 
-### 15. ⚠️ Mostrar Apenas 5 Opções de Frete
-**Arquivo:** `components/checkout/ShippingOptions.tsx`  
+### 15. ✅ Mostrar Apenas 5 Opções de Frete (CORRIGIDO)
+**Arquivo:** `components/checkout/ShippingSelector.tsx`, `components/checkout/ShippingCalculator.tsx`  
 **Problema:** Mostrar apenas 5 primeiras opções com botão "Ver mais"
 
-**Status:** 🟠 PRECISA IMPLEMENTAR
+**Status:** ✅ CORRIGIDO em 23/01/2026  
+**Solução Aplicada:**
+- Adicionado estado `showAllOptions` e constante `VISIBLE_OPTIONS_COUNT = 5`
+- Renderiza apenas as 5 primeiras opções por padrão
+- Botão "Ver mais X opções" / "Mostrar menos" para expandir/colapsar
 
 ---
 
@@ -274,25 +277,28 @@ O código está correto - `signOut({ callbackUrl: "/" })` usa URL relativa que o
 
 ---
 
-### 24. 🔴 Bloquear Acesso de Usuário Bloqueado nos Endpoints
-**Arquivo:** `middleware.ts` + endpoints de API  
+### 24. ✅ Bloquear Acesso de Usuário Bloqueado nos Endpoints (CORRIGIDO)
+**Arquivo:** `middleware.ts` + `lib/api-auth.ts` + endpoints de API  
 **Problema:** Usuário com status BLOCKED ainda consegue acessar endpoints protegidos
 
-**Status:** 🔴 PRECISA IMPLEMENTAR  
-**Solução:** 
-- Verificar `user.status === "BLOCKED"` em middleware ou em cada endpoint protegido
-- Retornar 403 Forbidden para usuários bloqueados
+**Status:** ✅ CORRIGIDO em 23/01/2026  
+**Solução Aplicada:** 
+- Criado `lib/api-auth.ts` com helpers `requireAuth()` e `requireAdmin()` que verificam status BLOCKED
+- Middleware verifica BLOCKED antes de qualquer outra verificação e redireciona para /login?error=blocked
+- Endpoints de checkout atualizados para usar os helpers
+- LoginForm mostra mensagem de erro quando `?error=blocked`
 
 ---
 
-### 25. 🔴 Deslogar Usuário Bloqueado Automaticamente
+### 25. ✅ Deslogar Usuário Bloqueado Automaticamente (CORRIGIDO)
 **Arquivo:** `lib/auth.ts` (callbacks) + `middleware.ts`  
 **Problema:** Usuário bloqueado deve ser deslogado automaticamente ao tentar acessar o sistema
 
-**Status:** 🔴 PRECISA IMPLEMENTAR  
-**Solução:** 
-- No callback `jwt` ou `session`, verificar status do usuário no banco
-- Se bloqueado, invalidar sessão e redirecionar para /login com mensagem
+**Status:** ✅ CORRIGIDO em 23/01/2026  
+**Solução Aplicada:** 
+- Callback `jwt` revalida status do usuário no banco a cada 5 minutos
+- Middleware limpa cookies de sessão e redireciona para /login com error=blocked
+- LoginForm exibe mensagem "Sua conta foi bloqueada" quando detecta o parâmetro
 
 ---
 

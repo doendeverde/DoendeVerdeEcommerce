@@ -57,18 +57,24 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Se está tentando acessar login/register já autenticado
-  if (isAuthRoute && session) {
-    return NextResponse.redirect(new URL("/", request.url));
+  // ⚠️ PRIMEIRO: Verificar se usuário está bloqueado (ANTES de qualquer outra verificação)
+  if (session?.user?.status === "BLOCKED") {
+    // Se está em rota de auth (login/register), deixa passar para ver a mensagem
+    if (!isAuthRoute) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("error", "blocked");
+      
+      const response = NextResponse.redirect(loginUrl);
+      // Limpar session cookies para forçar logout
+      response.cookies.delete("authjs.session-token");
+      response.cookies.delete("__Secure-authjs.session-token");
+      return response;
+    }
   }
 
-  // Verificar se usuário está bloqueado
-  if (session?.user?.status === "BLOCKED") {
-    const response = NextResponse.redirect(new URL("/login", request.url));
-    // Limpar session cookie
-    response.cookies.delete("authjs.session-token");
-    response.cookies.delete("__Secure-authjs.session-token");
-    return response;
+  // Se está tentando acessar login/register já autenticado (e não bloqueado)
+  if (isAuthRoute && session && session.user.status !== "BLOCKED") {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();

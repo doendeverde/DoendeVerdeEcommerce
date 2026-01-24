@@ -8,7 +8,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Truck, Loader2, AlertCircle, MapPin, Package } from "lucide-react";
+import { Truck, Loader2, AlertCircle, MapPin, Package, ChevronDown, ChevronUp } from "lucide-react";
 import type { ShippingOption, ShippingQuoteResponse } from "@/types/shipping";
 
 interface ShippingCalculatorProps {
@@ -58,6 +58,10 @@ export function ShippingCalculator({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [showAllOptions, setShowAllOptions] = useState(false);
+
+  // Number of options to show before "Ver mais"
+  const VISIBLE_OPTIONS_COUNT = 5;
 
   // Auto-calculate if initial CEP is provided
   useEffect(() => {
@@ -189,7 +193,7 @@ export function ShippingCalculator({
         <div className="mt-4 space-y-3">
           <p className="text-sm text-text-secondary">Opções de entrega:</p>
 
-          {options.map((option) => (
+          {(showAllOptions ? options : options.slice(0, VISIBLE_OPTIONS_COUNT)).map((option) => (
             <button
               key={option.id}
               type="button"
@@ -221,6 +225,27 @@ export function ShippingCalculator({
               </div>
             </button>
           ))}
+
+          {/* Show More / Show Less Button */}
+          {options.length > VISIBLE_OPTIONS_COUNT && (
+            <button
+              type="button"
+              onClick={() => setShowAllOptions(!showAllOptions)}
+              className="w-full flex items-center justify-center gap-2 py-3 text-sm text-gray-600 hover:text-primary-green transition-colors"
+            >
+              {showAllOptions ? (
+                <>
+                  <ChevronUp className="w-4 h-4" />
+                  Mostrar menos
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4" />
+                  Ver mais {options.length - VISIBLE_OPTIONS_COUNT} opções
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
 

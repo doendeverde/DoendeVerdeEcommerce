@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAuth } from "@/lib/api-auth";
 import { checkoutService } from "@/services/checkout.service";
 import { productCheckoutSchema } from "@/schemas/checkout.schema";
 import { ZodError } from "zod";
@@ -16,14 +16,13 @@ import { ZodError } from "zod";
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. Check authentication
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: "Não autenticado", errorCode: "UNAUTHORIZED" },
-        { status: 401 }
-      );
+    // 1. Check authentication and blocked status
+    const authResult = await requireAuth();
+    if (!authResult.success) {
+      return authResult.response;
     }
+    
+    const { session, userId } = authResult;
 
     // 2. Parse and validate request body
     const body = await request.json();
@@ -31,11 +30,11 @@ export async function POST(request: NextRequest) {
 
     // 3. Process checkout
     const result = await checkoutService.processProductCheckout(
-      session.user.id,
+      userId,
       {
-        id: session.user.id,
-        fullName: session.user.name || "Cliente",
-        email: session.user.email || "",
+        id: userId,
+        fullName: session?.user.name || "Cliente",
+        email: session?.user.email || "",
         whatsapp: null, // TODO: Get from user profile
       },
       validated
