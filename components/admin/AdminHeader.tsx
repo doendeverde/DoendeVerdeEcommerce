@@ -120,7 +120,7 @@ export function AdminHeader({ user }: AdminHeaderProps) {
           </button>
 
           {/* User menu */}
-          <div className="flex items-center gap-3 pl-2 ml-2 border-l border-default">
+          <div className="flex items-center gap-3 pl-2 ml-2 border-l">
             {/* Avatar */}
             {user.image ? (
               <img
