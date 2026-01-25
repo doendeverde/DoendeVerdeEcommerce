@@ -34,8 +34,8 @@ export function Header({ className }: HeaderProps) {
 
         {/* Right Section: Theme Toggle + Cart + User */}
         <div className="flex items-center gap-1">
-          <ThemeToggle />
           <CartButton />
+          <ThemeToggle />
           <UserDropdown />
         </div>
       </div>

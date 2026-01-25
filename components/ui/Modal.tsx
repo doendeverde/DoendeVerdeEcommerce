@@ -128,7 +128,7 @@ export function Modal({
             {!preventClose && (
               <button
                 onClick={onClose}
-                className="p-1 text-muted hover:text-default transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="p-1 text-muted hover:text-default transition-colors rounded-md hover:bg-hover-bg"
                 aria-label="Fechar modal"
               >
                 <X size={20} />

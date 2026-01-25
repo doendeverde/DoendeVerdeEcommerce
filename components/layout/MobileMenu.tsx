@@ -42,7 +42,7 @@ export function MobileMenu({ className }: MobileMenuProps) {
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="p-2 text-text-secondary hover:text-text-primary hover:bg-gray-bg dark:hover:bg-gray-800 rounded-lg transition-colors"
+        className="p-2 text-text-secondary hover:text-text-primary hover:bg-hover-bg rounded-lg transition-colors"
         aria-label="Abrir menu"
       >
         <Menu className="w-5 h-5" />
@@ -71,7 +71,7 @@ export function MobileMenu({ className }: MobileMenuProps) {
           </span>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-2 text-text-secondary hover:text-text-primary hover:bg-gray-bg dark:hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 text-text-secondary hover:text-text-primary hover:bg-hover-bg rounded-lg transition-colors"
             aria-label="Fechar menu"
           >
             <X className="w-5 h-5" />
@@ -92,7 +92,7 @@ export function MobileMenu({ className }: MobileMenuProps) {
                       "block px-4 py-3 text-sm font-medium rounded-lg transition-colors",
                       isActive
                         ? "text-primary-green bg-primary-green-light dark:bg-green-950"
-                        : "text-text-primary hover:bg-gray-bg dark:hover:bg-gray-800"
+                        : "text-text-primary hover:bg-hover-bg"
                     )}
                   >
                     {item.label}

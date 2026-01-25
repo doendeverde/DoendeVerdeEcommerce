@@ -223,7 +223,7 @@ export function OrderPixPayment({
         {/* QR Code */}
         {!isExpired && currentPixData.qrCodeBase64 && (
           <div className="flex justify-center">
-            <div className="p-3 bg-white border-2 border-gray-200 rounded-xl">
+            <div className="p-3 bg-white dark:bg-gray-800 border-2 border-gray-border rounded-xl">
               <img
                 src={`data:image/png;base64,${currentPixData.qrCodeBase64}`}
                 alt="QR Code PIX"

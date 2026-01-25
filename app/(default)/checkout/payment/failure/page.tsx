@@ -105,7 +105,7 @@ async function PaymentFailureContent({ searchParams }: PaymentFailurePageProps) 
             </Link>
             <Link
               href="/"
-              className="w-full py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors block"
+              className="w-full py-3 border border-gray-border text-text-secondary rounded-lg font-medium hover:bg-hover-bg transition-colors block text-center"
             >
               Voltar para a loja
             </Link>

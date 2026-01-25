@@ -169,7 +169,7 @@ export function AddressFormModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Label */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-text-secondary mb-1">
               Apelido (opcional)
             </label>
             <input
@@ -177,14 +177,14 @@ export function AddressFormModal({
               value={form.label}
               onChange={(e) => handleChange("label", e.target.value)}
               placeholder="Ex: Casa, Trabalho"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
             />
           </div>
 
           {/* CEP + State */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-secondary mb-1">
                 CEP *
               </label>
               <div className="relative">
@@ -195,7 +195,7 @@ export function AddressFormModal({
                   onBlur={handleCepBlur}
                   placeholder="00000000"
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
                 />
                 {isCepLoading && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -205,7 +205,7 @@ export function AddressFormModal({
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-secondary mb-1">
                 Estado *
               </label>
               <input
@@ -215,14 +215,14 @@ export function AddressFormModal({
                 placeholder="UF"
                 required
                 maxLength={2}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
               />
             </div>
           </div>
 
           {/* City */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-text-secondary mb-1">
               Cidade *
             </label>
             <input
@@ -230,13 +230,13 @@ export function AddressFormModal({
               value={form.city}
               onChange={(e) => handleChange("city", e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
             />
           </div>
 
           {/* Neighborhood */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-text-secondary mb-1">
               Bairro *
             </label>
             <input
@@ -244,14 +244,14 @@ export function AddressFormModal({
               value={form.neighborhood}
               onChange={(e) => handleChange("neighborhood", e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
             />
           </div>
 
           {/* Street + Number */}
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-secondary mb-1">
                 Rua *
               </label>
               <input
@@ -259,11 +259,11 @@ export function AddressFormModal({
                 value={form.street}
                 onChange={(e) => handleChange("street", e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-secondary mb-1">
                 Número *
               </label>
               <input
@@ -271,14 +271,14 @@ export function AddressFormModal({
                 value={form.number}
                 onChange={(e) => handleChange("number", e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
               />
             </div>
           </div>
 
           {/* Complement */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-text-secondary mb-1">
               Complemento
             </label>
             <input
@@ -286,13 +286,13 @@ export function AddressFormModal({
               value={form.complement}
               onChange={(e) => handleChange("complement", e.target.value)}
               placeholder="Apto, Bloco, etc."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
             />
           </div>
 
           {/* Error */}
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{error}</p>
+            <p className="text-sm text-red-600 dark:text-red-400 bg-error-bg p-3 rounded-lg">{error}</p>
           )}
 
           {/* Actions */}
@@ -300,7 +300,7 @@ export function AddressFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+              className="flex-1 py-3 border border-gray-border text-text-secondary rounded-lg font-medium hover:bg-hover-bg transition-colors"
             >
               Cancelar
             </button>

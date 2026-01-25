@@ -51,7 +51,7 @@ export default async function HomePage() {
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-base font-semibold text-primary-purple transition-all hover:bg-gray-100"
+                className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-base font-semibold text-primary-purple transition-all hover:bg-white/90"
               >
                 Ver Produtos
                 <ArrowRight className="h-5 w-5" />

@@ -146,9 +146,9 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           type="text"
           value={formData.fullName}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.fullName
-            ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-500"
+          className={`w-full px-3 py-2 border rounded-lg bg-card-bg text-text-primary focus:outline-none focus:ring-2 ${errors.fullName
+            ? "border-error focus:ring-error/20"
+            : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
           disabled={isLoading}
         />
@@ -167,9 +167,9 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           type="email"
           value={formData.email}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.email
-            ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-500"
+          className={`w-full px-3 py-2 border rounded-lg bg-card-bg text-text-primary focus:outline-none focus:ring-2 ${errors.email
+            ? "border-error focus:ring-error/20"
+            : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
           disabled={isLoading}
         />
@@ -188,9 +188,9 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           type="date"
           value={formData.birthDate}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.birthDate
+          className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 ${errors.birthDate
             ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-500"
+            : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
           disabled={isLoading}
         />
@@ -210,9 +210,9 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           placeholder="(11) 99999-9999"
           value={formData.whatsapp}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.whatsapp
+          className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 ${errors.whatsapp
             ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-500"
+            : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
           disabled={isLoading}
         />
@@ -231,9 +231,9 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           type="password"
           value={formData.password}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.password
+          className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 ${errors.password
             ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-500"
+            : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
           disabled={isLoading}
         />
@@ -255,9 +255,9 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           type="password"
           value={formData.confirmPassword}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.confirmPassword
+          className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 ${errors.confirmPassword
             ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-500"
+            : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
           disabled={isLoading}
         />
@@ -273,7 +273,7 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           type="checkbox"
           checked={formData.acceptTerms}
           onChange={handleChange}
-          className={`mt-1 h-4 w-4 rounded border-gray-300 ${errors.acceptTerms ? "border-red-500" : ""
+          className={`mt-1 h-4 w-4 rounded border-gray-border accent-primary-green ${errors.acceptTerms ? "border-red-500" : ""
             }`}
           disabled={isLoading}
         />

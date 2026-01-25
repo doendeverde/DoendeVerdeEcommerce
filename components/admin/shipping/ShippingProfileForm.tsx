@@ -321,7 +321,7 @@ export function ShippingProfileForm({ profile }: ShippingProfileFormProps) {
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-4 py-2 text-text-secondary hover:text-text-primary border border-gray-border rounded-lg hover:bg-gray-50 transition-colors"
+          className="px-4 py-2 text-text-secondary hover:text-text-primary border border-gray-border rounded-lg hover:bg-hover-bg transition-colors"
         >
           Cancelar
         </button>

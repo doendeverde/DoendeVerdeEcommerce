@@ -441,16 +441,16 @@ function CheckoutHeader({ planName, onBack }: CheckoutHeaderProps) {
     <div className="flex items-center gap-4">
       <button
         onClick={onBack}
-        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        className="p-2 hover:bg-hover-bg rounded-lg transition-colors"
         aria-label="Voltar"
       >
-        <ArrowLeft className="w-5 h-5" />
+        <ArrowLeft className="w-5 h-5 text-text-secondary" />
       </button>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-text-primary">
           Assinar {planName}
         </h1>
-        <p className="text-gray-600">
+        <p className="text-text-secondary">
           Complete os passos abaixo para ativar sua assinatura
         </p>
       </div>

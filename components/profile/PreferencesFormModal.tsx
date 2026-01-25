@@ -195,11 +195,11 @@ export function PreferencesFormModal({
         <div className="p-6 space-y-6">
           {/* Consumption Section */}
           <section className="space-y-4">
-            <h3 className="font-medium text-gray-800 border-b pb-2">Sobre seu consumo</h3>
+            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Sobre seu consumo</h3>
 
             {/* Frequency */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Frequência de consumo
               </label>
               <select
@@ -207,7 +207,7 @@ export function PreferencesFormModal({
                 onChange={(e) =>
                   handleChange("consumptionFrequency", (e.target.value as ConsumptionFrequency) || null)
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
               >
                 <option value="">Selecione...</option>
                 <option value="OCCASIONAL">Ocasional</option>
@@ -219,7 +219,7 @@ export function PreferencesFormModal({
 
             {/* Moments */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Quando você costuma consumir?
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -227,17 +227,17 @@ export function PreferencesFormModal({
                   <label
                     key={moment.value}
                     className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form.consumptionMoment.includes(moment.value)
-                      ? "border-primary-green bg-green-50"
-                      : "border-gray-200 hover:border-gray-300"
+                      ? "border-primary-green bg-success-bg"
+                      : "border-gray-border hover:border-gray-muted"
                       }`}
                   >
                     <input
                       type="checkbox"
                       checked={form.consumptionMoment.includes(moment.value)}
                       onChange={(e) => handleMomentToggle(moment.value, e.target.checked)}
-                      className="text-primary-green focus:ring-primary-green rounded"
+                      className="text-primary-green focus:ring-primary-green rounded accent-primary-green"
                     />
-                    <span className="text-sm text-gray-700">{moment.label}</span>
+                    <span className="text-sm text-text-secondary">{moment.label}</span>
                   </label>
                 ))}
               </div>
@@ -245,7 +245,7 @@ export function PreferencesFormModal({
 
             {/* Years */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Há quantos anos você fuma?
               </label>
               <input
@@ -257,30 +257,30 @@ export function PreferencesFormModal({
                   handleChange("yearsSmoking", e.target.value ? parseInt(e.target.value) : null)
                 }
                 placeholder="Ex: 5"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
               />
             </div>
           </section>
 
           {/* What You Consume */}
           <section className="space-y-4">
-            <h3 className="font-medium text-gray-800 border-b pb-2">O que você consome?</h3>
+            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">O que você consome?</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {CONSUMPTION_TYPES.map((item) => (
                 <label
                   key={item.field}
                   className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form[item.field]
-                    ? "border-primary-green bg-green-50"
-                    : "border-gray-200 hover:border-gray-300"
+                    ? "border-primary-green bg-success-bg"
+                    : "border-gray-border hover:border-gray-muted"
                     }`}
                 >
                   <input
                     type="checkbox"
                     checked={form[item.field]}
                     onChange={(e) => handleChange(item.field, e.target.checked)}
-                    className="text-primary-green focus:ring-primary-green rounded"
+                    className="text-primary-green focus:ring-primary-green rounded accent-primary-green"
                   />
-                  <span className="text-sm text-gray-700">{item.label}</span>
+                  <span className="text-sm text-text-secondary">{item.label}</span>
                 </label>
               ))}
             </div>
@@ -288,10 +288,10 @@ export function PreferencesFormModal({
 
           {/* Paper Preferences */}
           <section className="space-y-4">
-            <h3 className="font-medium text-gray-800 border-b pb-2">Preferências de seda</h3>
+            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Preferências de seda</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-text-secondary mb-2">
                   Tipo de seda
                 </label>
                 <select
@@ -299,7 +299,7 @@ export function PreferencesFormModal({
                   onChange={(e) =>
                     handleChange("favoritePaperType", (e.target.value as PaperType) || null)
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
                 >
                   <option value="">Selecione...</option>
                   <option value="WHITE">Branca</option>
@@ -310,7 +310,7 @@ export function PreferencesFormModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-text-secondary mb-2">
                   Tamanho preferido
                 </label>
                 <select
@@ -318,7 +318,7 @@ export function PreferencesFormModal({
                   onChange={(e) =>
                     handleChange("favoritePaperSize", (e.target.value as PaperSize) || null)
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
                 >
                   <option value="">Selecione...</option>
                   <option value="MINI">Mini</option>
@@ -331,7 +331,7 @@ export function PreferencesFormModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Tamanho de filtro de papel
               </label>
               <select
@@ -339,7 +339,7 @@ export function PreferencesFormModal({
                 onChange={(e) =>
                   handleChange("paperFilterSize", (e.target.value as FilterPaperSize) || null)
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
               >
                 <option value="">Selecione...</option>
                 <option value="SHORT">Curto</option>
@@ -353,10 +353,10 @@ export function PreferencesFormModal({
 
           {/* Glass Filter */}
           <section className="space-y-4">
-            <h3 className="font-medium text-gray-800 border-b pb-2">Piteira de vidro</h3>
+            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Piteira de vidro</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-text-secondary mb-2">
                   Tamanho
                 </label>
                 <select
@@ -364,7 +364,7 @@ export function PreferencesFormModal({
                   onChange={(e) =>
                     handleChange("glassFilterSize", (e.target.value as GlassFilterSize) || null)
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
                 >
                   <option value="">Selecione...</option>
                   <option value="SHORT">Curta (2-4cm)</option>
@@ -375,7 +375,7 @@ export function PreferencesFormModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-text-secondary mb-2">
                   Espessura
                 </label>
                 <select
@@ -383,7 +383,7 @@ export function PreferencesFormModal({
                   onChange={(e) =>
                     handleChange("glassFilterThickness", (e.target.value as GlassFilterThickness) || null)
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
                 >
                   <option value="">Selecione...</option>
                   <option value="THIN">Fina (2-4mm)</option>
@@ -397,9 +397,9 @@ export function PreferencesFormModal({
 
           {/* Tobacco */}
           <section className="space-y-4">
-            <h3 className="font-medium text-gray-800 border-b pb-2">Tabaco</h3>
+            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Tabaco</h3>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-secondary mb-2">
                 Você usa tabaco?
               </label>
               <select
@@ -407,7 +407,7 @@ export function PreferencesFormModal({
                 onChange={(e) =>
                   handleChange("tobaccoUsage", (e.target.value as TobaccoUsage) || null)
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
               >
                 <option value="">Selecione...</option>
                 <option value="FULL_TIME">Sempre</option>
@@ -419,23 +419,23 @@ export function PreferencesFormModal({
 
           {/* Interests */}
           <section className="space-y-4">
-            <h3 className="font-medium text-gray-800 border-b pb-2">Seus interesses</h3>
+            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Seus interesses</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {INTERESTS.map((item) => (
                 <label
                   key={item.field}
                   className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-colors ${form[item.field]
-                    ? "border-primary-green bg-green-50"
-                    : "border-gray-200 hover:border-gray-300"
+                    ? "border-primary-green bg-success-bg"
+                    : "border-gray-border hover:border-gray-muted"
                     }`}
                 >
                   <input
                     type="checkbox"
                     checked={form[item.field]}
                     onChange={(e) => handleChange(item.field, e.target.checked)}
-                    className="text-primary-green focus:ring-primary-green rounded"
+                    className="text-primary-green focus:ring-primary-green rounded accent-primary-green"
                   />
-                  <span className="text-sm text-gray-700">{item.label}</span>
+                  <span className="text-sm text-text-secondary">{item.label}</span>
                 </label>
               ))}
             </div>
@@ -443,7 +443,7 @@ export function PreferencesFormModal({
 
           {/* Colors */}
           <section className="space-y-4">
-            <h3 className="font-medium text-gray-800 border-b pb-2">Cores favoritas</h3>
+            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Cores favoritas</h3>
             <div className="flex flex-wrap gap-2">
               {FAVORITE_COLORS.map((color) => {
                 const isSelected = form.favoriteColors.includes(color.toLowerCase());
@@ -451,8 +451,8 @@ export function PreferencesFormModal({
                   <label
                     key={color}
                     className={`px-3 py-1.5 rounded-full border-2 cursor-pointer transition-colors text-sm ${isSelected
-                      ? "border-primary-green bg-green-50 text-primary-green"
-                      : "border-gray-200 hover:border-gray-300 text-gray-700"
+                      ? "border-primary-green bg-success-bg text-primary-green"
+                      : "border-gray-border hover:border-gray-muted text-text-secondary"
                       }`}
                   >
                     <input
@@ -470,7 +470,7 @@ export function PreferencesFormModal({
 
           {/* Notes */}
           <section>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               Observações adicionais
             </label>
             <textarea
@@ -478,13 +478,13 @@ export function PreferencesFormModal({
               onChange={(e) => handleChange("notes", e.target.value || null)}
               placeholder="Algo mais que devemos saber?"
               rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent resize-none"
+              className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none resize-none"
             />
           </section>
 
           {/* Error */}
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{error}</p>
+            <p className="text-sm text-red-600 dark:text-red-400 bg-error-bg p-3 rounded-lg">{error}</p>
           )}
         </div>
 

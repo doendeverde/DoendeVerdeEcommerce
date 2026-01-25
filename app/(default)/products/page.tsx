@@ -129,7 +129,7 @@ function ProductCatalogSkeleton() {
       {/* Grid skeleton */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="animate-pulse overflow-hidden rounded-xl bg-white border border-gray-200">
+          <div key={i} className="animate-pulse overflow-hidden rounded-xl bg-card-bg border border-gray-border">
             <div className="aspect-square bg-gray-200" />
             <div className="p-4 space-y-3">
               <div className="h-5 w-3/4 rounded bg-gray-200" />

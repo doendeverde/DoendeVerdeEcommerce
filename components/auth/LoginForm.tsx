@@ -128,9 +128,9 @@ export function LoginForm({ onSuccess, onSwitchView, callbackUrl: callbackUrlPro
           type="email"
           value={formData.email}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.email
-            ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-500"
+          className={`w-full px-3 py-2 border rounded-lg bg-card-bg text-text-primary focus:outline-none focus:ring-2 ${errors.email
+            ? "border-error focus:ring-error/20"
+            : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
           disabled={isLoading}
         />
@@ -149,9 +149,9 @@ export function LoginForm({ onSuccess, onSwitchView, callbackUrl: callbackUrlPro
           type="password"
           value={formData.password}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${errors.password
-            ? "border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:ring-blue-500"
+          className={`w-full px-3 py-2 border rounded-lg bg-card-bg text-text-primary focus:outline-none focus:ring-2 ${errors.password
+            ? "border-error focus:ring-error/20"
+            : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
           disabled={isLoading}
         />

@@ -77,7 +77,7 @@ export function UserDropdown({ className }: UserDropdownProps) {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-bg dark:hover:bg-gray-800 transition-colors"
+        className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-hover-bg transition-colors"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -109,9 +109,9 @@ export function UserDropdown({ className }: UserDropdownProps) {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-surface rounded-xl shadow-lg border border-default py-2 z-50">
+        <div className="absolute right-0 mt-2 w-64 bg-card-bg rounded-xl shadow-lg border border-gray-border py-2 z-50">
           {/* User Info Header */}
-          <div className="px-4 py-3 border-b border-default">
+          <div className="px-4 py-3 border-b border-gray-border">
             <p className="text-sm font-medium text-text-primary truncate">
               {user.name}
             </p>
@@ -143,10 +143,10 @@ export function UserDropdown({ className }: UserDropdownProps) {
           </div>
 
           {/* Logout */}
-          <div className="border-t border-default pt-2">
+          <div className="border-t border-gray-border pt-2">
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex items-center gap-3 w-full px-4 py-2 text-sm text-error hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+              className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-error-bg transition-colors"
             >
               <LogOut className="w-4 h-4" />
               Sair
@@ -168,7 +168,7 @@ function DropdownLink({ href, icon: Icon, children }: DropdownLinkProps) {
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 px-4 py-2 text-sm text-text-primary hover:bg-gray-bg dark:hover:bg-gray-800 transition-colors"
+      className="flex items-center gap-3 px-4 py-2 text-sm text-text-primary hover:bg-hover-bg transition-colors"
     >
       <Icon className="w-4 h-4 text-text-secondary" />
       {children}

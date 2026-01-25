@@ -106,9 +106,9 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
       <div className="flex items-center gap-4">
         <Link
           href="/admin/categories"
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          className="p-2 hover:bg-hover-bg rounded-lg transition-colors"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <ArrowLeft className="w-5 h-5 text-text-secondary" />
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">

@@ -112,7 +112,7 @@ export default async function AdminSubscriptionPlansPage() {
                 <div className="absolute top-3 right-3 flex gap-1">
                   <Link
                     href={`/admin/subscriptions/${plan.id}`}
-                    className="p-2 bg-white/80 dark:bg-gray-900/80 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-white rounded-lg transition-colors"
+                    className="p-2 bg-card-bg/80 hover:bg-hover-bg text-text-primary rounded-lg transition-colors"
                     title="Editar"
                   >
                     <Pencil className="w-4 h-4" />

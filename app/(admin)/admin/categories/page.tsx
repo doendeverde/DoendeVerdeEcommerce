@@ -129,7 +129,7 @@ export default async function AdminCategoriesPage() {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           href={`/admin/categories/${category.id}`}
-                          className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                          className="p-2 text-text-secondary hover:text-text-primary hover:bg-hover-bg rounded-lg transition-colors"
                           title="Editar"
                         >
                           <Pencil className="w-4 h-4" />

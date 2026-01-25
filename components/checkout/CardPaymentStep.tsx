@@ -218,7 +218,7 @@ export function CardPaymentStep({
 
         <button
           onClick={onBack}
-          className="w-full mt-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+          className="w-full mt-4 py-3 border border-gray-border text-text-secondary rounded-lg font-medium hover:bg-hover-bg transition-colors flex items-center justify-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar
@@ -260,7 +260,7 @@ export function CardPaymentStep({
       <button
         onClick={onBack}
         disabled={state === "processing"}
-        className="w-full mt-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full mt-4 py-3 border border-gray-border text-text-secondary rounded-lg font-medium hover:bg-hover-bg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <ArrowLeft className="w-4 h-4" />
         Voltar

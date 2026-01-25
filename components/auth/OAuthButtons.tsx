@@ -58,10 +58,10 @@ export function OAuthButtons({ callbackUrl = "/dashboard", onError }: OAuthButto
         type="button"
         onClick={() => handleOAuth("google")}
         disabled={loadingGoogle || loadingGitHub}
-        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white dark:bg-gray-800 border-2 border-gray-border rounded-lg hover:bg-hover-bg hover:border-gray-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all"
       >
         {loadingGoogle ? (
-          <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-gray-muted border-t-transparent rounded-full animate-spin" />
         ) : (
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -82,7 +82,7 @@ export function OAuthButtons({ callbackUrl = "/dashboard", onError }: OAuthButto
             />
           </svg>
         )}
-        <span className="font-medium text-gray-700">
+        <span className="font-medium text-text-primary">
           {loadingGoogle ? "Conectando..." : "Continuar com Google"}
         </span>
       </button>
@@ -109,10 +109,10 @@ export function OAuthButtons({ callbackUrl = "/dashboard", onError }: OAuthButto
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300"></div>
+          <div className="w-full border-t border-gray-border"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">ou continue com email</span>
+          <span className="px-2 bg-card-bg text-text-secondary">ou continue com email</span>
         </div>
       </div>
     </div>
