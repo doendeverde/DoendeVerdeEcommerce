@@ -28,7 +28,7 @@ export function CategoryChips({
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="h-9 w-24 flex-shrink-0 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700"
+            className="h-9 w-24 flex-shrink-0 animate-pulse rounded-full bg-gray-bg"
           />
         ))}
       </div>
@@ -42,7 +42,7 @@ export function CategoryChips({
         onClick={() => onSelect(null)}
         className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all whitespace-nowrap ${selectedCategory === null
           ? 'bg-primary-green text-white shadow-sm'
-          : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+          : 'bg-gray-bg text-text-primary hover:bg-hover-bg'
           }`}
       >
         Todos
@@ -55,14 +55,14 @@ export function CategoryChips({
           onClick={() => onSelect(category.slug)}
           className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all whitespace-nowrap ${selectedCategory === category.slug
             ? 'bg-primary-green text-white shadow-sm'
-            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+            : 'bg-gray-bg text-text-primary hover:bg-hover-bg'
             }`}
         >
           {category.name}
           <span
             className={`rounded-full px-1.5 py-0.5 text-xs ${selectedCategory === category.slug
               ? 'bg-white/20 text-white'
-              : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+              : 'bg-gray-border text-text-secondary'
               }`}
           >
             {category.productCount}

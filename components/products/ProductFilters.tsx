@@ -83,7 +83,7 @@ export function ProductFilters({
         onClick={() => setIsOpen(true)}
         className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${hasActiveFilters
           ? 'bg-primary-purple text-white'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          : 'bg-gray-bg text-text-primary hover:bg-hover-bg'
           }`}
       >
         <SlidersHorizontal className="h-4 w-4" />
@@ -124,10 +124,10 @@ export function ProductFilters({
           <div className="fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-auto rounded-t-2xl bg-white dark:bg-gray-900 p-6 shadow-xl md:inset-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl">
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Filtros</h2>
+              <h2 className="text-lg font-semibold text-text-primary">Filtros</h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-hover-bg hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -135,7 +135,7 @@ export function ProductFilters({
 
             {/* Price Range */}
             <div className="mb-6">
-              <label className="mb-3 block text-sm font-medium text-gray-700">
+              <label className="mb-3 block text-sm font-medium text-text-primary">
                 Faixa de Preço
               </label>
               <div className="flex items-center gap-3">
@@ -170,12 +170,12 @@ export function ProductFilters({
             {/* In Stock Toggle */}
             <div className="mb-6">
               <label className="flex cursor-pointer items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-text-primary">
                   Apenas em estoque
                 </span>
                 <button
                   onClick={() => onFiltersChange({ inStock: !inStock })}
-                  className={`relative h-6 w-11 rounded-full transition-colors ${inStock ? 'bg-primary-green' : 'bg-gray-200'
+                  className={`relative h-6 w-11 rounded-full transition-colors ${inStock ? 'bg-primary-green' : 'bg-gray-border'
                     }`}
                 >
                   <span

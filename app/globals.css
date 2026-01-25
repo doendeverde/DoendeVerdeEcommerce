@@ -150,6 +150,9 @@
   /* Cards */
   --color-card-bg: var(--card-bg);
   --color-card-border: var(--card-border);
+  
+  /* Hover */
+  --color-hover-bg: var(--hover-bg);
 
   /* Fonts */
   --font-sans: var(--font-geist-sans);

@@ -24,16 +24,16 @@ export function CategoryGrid({ categories, maxDisplay = 6 }: CategoryGridProps) 
         <Link
           key={category.id}
           href={`/products?category=${category.slug}`}
-          className="group flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 transition-all hover:border-primary-green hover:shadow-md"
+          className="group flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-border bg-card-bg p-6 transition-all hover:border-primary-green hover:shadow-md"
         >
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-2xl transition-colors group-hover:bg-green-50">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-bg text-2xl transition-colors group-hover:bg-green-50 dark:group-hover:bg-green-900/30">
             🌿
           </div>
-          <span className="text-sm font-medium text-center text-gray-700 group-hover:text-primary-green">
+          <span className="text-sm font-medium text-center text-text-primary group-hover:text-primary-green">
             {category.name}
           </span>
           {category.productCount !== undefined && category.productCount > 0 && (
-            <span className="inline-flex items-center justify-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500 group-hover:bg-green-50">
+            <span className="inline-flex items-center justify-center rounded-full bg-gray-bg px-2 py-0.5 text-xs text-text-secondary group-hover:bg-green-50 dark:group-hover:bg-green-900/30">
               {category.productCount}
             </span>
           )}

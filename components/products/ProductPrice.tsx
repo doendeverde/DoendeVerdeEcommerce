@@ -79,7 +79,7 @@ export function ProductDetailPrice({ basePrice }: ProductDetailPriceProps) {
   if (isLoading) {
     return (
       <div className="flex items-baseline gap-4 animate-pulse">
-        <div className="h-9 w-32 bg-gray-200 rounded" />
+        <div className="h-9 w-32 bg-gray-bg rounded" />
       </div>
     );
   }

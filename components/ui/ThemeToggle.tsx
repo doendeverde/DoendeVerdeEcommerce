@@ -28,7 +28,7 @@ export function ThemeToggle({ variant = "icon", className = "" }: ThemeTogglePro
 
   if (!mounted) {
     return (
-      <button className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-800 ${className}`}>
+      <button className={`p-2 rounded-lg bg-gray-bg ${className}`}>
         <div className="h-5 w-5" />
       </button>
     );
@@ -36,36 +36,36 @@ export function ThemeToggle({ variant = "icon", className = "" }: ThemeTogglePro
 
   if (variant === "buttons") {
     return (
-      <div className={`inline-flex items-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 ${className}`}>
+      <div className={`inline-flex items-center rounded-lg bg-gray-bg p-1 ${className}`}>
         <button
           onClick={() => setTheme("light")}
           className={`p-2 rounded-md transition-colors ${theme === "light"
-              ? "bg-white dark:bg-gray-700 shadow-sm"
-              : "hover:bg-gray-200 dark:hover:bg-gray-700"
+            ? "bg-card-bg shadow-sm"
+            : "hover:bg-hover-bg"
             }`}
           title="Modo Claro"
         >
-          <Sun className="h-4 w-4" />
+          <Sun className="h-4 w-4 text-text-primary" />
         </button>
         <button
           onClick={() => setTheme("dark")}
           className={`p-2 rounded-md transition-colors ${theme === "dark"
-              ? "bg-white dark:bg-gray-700 shadow-sm"
-              : "hover:bg-gray-200 dark:hover:bg-gray-700"
+            ? "bg-card-bg shadow-sm"
+            : "hover:bg-hover-bg"
             }`}
           title="Modo Escuro"
         >
-          <Moon className="h-4 w-4" />
+          <Moon className="h-4 w-4 text-text-primary" />
         </button>
         <button
           onClick={() => setTheme("system")}
           className={`p-2 rounded-md transition-colors ${theme === "system"
-              ? "bg-white dark:bg-gray-700 shadow-sm"
-              : "hover:bg-gray-200 dark:hover:bg-gray-700"
+            ? "bg-card-bg shadow-sm"
+            : "hover:bg-hover-bg"
             }`}
           title="Sistema"
         >
-          <Monitor className="h-4 w-4" />
+          <Monitor className="h-4 w-4 text-text-primary" />
         </button>
       </div>
     );
@@ -78,14 +78,14 @@ export function ThemeToggle({ variant = "icon", className = "" }: ThemeTogglePro
   return (
     <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={`p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors ${className}`}
+      className={`p-2 rounded-lg bg-gray-bg hover:bg-hover-bg transition-colors ${className}`}
       title={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
       aria-label={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
     >
       {isDark ? (
         <Sun className="h-5 w-5 text-yellow-500" />
       ) : (
-        <Moon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+        <Moon className="h-5 w-5 text-text-secondary" />
       )}
     </button>
   );

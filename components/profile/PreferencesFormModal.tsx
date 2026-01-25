@@ -176,18 +176,18 @@ export function PreferencesFormModal({
       />
 
       {/* Modal */}
-      <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-card-bg rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-gray-900 px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between z-10">
-          <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+        <div className="sticky top-0 bg-card-bg px-6 py-4 border-b border-gray-border flex items-center justify-between z-10">
+          <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
             <Settings className="w-5 h-5 text-primary-green" />
             {initialPreferences ? "Editar Preferências" : "Definir Preferências"}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-hover-bg rounded-full transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-text-secondary" />
           </button>
         </div>
 
@@ -489,11 +489,11 @@ export function PreferencesFormModal({
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white dark:bg-gray-900 px-6 py-4 border-t border-gray-200 dark:border-gray-800 flex gap-3">
+        <div className="sticky bottom-0 bg-card-bg px-6 py-4 border-t border-gray-border flex gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+            className="flex-1 py-3 border border-gray-border text-text-primary rounded-lg font-medium hover:bg-hover-bg transition-colors"
           >
             Cancelar
           </button>

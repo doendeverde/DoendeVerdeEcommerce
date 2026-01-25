@@ -34,16 +34,16 @@ const planColors: Record<
   { icon: string; badge: string; button: string; border: string }
 > = {
   gratuito: {
-    icon: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
+    icon: "bg-gray-bg text-text-secondary",
     badge: "",
-    button: "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700",
-    border: "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600",
+    button: "bg-gray-bg text-text-primary hover:bg-hover-bg",
+    border: "border-gray-border hover:border-gray-muted",
   },
   "doende-x": {
     icon: "bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400",
     badge: "",
     button: "bg-primary-green text-white hover:bg-green-600",
-    border: "border-gray-200 dark:border-gray-700 hover:border-primary-green",
+    border: "border-gray-border hover:border-primary-green",
   },
   "doende-bronze": {
     icon: "bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400",
@@ -345,7 +345,7 @@ export function SubscriptionPlans({
                 rounded-full transition-all duration-300 ease-out
                 ${isActive
                   ? `w-6 h-2 ${plan.badge === "premium" ? "bg-primary-purple" : "bg-primary-green"}`
-                  : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
+                  : "w-2 h-2 bg-gray-border hover:bg-gray-muted"
                 }
               `}
             />

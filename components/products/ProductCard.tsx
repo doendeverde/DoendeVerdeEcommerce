@@ -99,7 +99,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="absolute left-2 top-2 sm:left-3 sm:top-3 flex flex-col gap-1.5 sm:gap-2">
           {/* Category Badge - hidden on mobile for cleaner look */}
           {product.category && (
-            <span className="hidden sm:inline-flex items-center rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 shadow-sm">
+            <span className="hidden sm:inline-flex items-center rounded-full bg-card-bg/90 backdrop-blur-sm px-3 py-1 text-xs font-medium text-text-primary shadow-sm">
               {product.category.name}
             </span>
           )}

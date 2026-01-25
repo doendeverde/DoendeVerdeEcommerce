@@ -51,9 +51,9 @@ export function ProfileInfoCard({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
-      <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+    <div className="bg-card-bg rounded-xl shadow-sm border border-gray-border">
+      <div className="px-6 py-4 border-b border-gray-border flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
           <User className="w-5 h-5 text-primary-green" />
           Informações Pessoais
         </h2>
@@ -71,21 +71,21 @@ export function ProfileInfoCard({
       <div className="p-6 space-y-4">
         {/* Name */}
         <InfoRow
-          icon={<User className="w-4 h-4 text-gray-400" />}
+          icon={<User className="w-4 h-4 text-text-secondary" />}
           label="Nome Completo"
           value={fullName}
         />
 
         {/* Email */}
         <InfoRow
-          icon={<Mail className="w-4 h-4 text-gray-400" />}
+          icon={<Mail className="w-4 h-4 text-text-secondary" />}
           label="E-mail"
           value={email}
         />
 
         {/* WhatsApp */}
         <InfoRow
-          icon={<Phone className="w-4 h-4 text-gray-400" />}
+          icon={<Phone className="w-4 h-4 text-text-secondary" />}
           label="WhatsApp"
           value={formatWhatsapp(whatsapp)}
           placeholder="Não informado"
@@ -93,7 +93,7 @@ export function ProfileInfoCard({
 
         {/* Birth Date */}
         <InfoRow
-          icon={<Cake className="w-4 h-4 text-gray-400" />}
+          icon={<Cake className="w-4 h-4 text-text-secondary" />}
           label="Data de Nascimento"
           value={formatBirthDate(birthDate)}
           placeholder="Não informada"
@@ -102,7 +102,7 @@ export function ProfileInfoCard({
         {/* Document */}
         {document && (
           <InfoRow
-            icon={<User className="w-4 h-4 text-gray-400" />}
+            icon={<User className="w-4 h-4 text-text-secondary" />}
             label="CPF"
             value={formatDocument(document)}
           />
@@ -128,8 +128,8 @@ function InfoRow({ icon, label, value, placeholder = "-" }: InfoRowProps) {
     <div className="flex items-start gap-3">
       <div className="mt-0.5">{icon}</div>
       <div>
-        <p className="text-sm text-gray-500">{label}</p>
-        <p className={`font-medium ${value ? "text-gray-900" : "text-gray-400"}`}>
+        <p className="text-sm text-text-secondary">{label}</p>
+        <p className={`font-medium ${value ? "text-text-primary" : "text-text-secondary"}`}>
           {value || placeholder}
         </p>
       </div>

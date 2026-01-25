@@ -30,7 +30,7 @@ export function ProductImageGallery({ images, productName }: ProductImageGallery
 
   if (!selectedImage) {
     return (
-      <div className="aspect-square rounded-xl bg-gray-100 flex items-center justify-center">
+      <div className="aspect-square rounded-xl bg-gray-bg flex items-center justify-center">
         <span className="text-gray-400">Sem imagem</span>
       </div>
     );
@@ -39,7 +39,7 @@ export function ProductImageGallery({ images, productName }: ProductImageGallery
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100">
+      <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-bg">
         <Image
           src={selectedImage.url}
           alt={selectedImage.altText || productName}
@@ -58,8 +58,8 @@ export function ProductImageGallery({ images, productName }: ProductImageGallery
               key={image.id}
               onClick={() => setSelectedIndex(index)}
               className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg transition-all ${index === selectedIndex
-                  ? 'ring-2 ring-primary-green ring-offset-2'
-                  : 'opacity-70 hover:opacity-100'
+                ? 'ring-2 ring-primary-green ring-offset-2'
+                : 'opacity-70 hover:opacity-100'
                 }`}
             >
               <Image

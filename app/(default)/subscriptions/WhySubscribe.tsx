@@ -53,7 +53,7 @@ export function WhySubscribe() {
           return (
             <div
               key={index}
-              className="flex flex-col items-center rounded-xl bg-white dark:bg-gray-900 p-6 text-center shadow-sm"
+              className="flex flex-col items-center rounded-xl bg-card-bg p-6 text-center shadow-sm"
             >
               <div
                 className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400"
