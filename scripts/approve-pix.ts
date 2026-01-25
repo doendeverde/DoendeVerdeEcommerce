@@ -5,13 +5,21 @@
  * Exemplo: npx tsx scripts/approve-pix.ts 12345678
  * 
  * Este script simula o webhook do Mercado Pago para aprovar um pagamento PIX.
+ * 
+ * NOTA: Este script pode usar localhost para testes locais.
+ * Em ambientes reais, configure WEBHOOK_NGROK_URL.
  */
 
 import "dotenv/config";
 
-const WEBHOOK_URL = process.env.NEXT_PUBLIC_APP_URL 
-  ? `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/mercadopago`
-  : "http://localhost:3000/api/webhooks/mercadopago";
+// Para testes locais, preferimos ngrok se disponível, senão localhost
+const WEBHOOK_URL = process.env.WEBHOOK_NGROK_URL 
+  ? `${process.env.WEBHOOK_NGROK_URL}/api/webhooks/mercadopago`
+  : process.env.NEXTAUTH_URL
+    ? `${process.env.NEXTAUTH_URL}/api/webhooks/mercadopago`
+    : process.env.AUTH_URL
+      ? `${process.env.AUTH_URL}/api/webhooks/mercadopago`
+      : "http://localhost:3000/api/webhooks/mercadopago";
 
 async function approvePix(paymentId: string) {
   console.log("\n" + "=".repeat(80));

@@ -14,6 +14,10 @@ import {
   validateMercadoPagoConfig,
   IS_MP_PRODUCTION 
 } from "./mercadopago-config";
+import {
+  getMercadoPagoWebhookUrl,
+  getMercadoPagoBackUrls,
+} from "./environment";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Environment Configuration
@@ -118,6 +122,10 @@ export interface PreferenceResponse {
 export async function createPaymentPreference(
   data: CreatePreferenceData
 ): Promise<PreferenceResponse> {
+  // Use centralized URLs from environment module
+  const defaultBackUrls = getMercadoPagoBackUrls();
+  const defaultNotificationUrl = getMercadoPagoWebhookUrl();
+
   const response = await preferenceApi.create({
     body: {
       items: data.items.map((item) => ({
@@ -131,14 +139,10 @@ export async function createPaymentPreference(
         category_id: item.category_id,
       })),
       payer: data.payer,
-      back_urls: data.back_urls || {
-        success: `${process.env.AUTH_URL}/checkout/payment/success`,
-        failure: `${process.env.AUTH_URL}/checkout/payment/failure`,
-        pending: `${process.env.AUTH_URL}/checkout/payment/pending`,
-      },
+      back_urls: data.back_urls || defaultBackUrls,
       auto_return: data.auto_return || "approved",
       external_reference: data.external_reference,
-      notification_url: data.notification_url || `${process.env.AUTH_URL}/api/webhooks/mercadopago`,
+      notification_url: data.notification_url || defaultNotificationUrl,
       statement_descriptor: data.statement_descriptor || "DOENDEVERDE",
       expires: data.expires,
       expiration_date_from: data.expiration_date_from,

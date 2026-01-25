@@ -17,6 +17,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { paymentApi } from "@/lib/mercadopago";
+import { getMercadoPagoWebhookUrl } from "@/lib/environment";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Validation Schema
@@ -163,7 +164,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<PaymentRe
         },
         external_reference: order.id,
         statement_descriptor: "DOENDEVERDE",
-        notification_url: `${process.env.AUTH_URL}/api/webhooks/mercadopago`,
+        notification_url: getMercadoPagoWebhookUrl(),
         metadata: {
           order_id: order.id,
           user_id: session.user.id,

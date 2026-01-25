@@ -59,6 +59,7 @@ import {
   type QualityShippingData,
   type MPAdditionalInfo,
 } from "@/lib/mercadopago-quality";
+import { getMercadoPagoWebhookUrl } from "@/lib/environment";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Configuration
@@ -78,44 +79,23 @@ const client = new MercadoPagoConfig({
 const paymentClient = new Payment(client);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Webhook URL Helper
+// Webhook URL Helper (using centralized environment module)
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Obtém a URL correta para webhooks.
- * 
- * Prioridade:
- * 1. WEBHOOK_NGROK_URL (para desenvolvimento com ngrok)
- * 2. NEXTAUTH_URL (produção)
- * 3. AUTH_URL (fallback)
+ * Obtém a URL correta para webhooks usando o módulo centralizado.
+ * @see lib/environment.ts
  */
 function getWebhookUrl(): string {
-  const ngrokUrl = process.env.WEBHOOK_NGROK_URL;
-  const nextAuthUrl = process.env.NEXTAUTH_URL;
-  const authUrl = process.env.AUTH_URL;
+  const webhookUrl = getMercadoPagoWebhookUrl();
   
-  // Em desenvolvimento, preferir ngrok
-  if (ngrokUrl) {
-    const url = `${ngrokUrl}/api/webhooks/mercadopago`;
-    console.log("[MercadoPago] Using ngrok webhook URL:", url);
-    return url;
+  if (webhookUrl) {
+    console.log("[MercadoPago] Using webhook URL:", webhookUrl);
+  } else {
+    console.warn("[MercadoPago] ⚠️ No webhook URL configured! Set WEBHOOK_NGROK_URL or NEXTAUTH_URL");
   }
   
-  // Em produção
-  if (nextAuthUrl) {
-    const url = `${nextAuthUrl}/api/webhooks/mercadopago`;
-    console.log("[MercadoPago] Using NEXTAUTH_URL for webhook:", url);
-    return url;
-  }
-  
-  if (authUrl) {
-    const url = `${authUrl}/api/webhooks/mercadopago`;
-    console.log("[MercadoPago] Using AUTH_URL for webhook:", url);
-    return url;
-  }
-  
-  console.warn("[MercadoPago] ⚠️ No webhook URL configured! Set WEBHOOK_NGROK_URL or NEXTAUTH_URL");
-  return "";
+  return webhookUrl;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -465,8 +445,11 @@ export async function createCardPayment(
         statement_descriptor: STATEMENT_DESCRIPTOR,
         additional_info: additionalInfo as any,
         metadata: request.metadata,
-        // 3DS para maior segurança
-        three_d_secure_mode: "optional",
+        // 3DS - desabilitado temporariamente para debug
+        // Se estiver tendo rejeições por high_risk, pode ajudar:
+        // - "optional": MP decide se usa 3DS
+        // - "not_supported": Nunca usa 3DS (pode ajudar em alguns casos)
+        // three_d_secure_mode: "optional",
       },
       requestOptions: {
         idempotencyKey,
@@ -595,7 +578,7 @@ export function isPaymentRefunded(status: PaymentStatus | undefined): boolean {
  * Verifica se está em modo de teste.
  */
 export function isTestMode(): boolean {
-  return accessToken?.startsWith("TEST-") ?? false;
+  return MP_ACCESS_TOKEN?.startsWith("TEST-") ?? false;
 }
 
 /**

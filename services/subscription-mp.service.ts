@@ -34,6 +34,10 @@ import {
   cancelPreapproval,
   type PreapprovalResponse,
 } from "@/lib/mercadopago-subscriptions";
+import { 
+  getMercadoPagoWebhookUrl, 
+  getMercadoPagoBackUrl 
+} from "@/lib/environment";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -72,31 +76,23 @@ export interface RecurringSubscriptionResult {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Webhook URL Helper
+// Webhook URL Helper (using centralized environment module)
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Obtém a URL correta para webhooks usando o módulo centralizado.
+ * @see lib/environment.ts
+ */
 function getWebhookUrl(): string {
-  const ngrokUrl = process.env.WEBHOOK_NGROK_URL;
-  const nextAuthUrl = process.env.NEXTAUTH_URL;
-  const authUrl = process.env.AUTH_URL;
-  
-  if (ngrokUrl) {
-    return `${ngrokUrl}/api/webhooks/mercadopago`;
-  }
-  if (nextAuthUrl) {
-    return `${nextAuthUrl}/api/webhooks/mercadopago`;
-  }
-  if (authUrl) {
-    return `${authUrl}/api/webhooks/mercadopago`;
-  }
-  
-  console.warn("[Subscription] ⚠️ No webhook URL configured!");
-  return "";
+  return getMercadoPagoWebhookUrl();
 }
 
+/**
+ * Obtém a URL de retorno após o checkout de assinatura.
+ * @see lib/environment.ts
+ */
 function getBackUrl(): string {
-  const baseUrl = process.env.NEXTAUTH_URL || process.env.AUTH_URL || "";
-  return `${baseUrl}/profile/subscriptions`;
+  return getMercadoPagoBackUrl("/profile/subscriptions");
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
