@@ -210,9 +210,10 @@ export function OrderCard({ order }: OrderCardProps) {
         className="w-full text-left focus:outline-none focus:ring-2 focus:ring-primary-green/20 focus:ring-inset"
       >
         <div className="p-4 sm:p-5">
-          <div className="flex items-center gap-4">
+          {/* Desktop Layout */}
+          <div className="hidden sm:flex items-center gap-4">
             {/* Product Image */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-bg rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-20 h-20 bg-gray-bg rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
               {firstProduct?.product.images?.[0]?.url ? (
                 <img
                   src={firstProduct.product.images[0].url}
@@ -227,7 +228,7 @@ export function OrderCard({ order }: OrderCardProps) {
             {/* Order Info */}
             <div className="flex-1 min-w-0">
               {/* Product Name(s) */}
-              <h3 className="text-base sm:text-lg font-semibold text-text-primary truncate">
+              <h3 className="text-lg font-semibold text-text-primary truncate">
                 {firstProduct?.product.name || "Pedido"}
                 {hasMultipleProducts && (
                   <span className="text-text-secondary font-normal text-sm ml-2">
@@ -237,7 +238,7 @@ export function OrderCard({ order }: OrderCardProps) {
               </h3>
 
               {/* Quantity and Date */}
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-text-secondary">
+              <div className="flex items-center gap-4 mt-1 text-sm text-text-secondary">
                 <span className="flex items-center gap-1">
                   <Package className="w-4 h-4" />
                   {totalItems} {totalItems === 1 ? "item" : "itens"}
@@ -247,56 +248,106 @@ export function OrderCard({ order }: OrderCardProps) {
                   {formatDate(order.createdAt)}
                 </span>
               </div>
+            </div>
 
-              {/* Total - Mobile */}
-              <p className="mt-2 text-lg font-bold text-primary-green sm:hidden">
+            {/* Total */}
+            <div className="text-right">
+              <p className="text-xs text-muted">Total</p>
+              <p className="text-xl font-bold text-primary-green">
                 {formatCurrency(order.totalAmount)}
               </p>
             </div>
 
-            {/* Right Side - Desktop */}
-            <div className="hidden sm:flex items-center gap-4">
-              {/* Total */}
-              <div className="text-right">
-                <p className="text-xs text-gray-500">Total</p>
-                <p className="text-xl font-bold text-primary-green">
+            {/* PIX Badge - Desktop */}
+            {hasPendingPix && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowPixModal(true);
+                }}
+                className="flex items-center gap-1.5 px-3 py-2 bg-green-bg text-green-text rounded-lg text-sm font-medium hover:bg-green-bg-hover transition-colors"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="3" width="7" height="7" rx="1" />
+                  <rect x="3" y="14" width="7" height="7" rx="1" />
+                  <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+                Pagar PIX
+              </button>
+            )}
+
+            {/* Status Badge */}
+            <div
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium min-w-[140px] justify-center",
+                statusConfig.bgColor,
+                statusConfig.color
+              )}
+            >
+              {statusConfig.icon}
+              <span>{statusConfig.label}</span>
+            </div>
+
+            {/* Expand Icon */}
+            <div className="text-gray-400">
+              {isExpanded ? (
+                <ChevronUp className="w-5 h-5" />
+              ) : (
+                <ChevronDown className="w-5 h-5" />
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Layout */}
+          <div className="sm:hidden space-y-3">
+            {/* Top Row: Image, Info, Expand */}
+            <div className="flex items-start gap-3">
+              {/* Product Image */}
+              <div className="w-16 h-16 bg-gray-bg rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+                {firstProduct?.product.images?.[0]?.url ? (
+                  <img
+                    src={firstProduct.product.images[0].url}
+                    alt={firstProduct.product.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Package className="w-6 h-6 text-gray-400" />
+                )}
+              </div>
+
+              {/* Order Info */}
+              <div className="flex-1 min-w-0">
+                {/* Product Name(s) */}
+                <h3 className="text-sm font-semibold text-text-primary line-clamp-2">
+                  {firstProduct?.product.name || "Pedido"}
+                  {hasMultipleProducts && (
+                    <span className="text-text-secondary font-normal ml-1">
+                      +{order.items.length - 1}
+                    </span>
+                  )}
+                </h3>
+
+                {/* Meta Info */}
+                <div className="flex items-center gap-3 mt-1 text-xs text-text-secondary">
+                  <span className="flex items-center gap-1">
+                    <Package className="w-3 h-3" />
+                    {totalItems}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    {formatDate(order.createdAt)}
+                  </span>
+                </div>
+
+                {/* Total */}
+                <p className="mt-1.5 text-base font-bold text-primary-green">
                   {formatCurrency(order.totalAmount)}
                 </p>
               </div>
 
-              {/* PIX Badge - Desktop */}
-              {hasPendingPix && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowPixModal(true);
-                  }}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-green-bg text-green-text rounded-lg text-sm font-medium hover:bg-green-bg-hover transition-colors"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="3" width="7" height="7" rx="1" />
-                    <rect x="14" y="3" width="7" height="7" rx="1" />
-                    <rect x="3" y="14" width="7" height="7" rx="1" />
-                    <rect x="14" y="14" width="7" height="7" rx="1" />
-                  </svg>
-                  Pagar PIX
-                </button>
-              )}
-
-              {/* Status Badge */}
-              <div
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium min-w-[140px] justify-center",
-                  statusConfig.bgColor,
-                  statusConfig.color
-                )}
-              >
-                {statusConfig.icon}
-                <span>{statusConfig.label}</span>
-              </div>
-
               {/* Expand Icon */}
-              <div className="text-gray-400">
+              <div className="text-gray-400 mt-1">
                 {isExpanded ? (
                   <ChevronUp className="w-5 h-5" />
                 ) : (
@@ -305,42 +356,38 @@ export function OrderCard({ order }: OrderCardProps) {
               </div>
             </div>
 
-            {/* Status Badge and Expand - Mobile */}
-            <div className="flex flex-col items-end gap-2 sm:hidden">
+            {/* Bottom Row: Status and PIX Button */}
+            <div className="flex items-center gap-2">
+              {/* Status Badge - Full width on mobile */}
               <div
                 className={cn(
-                  "flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium",
+                  "flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium flex-1",
                   statusConfig.bgColor,
                   statusConfig.color
                 )}
               >
                 {statusConfig.icon}
-                <span>{statusConfig.label}</span>
+                <span className="truncate">{statusConfig.label}</span>
               </div>
+
+              {/* PIX Button - Mobile */}
               {hasPendingPix && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowPixModal(true);
                   }}
-                  className="flex items-center gap-1 px-2 py-1 bg-green-bg text-green-text rounded-lg text-xs font-medium hover:bg-green-bg-hover transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-green-bg text-green-text rounded-lg text-xs font-medium hover:bg-green-bg-hover transition-colors whitespace-nowrap"
                 >
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="3" width="7" height="7" rx="1" />
                     <rect x="14" y="3" width="7" height="7" rx="1" />
                     <rect x="3" y="14" width="7" height="7" rx="1" />
                     <rect x="14" y="14" width="7" height="7" rx="1" />
                   </svg>
-                  Pagar PIX
+                  Pagar
                 </button>
               )}
-              <div className="text-gray-400">
-                {isExpanded ? (
-                  <ChevronUp className="w-5 h-5" />
-                ) : (
-                  <ChevronDown className="w-5 h-5" />
-                )}
-              </div>
             </div>
           </div>
         </div>
