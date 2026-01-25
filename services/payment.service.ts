@@ -169,12 +169,28 @@ export interface PixPaymentResult {
   expirationDate: Date;
 }
 
-export async function createPixPaymentDirect(data: {
+export interface PixPaymentDirectData {
   amount: number;
   description: string;
   email: string;
   externalReference: string;
-}): Promise<PixPaymentResult> {
+  firstName?: string;
+  lastName?: string;
+  identification?: {
+    type: string;
+    number: string;
+  };
+  phone?: string;
+  items?: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    quantity: number;
+    unit_price: number;
+  }>;
+}
+
+export async function createPixPaymentDirect(data: PixPaymentDirectData): Promise<PixPaymentResult> {
   // Validate and normalize amount (MP requires 2 decimal places max, > 0)
   const normalizedAmount = Math.round(data.amount * 100) / 100;
   
@@ -189,34 +205,42 @@ export async function createPixPaymentDirect(data: {
     email: data.email,
   });
 
-  // Import Payment API from mercadopago lib
-  const { paymentApi } = await import("@/lib/mercadopago");
+  // Import MP service for quality-enhanced payment
+  const { createPixPayment: createMPPixPayment } = await import("./mercadopago.service");
+  const { parsePhone } = await import("@/lib/mercadopago-quality");
   
-  const response = await paymentApi.create({
-    body: {
-      transaction_amount: normalizedAmount,
-      description: data.description,
-      payment_method_id: "pix",
-      payer: {
-        email: data.email,
-      },
-      external_reference: data.externalReference,
+  // Build request with quality fields
+  const result = await createMPPixPayment({
+    amount: normalizedAmount,
+    description: data.description,
+    externalReference: data.externalReference,
+    payer: {
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      identification: data.identification,
+      phone: parsePhone(data.phone),
     },
+    items: data.items?.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      quantity: item.quantity,
+      unit_price: item.unit_price,
+    })),
   });
 
-  const paymentData = response;
-  const pointOfInteraction = paymentData.point_of_interaction;
-  const transactionData = pointOfInteraction?.transaction_data;
+  if (!result.success) {
+    throw new Error(result.error || "Failed to create PIX payment");
+  }
 
   return {
-    paymentId: String(paymentData.id || ""),
-    qrCode: transactionData?.qr_code || "",
-    qrCodeBase64: transactionData?.qr_code_base64 || "",
-    pixCopyPaste: transactionData?.qr_code || "",
-    ticketUrl: transactionData?.ticket_url || "",
-    expirationDate: paymentData.date_of_expiration 
-      ? new Date(paymentData.date_of_expiration) 
-      : new Date(Date.now() + 30 * 60 * 1000), // 30 min default
+    paymentId: result.paymentId || "",
+    qrCode: result.qrCode || "",
+    qrCodeBase64: result.qrCodeBase64 || "",
+    pixCopyPaste: result.pixCopyPaste || "",
+    ticketUrl: result.ticketUrl || "",
+    expirationDate: result.expirationDate || new Date(Date.now() + 30 * 60 * 1000),
   };
 }
 
@@ -228,11 +252,15 @@ export async function createPixPayment(data: {
   description: string;
   userEmail: string;
   externalReference: string;
+  firstName?: string;
+  lastName?: string;
 }) {
   return createPixPaymentDirect({
     amount: data.amount,
     description: data.description,
     email: data.userEmail,
     externalReference: data.externalReference,
+    firstName: data.firstName,
+    lastName: data.lastName,
   });
 }

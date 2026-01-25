@@ -46,6 +46,19 @@ import { Payment, MercadoPagoConfig } from "mercadopago";
 import { randomUUID } from "crypto";
 import type { CardPaymentData } from "@/schemas/payment.schema";
 import { MP_ACCESS_TOKEN, validateMercadoPagoConfig } from "@/lib/mercadopago-config";
+import {
+  STATEMENT_DESCRIPTOR,
+  CATEGORY_ID,
+  PIX_EXPIRATION_MINUTES,
+  buildAdditionalInfo,
+  parsePhone,
+  buildPayerAddress,
+  type QualityPaymentRequest,
+  type QualityPayerData,
+  type QualityItemData,
+  type QualityShippingData,
+  type MPAdditionalInfo,
+} from "@/lib/mercadopago-quality";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Configuration
@@ -121,7 +134,20 @@ export interface PaymentRequest {
       type: string;
       number: string;
     };
+    phone?: {
+      area_code: string;
+      number: string;
+    };
+    address?: {
+      zip_code: string;
+      street_name: string;
+      street_number: string;
+    };
   };
+  /** Itens do pedido para additional_info */
+  items?: QualityItemData[];
+  /** Dados de envio para additional_info */
+  shipping?: QualityShippingData;
   metadata?: Record<string, unknown>;
 }
 
@@ -283,6 +309,22 @@ export async function createPixPayment(
       email: request.payer.email,
     });
     
+    // Build additional_info for better approval rates
+    const additionalInfo = buildAdditionalInfo({
+      amount: request.amount,
+      description: request.description,
+      externalReference: request.externalReference,
+      payer: {
+        email: request.payer.email,
+        first_name: request.payer.firstName,
+        last_name: request.payer.lastName,
+        phone: request.payer.phone,
+        address: request.payer.address,
+      },
+      items: request.items,
+      shipping: request.shipping,
+    });
+    
     const response = await paymentClient.create({
       body: {
         transaction_amount: request.amount,
@@ -296,6 +338,8 @@ export async function createPixPayment(
         },
         external_reference: request.externalReference,
         notification_url: getWebhookUrl(),
+        statement_descriptor: STATEMENT_DESCRIPTOR,
+        additional_info: additionalInfo as any,
         metadata: request.metadata,
       },
       requestOptions: {
@@ -386,6 +430,22 @@ export async function createCardPayment(
       installments: request.installments,
     });
     
+    // Build additional_info for better approval rates and fraud prevention
+    const additionalInfo = buildAdditionalInfo({
+      amount: request.amount,
+      description: request.description,
+      externalReference: request.externalReference,
+      payer: {
+        email: request.payer.email,
+        first_name: request.payer.firstName,
+        last_name: request.payer.lastName,
+        phone: request.payer.phone,
+        address: request.payer.address,
+      },
+      items: request.items,
+      shipping: request.shipping,
+    });
+    
     const response = await paymentClient.create({
       body: {
         transaction_amount: request.amount,
@@ -402,7 +462,8 @@ export async function createCardPayment(
         },
         external_reference: request.externalReference,
         notification_url: getWebhookUrl(),
-        statement_descriptor: "DOENDEVERDE",
+        statement_descriptor: STATEMENT_DESCRIPTOR,
+        additional_info: additionalInfo as any,
         metadata: request.metadata,
         // 3DS para maior segurança
         three_d_secure_mode: "optional",

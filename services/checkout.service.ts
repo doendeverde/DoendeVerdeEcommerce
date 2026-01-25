@@ -172,7 +172,7 @@ async function processSubscriptionCheckout(
     if (data.paymentData.method === "pix") {
       // Generate PIX payment
       try {
-        paymentPreference = await createPixPayment(order.id, payment.id, totalAmount, user);
+        paymentPreference = await createPixPayment(order.id, payment.id, totalAmount, user, plan.name);
       } catch (pixError) {
         console.error("[Subscription Checkout] PIX payment creation failed:", pixError);
         await paymentRepository.markPaymentAsFailed(payment.id, { 
@@ -269,7 +269,8 @@ async function createPixPayment(
   orderId: string,
   paymentId: string,
   amount: number,
-  user: UserCheckoutData
+  user: UserCheckoutData,
+  planName?: string
 ): Promise<PaymentPreference> {
   console.log("[createPixPayment] Creating PIX for order:", {
     orderId,
@@ -278,11 +279,27 @@ async function createPixPayment(
     email: user.email,
   });
 
+  // Split user name for MP quality fields
+  const nameParts = user.fullName?.split(" ") || [];
+  const firstName = nameParts[0] || undefined;
+  const lastName = nameParts.slice(1).join(" ") || undefined;
+
   const result = await createPixPaymentDirect({
     amount,
     description: `Pagamento pedido #${orderId}`,
     email: user.email,
     externalReference: orderId,
+    firstName,
+    lastName,
+    phone: user.whatsapp || undefined,
+    // Include item info for better approval rates
+    items: planName ? [{
+      id: orderId,
+      title: planName,
+      description: `Assinatura ${planName}`,
+      quantity: 1,
+      unit_price: amount,
+    }] : undefined,
   });
 
   console.log("[createPixPayment] PIX created successfully:", {
@@ -656,7 +673,11 @@ async function processProductCheckout(
     if (data.paymentData.method === "pix") {
       // Generate PIX payment
       try {
-        paymentPreference = await createPixPayment(order.id, payment.id, total, user);
+        // Build item description from cart
+        const itemDescription = cart.items.length === 1 
+          ? cart.items[0].product.name 
+          : `Pedido com ${cart.items.length} itens`;
+        paymentPreference = await createPixPayment(order.id, payment.id, total, user, itemDescription);
       } catch (pixError) {
         console.error("[Checkout] PIX payment creation failed:", pixError);
         // Mark payment as failed

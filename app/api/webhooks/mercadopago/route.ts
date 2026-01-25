@@ -243,7 +243,7 @@ async function processPaymentNotification(paymentId: string) {
     // Atualiza order
     await orderRepository.markOrderAsPaid(order.id);
 
-    // Se é uma assinatura, cria UserSubscription
+    // Se é uma assinatura, processa criação ou renovação
     const type = metadata?.type as string;
     console.log("[Webhook] Payment type from metadata:", type);
     console.log("[Webhook] Full metadata:", JSON.stringify(metadata, null, 2));
@@ -251,22 +251,39 @@ async function processPaymentNotification(paymentId: string) {
     if (type === "subscription") {
       const planId = metadata?.planId as string || metadata?.plan_id as string;
       const userId = metadata?.userId as string || metadata?.user_id as string;
+      const mpPaymentId = String(mpPayment.id);
 
       console.log("[Webhook] Subscription metadata - planId:", planId, "userId:", userId);
 
-      if (planId && userId) {
-        // Verifica se já existe subscription ativa
-        const existingSub = await subscriptionRepository.userHasAnyActiveSubscription(userId);
-        console.log("[Webhook] User has existing subscription:", existingSub);
+      // ───────────────────────────────────────────────────────────────────────
+      // VERIFICAR SE É RENOVAÇÃO (já existe subscription com esse providerSubId)
+      // ───────────────────────────────────────────────────────────────────────
+      const existingSubByProvider = await subscriptionRepository.findByProviderSubId(mpPaymentId);
+      
+      if (existingSubByProvider) {
+        // 🔄 É RENOVAÇÃO - criar novo ciclo
+        console.log("[Webhook] 🔄 RENEWAL detected for subscription:", existingSubByProvider.id);
         
-        if (!existingSub) {
-          console.log("[Webhook] Creating subscription for user:", userId);
+        await subscriptionRepository.createRenewalCycle({
+          subscriptionId: existingSubByProvider.id,
+          amount: Number(mpPayment.transaction_amount),
+          paymentId: payment.id,
+        });
+        
+        console.log("[Webhook] ✅ Renewal cycle created successfully");
+      } else if (planId && userId) {
+        // 🆕 PRIMEIRO PAGAMENTO - criar subscription
+        const hasActiveSubscription = await subscriptionRepository.userHasAnyActiveSubscription(userId);
+        console.log("[Webhook] User has existing subscription:", hasActiveSubscription);
+        
+        if (!hasActiveSubscription) {
+          console.log("[Webhook] Creating NEW subscription for user:", userId);
           
           const subscription = await subscriptionRepository.createSubscription({
             userId,
             planId,
             provider: "MERCADO_PAGO",
-            providerSubId: String(mpPayment.id),
+            providerSubId: mpPaymentId,
           });
 
           // Cria primeiro ciclo
@@ -276,7 +293,7 @@ async function processPaymentNotification(paymentId: string) {
             paymentId: payment.id,
           });
 
-          console.log("[Webhook] ✅ Subscription created successfully:", subscription.id);
+          console.log("[Webhook] ✅ New subscription created successfully:", subscription.id);
         } else {
           console.log("[Webhook] ⚠️ User already has active subscription, skipping creation");
         }
@@ -356,7 +373,240 @@ async function processPaymentNotification(paymentId: string) {
   console.log("[Webhook] No action needed for status:", status);
   return { success: true, action: "no_action" };
 }
+// ─────────────────────────────────────────────────────────────────────────────
+// Subscription (Preapproval) Payment Processing
+// ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Processa notificação de pagamento de assinatura (subscription_authorized_payment).
+ * 
+ * Esta notificação é enviada pelo Mercado Pago quando:
+ * - Uma cobrança recorrente é processada com sucesso
+ * - Uma cobrança recorrente falha
+ * 
+ * O data.id aqui é o ID do PAGAMENTO (authorized_payment), não da assinatura.
+ * Precisamos buscar a assinatura (preapproval) relacionada.
+ */
+async function processSubscriptionPaymentNotification(paymentId: string) {
+  console.log("[Webhook] Processing subscription authorized payment:", paymentId);
+  
+  try {
+    // Busca detalhes do pagamento via API
+    const mpPayment = await paymentClient.get({ id: paymentId });
+    
+    if (!mpPayment?.id) {
+      console.error("[Webhook] Subscription payment not found in MP:", paymentId);
+      return { success: false, reason: "Payment not found in Mercado Pago" };
+    }
+
+    const status = mpPayment.status as string;
+    const statusDetail = mpPayment.status_detail as string;
+    const amount = mpPayment.transaction_amount as number;
+    
+    // O preapproval_id está no campo metadata ou description
+    // Mas para subscriptions, o external_reference é nossa referência
+    const externalReference = mpPayment.external_reference;
+    
+    // Ou podemos buscar pelo preapproval_id se disponível
+    const metadata = mpPayment.metadata as Record<string, unknown> | null;
+    const preapprovalId = metadata?.preapproval_id as string | undefined;
+    
+    console.log("[Webhook] Subscription payment details:", {
+      id: mpPayment.id,
+      status,
+      statusDetail,
+      amount,
+      externalReference,
+      preapprovalId,
+    });
+
+    // ───────────────────────────────────────────────────────────────────────
+    // BUSCA A ASSINATURA
+    // ───────────────────────────────────────────────────────────────────────
+    
+    // Tenta buscar por preapprovalId primeiro (ID real da subscription no MP)
+    let subscription = null;
+    
+    if (preapprovalId) {
+      subscription = await subscriptionRepository.findByProviderSubId(preapprovalId);
+    }
+    
+    // Se não encontrou, tenta por external_reference (que é nosso order_id)
+    if (!subscription && externalReference) {
+      // Busca payment/order para encontrar a subscription relacionada
+      const payment = await prisma.payment.findFirst({
+        where: {
+          order: {
+            id: externalReference,
+          },
+        },
+        select: {
+          order: {
+            select: {
+              userId: true,
+              notes: true, // Pode conter planId no formato JSON
+            },
+          },
+          payload: true,
+        },
+      });
+      
+      if (payment?.order) {
+        // Tenta extrair planId do payload ou notes
+        const payload = payment.payload as Record<string, unknown> | null;
+        const planId = payload?.planId as string | undefined;
+        
+        if (planId) {
+          subscription = await prisma.subscription.findFirst({
+            where: {
+              userId: payment.order.userId,
+              planId,
+              status: "ACTIVE",
+            },
+            include: {
+              plan: true,
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                },
+              },
+            },
+          });
+        } else {
+          // Fallback: busca a subscription ativa mais recente do usuário
+          subscription = await prisma.subscription.findFirst({
+            where: {
+              userId: payment.order.userId,
+              status: "ACTIVE",
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+            include: {
+              plan: true,
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                },
+              },
+            },
+          });
+        }
+      }
+    }
+
+    if (!subscription) {
+      console.error("[Webhook] Subscription not found for payment:", paymentId);
+      return { success: false, reason: "Subscription not found" };
+    }
+
+    console.log("[Webhook] Found subscription:", subscription.id);
+
+    // ───────────────────────────────────────────────────────────────────────
+    // PAGAMENTO APROVADO - CRIA CICLO DE RENOVAÇÃO
+    // ───────────────────────────────────────────────────────────────────────
+    if (status === "approved") {
+      console.log("[Webhook] 🔄 Subscription payment approved - Creating renewal cycle");
+      
+      // Cria novo ciclo de renovação
+      await subscriptionRepository.createRenewalCycle({
+        subscriptionId: subscription.id,
+        amount: amount || Number(subscription.plan?.price) || 0,
+        // Não temos paymentId porque é pagamento automático do MP
+      });
+      
+      console.log("[Webhook] ✅ Renewal cycle created for subscription:", subscription.id);
+      
+      return { success: true, action: "subscription_renewed" };
+    }
+
+    // ───────────────────────────────────────────────────────────────────────
+    // PAGAMENTO REJEITADO - LOG PARA MONITORAMENTO
+    // ───────────────────────────────────────────────────────────────────────
+    if (status === "rejected") {
+      console.warn("[Webhook] ⚠️ Subscription payment REJECTED:", {
+        subscriptionId: subscription.id,
+        paymentId,
+        status,
+        statusDetail,
+      });
+      
+      // MP fará retry automático (até 4x em 10 dias)
+      // Após 3 parcelas rejeitadas consecutivas, MP cancela automaticamente
+      // Por enquanto apenas logamos
+      
+      return { success: true, action: "subscription_payment_rejected" };
+    }
+
+    return { success: true, action: "no_action" };
+    
+  } catch (error) {
+    console.error("[Webhook] Error processing subscription payment:", error);
+    return { success: false, reason: "Processing error" };
+  }
+}
+
+/**
+ * Processa notificação de mudança de status de assinatura (subscription_preapproval).
+ * 
+ * Esta notificação é enviada quando:
+ * - Assinatura é criada
+ * - Assinatura é pausada
+ * - Assinatura é cancelada
+ * - Assinatura é reativada
+ */
+async function processSubscriptionStatusNotification(preapprovalId: string) {
+  console.log("[Webhook] Processing subscription status change:", preapprovalId);
+  
+  try {
+    // Importa função para buscar preapproval
+    const { getPreapproval, mapPreapprovalStatus } = await import("@/lib/mercadopago-subscriptions");
+    
+    // Busca detalhes atualizados da assinatura no MP
+    const mpSubscription = await getPreapproval(preapprovalId);
+    
+    console.log("[Webhook] MP Subscription details:", {
+      id: mpSubscription.id,
+      status: mpSubscription.status,
+      reason: mpSubscription.reason,
+      external_reference: mpSubscription.external_reference,
+    });
+    
+    // Busca nossa subscription pelo providerSubId
+    const subscription = await subscriptionRepository.findByProviderSubId(preapprovalId);
+    
+    if (!subscription) {
+      console.warn("[Webhook] Subscription not found in DB for preapprovalId:", preapprovalId);
+      return { success: false, reason: "Subscription not found" };
+    }
+    
+    // Mapeia status do MP para nosso sistema
+    const newStatus = mapPreapprovalStatus(mpSubscription.status);
+    
+    // Atualiza status se mudou
+    if (subscription.status !== newStatus) {
+      console.log("[Webhook] Updating subscription status:", subscription.status, "->", newStatus);
+      
+      await prisma.subscription.update({
+        where: { id: subscription.id },
+        data: {
+          status: newStatus,
+          ...(newStatus === "CANCELED" ? { canceledAt: new Date() } : {}),
+        },
+      });
+      
+      console.log("[Webhook] ✅ Subscription status updated:", subscription.id);
+    }
+    
+    return { success: true, action: "subscription_status_updated" };
+    
+  } catch (error) {
+    console.error("[Webhook] Error processing subscription status:", error);
+    return { success: false, reason: "Processing error" };
+  }
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // POST Handler
 // ─────────────────────────────────────────────────────────────────────────────
@@ -425,10 +675,30 @@ export async function POST(request: NextRequest) {
     console.log("[Webhook] ✅ Signature valid");
 
     // Processa por tipo de notificação
+    // Tipos do Mercado Pago:
+    // - payment: Pagamento único ou parcela de subscription
+    // - subscription_authorized_payment: Pagamento recorrente de subscription (Preapproval)
+    // - subscription_preapproval: Mudança de status de subscription (criada, pausada, cancelada)
+    // - plan: Mudança em plano de assinatura
+    // - invoice: Fatura gerada
+    
     if (notificationType === "payment") {
       const result = await processPaymentNotification(dataId);
       console.log("[Webhook] Payment processing result:", result);
-    } else {
+    } 
+    else if (notificationType === "subscription_authorized_payment") {
+      // Pagamento recorrente de assinatura (Preapproval API)
+      console.log("[Webhook] 🔄 Processing SUBSCRIPTION AUTHORIZED PAYMENT");
+      const result = await processSubscriptionPaymentNotification(dataId);
+      console.log("[Webhook] Subscription payment result:", result);
+    }
+    else if (notificationType === "subscription_preapproval") {
+      // Mudança de status da assinatura
+      console.log("[Webhook] 📋 Processing SUBSCRIPTION STATUS CHANGE");
+      const result = await processSubscriptionStatusNotification(dataId);
+      console.log("[Webhook] Subscription status result:", result);
+    }
+    else {
       console.log("[Webhook] Unhandled notification type:", notificationType);
     }
 

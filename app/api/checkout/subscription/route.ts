@@ -45,10 +45,7 @@ import {
 // Services
 import {
   createPixPayment,
-  createCardPayment,
-  buildCardPaymentRequest,
-  isPaymentApproved,
-  isPaymentPending,
+  // Card payment imports removidos - agora usamos Preapproval para subscriptions
 } from "@/services/mercadopago.service";
 
 // Repositories
@@ -411,108 +408,160 @@ export async function POST(request: NextRequest) {
     }
 
     // ───────────────────────────────────────────────────────────────────────
-    // PAGAMENTO COM CARTÃO
+    // PAGAMENTO COM CARTÃO - USANDO PREAPPROVAL (RECORRÊNCIA REAL)
     // ───────────────────────────────────────────────────────────────────────
     if (isCardPayment(paymentData)) {
-      console.log("[Checkout] Processing card payment for order:", order.id);
+      console.log("[Checkout] Processing card subscription with PREAPPROVAL for order:", order.id);
+      console.log("[Checkout] ⚠️ Using Mercado Pago Subscriptions API (not Checkout Pro)");
+      console.log("[Checkout] Card token received:", paymentData.token ? `${paymentData.token.substring(0, 20)}...` : "❌ MISSING!");
       
-      const cardRequest = buildCardPaymentRequest(paymentData, basePaymentRequest);
-      const cardResult = await createCardPayment(cardRequest);
+      // Validação: token é obrigatório
+      if (!paymentData.token) {
+        return NextResponse.json(
+          { success: false, error: "Token do cartão é obrigatório", errorCode: "MISSING_CARD_TOKEN" },
+          { status: 400 }
+        );
+      }
       
-      if (!cardResult.success) {
+      // Import do serviço de subscription com Preapproval
+      const { createRecurringSubscription } = await import("@/services/subscription-mp.service");
+      
+      // Cria assinatura recorrente REAL via Preapproval API
+      // MP irá:
+      // 1. Validar o cartão e fazer primeira cobrança
+      // 2. Cobrar automaticamente todo mês
+      // 3. Fazer retry automático se falhar
+      // 4. Enviar webhook a cada cobrança (subscription_authorized_payment)
+      const subscriptionResult = await createRecurringSubscription({
+        cardToken: paymentData.token,
+        payerEmail: user.email,
+        planName: plan.name,
+        amount: totalAmount,
+        externalReference: order.id,
+        frequencyMonths: 1, // Mensal
+      });
+      
+      if (!subscriptionResult.success) {
+        console.log("[Checkout] ❌ Preapproval subscription creation failed:", subscriptionResult.error);
+        
         await paymentRepository.markPaymentAsFailed(payment.id, {
-          error: cardResult.error,
-          errorCode: cardResult.errorCode,
+          error: subscriptionResult.error,
+          errorCode: subscriptionResult.errorCode,
         });
         
         return NextResponse.json(
           {
             success: false,
-            error: cardResult.error || "Erro ao processar pagamento com cartão",
-            errorCode: cardResult.errorCode || "CARD_ERROR",
+            error: subscriptionResult.error || "Erro ao criar assinatura recorrente",
+            errorCode: subscriptionResult.errorCode || "SUBSCRIPTION_ERROR",
           },
           { status: 400 }
         );
       }
 
-      // Atualiza payment com transactionId
+      console.log("[Checkout] ✅ Preapproval subscription created:", subscriptionResult.mpSubscriptionId);
+      console.log("[Checkout] Status:", subscriptionResult.status);
+      console.log("[Checkout] Next payment:", subscriptionResult.nextPaymentDate);
+
+      // Atualiza payment com dados do Preapproval
       await prisma.payment.update({
         where: { id: payment.id },
         data: { 
-          transactionId: cardResult.transactionId,
+          transactionId: subscriptionResult.mpSubscriptionId,
           payload: {
-            mpPaymentId: cardResult.paymentId,
-            status: cardResult.status,
-            statusDetail: cardResult.statusDetail,
-            cardLastFour: cardResult.cardLastFour,
-            cardBrand: cardResult.cardBrand,
+            type: "preapproval",
+            mpSubscriptionId: subscriptionResult.mpSubscriptionId,
+            status: subscriptionResult.status,
+            nextPaymentDate: subscriptionResult.nextPaymentDate,
           },
         },
       });
 
-      // APROVADO: Cria subscription imediatamente
-      if (isPaymentApproved(cardResult.status)) {
-        console.log("[Checkout] Card payment approved, creating subscription");
+      // Se status = authorized, a assinatura está ativa e primeira cobrança será feita
+      if (subscriptionResult.status === "authorized") {
+        console.log("[Checkout] Preapproval AUTHORIZED - Creating subscription record");
         
+        // Marca pagamento como pago (primeira parcela será cobrada pelo MP)
         await paymentRepository.markPaymentAsPaid(
           payment.id,
-          cardResult.transactionId || "",
-          { status: cardResult.status }
+          subscriptionResult.mpSubscriptionId || "",
+          { 
+            status: "authorized",
+            type: "preapproval",
+          }
         );
 
         await orderRepository.markOrderAsPaid(order.id);
 
+        // Cria subscription no banco com providerSubId = ID do Preapproval do MP
         const subscription = await subscriptionRepository.createSubscription({
           userId,
           planId: plan.id,
           provider: "MERCADO_PAGO",
-          providerSubId: cardResult.transactionId,
+          providerSubId: subscriptionResult.mpSubscriptionId!, // ID real do MP Subscriptions
         });
 
+        // Cria primeiro ciclo
         await subscriptionRepository.createFirstCycle({
           subscriptionId: subscription.id,
           amount: totalAmount,
           paymentId: payment.id,
         });
 
+        console.log("\n" + "=".repeat(80));
+        console.log("🟢 ASSINATURA RECORRENTE CRIADA COM SUCESSO (PREAPPROVAL)");
+        console.log("   MP Subscription ID:", subscriptionResult.mpSubscriptionId);
+        console.log("   Internal Subscription ID:", subscription.id);
+        console.log("   Plan:", plan.name);
+        console.log("   Amount: R$", totalAmount);
+        console.log("   Next Payment:", subscriptionResult.nextPaymentDate);
+        console.log("\n   ⚠️ IMPORTANTE: O Mercado Pago irá:");
+        console.log("   - Cobrar automaticamente todo mês");
+        console.log("   - Enviar webhook 'subscription_authorized_payment' a cada cobrança");
+        console.log("   - Fazer retry automático se pagamento falhar");
+        console.log("=".repeat(80) + "\n");
+
         return NextResponse.json({
           success: true,
           data: {
             subscriptionId: subscription.id,
+            mpSubscriptionId: subscriptionResult.mpSubscriptionId,
             orderId: order.id,
             paymentId: payment.id,
-            status: "approved",
+            status: "authorized",
+            nextPaymentDate: subscriptionResult.nextPaymentDate,
+            message: "Assinatura recorrente criada com sucesso! O Mercado Pago irá cobrar automaticamente.",
           },
         });
       }
 
-      // PENDENTE: Aguarda webhook
-      if (isPaymentPending(cardResult.status)) {
-        console.log("[Checkout] Card payment pending, waiting for webhook");
+      // Status pending = aguardando processamento
+      if (subscriptionResult.status === "pending") {
+        console.log("[Checkout] Preapproval PENDING - Waiting for MP processing");
         
         return NextResponse.json({
           success: true,
           data: {
             orderId: order.id,
             paymentId: payment.id,
-            status: cardResult.status || "pending",
+            mpSubscriptionId: subscriptionResult.mpSubscriptionId,
+            status: "pending",
+            message: "Assinatura sendo processada. Você receberá confirmação em breve.",
           },
         });
       }
 
-      // REJEITADO
+      // Outros status = erro
       await paymentRepository.markPaymentAsFailed(payment.id, {
-        status: cardResult.status,
-        statusDetail: cardResult.statusDetail,
+        status: subscriptionResult.status,
+        mpSubscriptionId: subscriptionResult.mpSubscriptionId,
       });
 
       return NextResponse.json(
         {
           success: false,
-          error: `Pagamento não aprovado. ${cardResult.statusDetail === "cc_rejected_high_risk" 
-            ? "Recusado por segurança." 
-            : "Tente outro cartão."}`,
-          errorCode: cardResult.statusDetail || "PAYMENT_REJECTED",
+          error: "Não foi possível ativar a assinatura. Verifique os dados do cartão e tente novamente.",
+          errorCode: "SUBSCRIPTION_NOT_AUTHORIZED",
         },
         { status: 400 }
       );

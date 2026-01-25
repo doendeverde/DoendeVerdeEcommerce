@@ -223,4 +223,75 @@ export const subscriptionRepository = {
       },
     });
   },
+
+  /**
+   * Find subscription by provider subscription ID (for webhook renewal processing)
+   * Used to identify if a payment is a renewal or new subscription
+   */
+  async findByProviderSubId(providerSubId: string) {
+    return prisma.subscription.findFirst({
+      where: {
+        providerSubId,
+        status: "ACTIVE",
+      },
+      include: {
+        plan: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+      },
+    });
+  },
+
+  /**
+   * Create a renewal cycle for an existing subscription
+   * Called when Mercado Pago processes a recurring payment
+   */
+  async createRenewalCycle(data: {
+    subscriptionId: string;
+    amount: number;
+    paymentId?: string;
+  }) {
+    const subscription = await prisma.subscription.findUnique({
+      where: { id: data.subscriptionId },
+      select: { nextBillingAt: true },
+    });
+
+    if (!subscription) {
+      throw new Error("Subscription not found");
+    }
+
+    const cycleStart = subscription.nextBillingAt || new Date();
+    const cycleEnd = new Date(cycleStart);
+    cycleEnd.setMonth(cycleEnd.getMonth() + 1);
+
+    // Create new cycle
+    const cycle = await prisma.subscriptionCycle.create({
+      data: {
+        subscriptionId: data.subscriptionId,
+        status: data.paymentId ? "PAID" : "PENDING",
+        cycleStart,
+        cycleEnd,
+        amount: data.amount,
+        paymentId: data.paymentId,
+      },
+    });
+
+    // Update subscription's nextBillingAt to first of next month
+    const newNextBilling = new Date(cycleEnd);
+    newNextBilling.setDate(1);
+    newNextBilling.setHours(0, 0, 0, 0);
+
+    await prisma.subscription.update({
+      where: { id: data.subscriptionId },
+      data: {
+        nextBillingAt: newNextBilling,
+      },
+    });
+
+    return cycle;
+  },
 };
