@@ -350,6 +350,61 @@ body {
   color: var(--text-secondary);
 }
 
+/* ─── Theme Normalization (Contrast Fixes) ─── */
+/* Map common Tailwind grays to theme tokens to keep contrast consistent */
+.text-gray-300 {
+  color: var(--gray-muted);
+}
+
+.text-gray-400,
+.text-gray-500 {
+  color: var(--text-secondary);
+}
+
+.text-gray-600,
+.text-gray-700,
+.text-gray-800,
+.text-gray-900,
+.text-slate-600,
+.text-slate-700,
+.text-slate-800,
+.text-neutral-600,
+.text-neutral-700 {
+  color: var(--text-primary);
+}
+
+.dark .text-gray-300 {
+  color: var(--gray-muted);
+}
+
+.dark .text-gray-400,
+.dark .text-gray-500 {
+  color: var(--text-secondary);
+}
+
+.dark .text-gray-600,
+.dark .text-gray-700,
+.dark .text-gray-800,
+.dark .text-gray-900,
+.dark .text-slate-600,
+.dark .text-slate-700,
+.dark .text-slate-800,
+.dark .text-neutral-600,
+.dark .text-neutral-700 {
+  color: var(--text-primary);
+}
+
+/* Hover background normalization */
+.hover\:bg-gray-100:hover,
+.hover\:bg-gray-200:hover {
+  background-color: var(--hover-bg);
+}
+
+.dark .hover\:bg-gray-700:hover,
+.dark .hover\:bg-gray-800:hover {
+  background-color: var(--hover-bg);
+}
+
 /* Hover backgrounds */
 .hover-bg:hover {
   background-color: var(--hover-bg);
