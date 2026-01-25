@@ -168,7 +168,7 @@ export default async function AdminSubscriptionPlansPage() {
                 )}
 
                 {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between pt-4 border-t border-gray-border">
                   <Link
                     href={`/admin/user-subscriptions?plan=${plan.id}`}
                     className="flex items-center gap-1 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 transition-colors"

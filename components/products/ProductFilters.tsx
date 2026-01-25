@@ -100,7 +100,7 @@ export function ProductFilters({
         <select
           value={`${sortBy}-${sortOrder}`}
           onChange={(e) => handleSortChange(e.target.value)}
-          className="appearance-none rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 pr-10 text-sm font-medium text-gray-700 dark:text-gray-300 outline-none transition-all hover:border-gray-300 dark:hover:border-gray-600 focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
+          className="appearance-none rounded-full border border-gray-border bg-card-bg px-4 py-2 pr-10 text-sm font-medium text-text-primary outline-none transition-all hover:border-gray-muted focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
         >
           {sortOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -108,7 +108,7 @@ export function ProductFilters({
             </option>
           ))}
         </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
       </div>
 
       {/* Filter Modal */}
@@ -148,12 +148,12 @@ export function ProductFilters({
                     value={localMinPrice}
                     onChange={(e) => setLocalMinPrice(e.target.value)}
                     placeholder="Min"
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-2 pl-9 pr-3 text-sm outline-none transition-all focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
+                    className="w-full rounded-lg border border-gray-border bg-card-bg py-2 pl-9 pr-3 text-sm text-text-primary outline-none transition-all focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
                   />
                 </div>
-                <span className="text-gray-400">—</span>
+                <span className="text-text-secondary">—</span>
                 <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-text-secondary">
                     R$
                   </span>
                   <input
@@ -161,7 +161,7 @@ export function ProductFilters({
                     value={localMaxPrice}
                     onChange={(e) => setLocalMaxPrice(e.target.value)}
                     placeholder="Max"
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-2 pl-9 pr-3 text-sm outline-none transition-all focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
+                    className="w-full rounded-lg border border-gray-border bg-card-bg py-2 pl-9 pr-3 text-sm text-text-primary outline-none transition-all focus:border-primary-green focus:ring-2 focus:ring-primary-green/20"
                   />
                 </div>
               </div>
@@ -190,7 +190,7 @@ export function ProductFilters({
             <div className="flex gap-3">
               <button
                 onClick={handleClear}
-                className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="flex-1 rounded-lg border border-gray-border py-2.5 text-sm font-medium text-text-primary transition-colors hover:bg-hover-bg"
               >
                 Limpar
               </button>

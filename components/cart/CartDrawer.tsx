@@ -81,14 +81,14 @@ export function CartDrawer() {
       {/* Drawer */}
       <div className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col bg-surface shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-4 py-4">
+        <div className="flex items-center justify-between border-b border-gray-border px-4 py-4">
           <div className="flex items-center gap-2">
-            <ShoppingCart className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Carrinho</h2>
+            <ShoppingCart className="h-5 w-5 text-text-secondary" />
+            <h2 className="text-lg font-semibold text-text-primary">Carrinho</h2>
           </div>
           <button
             onClick={closeDrawer}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 dark:text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-hover-bg hover:text-text-primary"
             aria-label="Fechar carrinho"
           >
             <X className="h-5 w-5" />
@@ -103,25 +103,25 @@ export function CartDrawer() {
             </div>
           ) : !session ? (
             <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-              <div className="mb-4 rounded-full bg-gray-100 dark:bg-gray-800 p-4">
-                <ShoppingCart className="h-10 w-10 text-gray-400" />
+              <div className="mb-4 rounded-full bg-gray-bg p-4">
+                <ShoppingCart className="h-10 w-10 text-text-secondary" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-text-primary">
                 Faça login para ver seu carrinho
               </h3>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-sm text-text-secondary">
                 Seus itens serão salvos automaticamente.
               </p>
             </div>
           ) : isEmpty ? (
             <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-              <div className="mb-4 rounded-full bg-gray-100 dark:bg-gray-800 p-4">
-                <ShoppingCart className="h-10 w-10 text-gray-400" />
+              <div className="mb-4 rounded-full bg-gray-bg p-4">
+                <ShoppingCart className="h-10 w-10 text-text-secondary" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-text-primary">
                 Seu carrinho está vazio
               </h3>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-sm text-text-secondary">
                 Adicione produtos para começar.
               </p>
               <button

@@ -74,11 +74,11 @@ export function PlanDeleteButton({
           />
 
           {/* Modal */}
-          <div className="relative bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 w-full max-w-md">
+          <div className="relative bg-card-bg rounded-xl border border-gray-border p-6 w-full max-w-md">
             {/* Close button */}
             <button
               onClick={() => !isDeleting && setIsOpen(false)}
-              className="absolute top-4 right-4 p-1 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+              className="absolute top-4 right-4 p-1 text-text-secondary hover:text-text-primary transition-colors"
               disabled={isDeleting}
             >
               <X className="w-5 h-5" />
@@ -90,12 +90,12 @@ export function PlanDeleteButton({
                 <AlertTriangle className="w-6 h-6 text-red-400" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                <h3 className="text-lg font-semibold text-text-primary mb-2">
                   Excluir Plano
                 </h3>
-                <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+                <p className="text-text-secondary text-sm mb-4">
                   Tem certeza que deseja excluir o plano{" "}
-                  <span className="text-gray-900 dark:text-gray-100 font-medium">{planName}</span>?
+                  <span className="text-text-primary font-medium">{planName}</span>?
                   Esta ação não pode ser desfeita.
                 </p>
 
@@ -109,7 +109,7 @@ export function PlanDeleteButton({
                   <button
                     onClick={() => setIsOpen(false)}
                     disabled={isDeleting}
-                    className="px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                    className="px-4 py-2 text-text-secondary hover:text-text-primary transition-colors"
                   >
                     Cancelar
                   </button>

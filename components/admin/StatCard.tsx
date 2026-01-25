@@ -16,8 +16,8 @@ interface StatCardProps {
 
 const variantStyles = {
   default: {
-    bg: "bg-gray-100 dark:bg-gray-800",
-    icon: "text-gray-600 dark:text-gray-400",
+    bg: "bg-gray-bg",
+    icon: "text-text-secondary",
   },
   green: {
     bg: "bg-green-100 dark:bg-green-900/30",

@@ -36,30 +36,30 @@ export default async function AdminCategoriesPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-800/50">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <tr className="bg-gray-bg">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                   Categoria
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                   Slug
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                   Produtos
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-right text-xs font-semibold text-text-secondary uppercase tracking-wider">
                   Ações
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-gray-border">
               {categories.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-4 py-12 text-center">
-                    <Tag className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
-                    <p className="text-gray-500 dark:text-gray-400 mb-4">Nenhuma categoria cadastrada</p>
+                    <Tag className="w-12 h-12 text-gray-muted mx-auto mb-3" />
+                    <p className="text-text-secondary mb-4">Nenhuma categoria cadastrada</p>
                     <Link
                       href="/admin/categories/new"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm font-medium rounded-lg transition-colors"
@@ -73,7 +73,7 @@ export default async function AdminCategoriesPage() {
                 categories.map((category) => (
                   <tr
                     key={category.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                    className="hover:bg-hover-bg transition-colors"
                   >
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
@@ -85,16 +85,16 @@ export default async function AdminCategoriesPage() {
                             className="w-10 h-10 rounded-lg object-cover"
                           />
                         ) : (
-                          <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-                            <Tag className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                          <div className="w-10 h-10 bg-gray-bg rounded-lg flex items-center justify-center">
+                            <Tag className="w-5 h-5 text-gray-muted" />
                           </div>
                         )}
                         <div>
-                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          <p className="text-sm font-medium text-text-primary">
                             {category.name}
                           </p>
                           {category.description && (
-                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">
+                            <p className="text-xs text-text-secondary truncate max-w-xs">
                               {category.description}
                             </p>
                           )}
@@ -102,7 +102,7 @@ export default async function AdminCategoriesPage() {
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm text-gray-600 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                      <span className="text-sm text-text-secondary font-mono bg-gray-bg px-2 py-1 rounded">
                         {category.slug}
                       </span>
                     </td>

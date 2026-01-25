@@ -64,7 +64,7 @@ export function SubscriptionFAQ() {
       </p>
 
       {/* FAQ List - Semantic structure for SEO */}
-      <dl className="mx-auto mt-10 max-w-3xl divide-y divide-gray-200 dark:divide-gray-700 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+      <dl className="mx-auto mt-10 max-w-3xl divide-y divide-gray-border rounded-2xl border border-gray-border bg-card-bg">
         {faqs.map((faq, index) => (
           <div key={index} className="group">
             <dt>

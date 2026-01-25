@@ -77,8 +77,8 @@ export function CheckoutProgressGeneric({
                   ${isPast
                     ? "bg-primary-green text-white"
                     : isActive
-                      ? "bg-primary-green/10 dark:bg-primary-green/20 text-primary-green ring-2 ring-primary-green ring-offset-1 dark:ring-offset-gray-900"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
+                      ? "bg-primary-green/10 text-primary-green ring-2 ring-primary-green ring-offset-1 ring-offset-card-bg"
+                      : "bg-gray-bg text-gray-muted"
                   }
                 `}
               >
@@ -99,8 +99,8 @@ export function CheckoutProgressGeneric({
                   ${isActive
                     ? "text-primary-green"
                     : isPast
-                      ? "text-gray-700 dark:text-gray-300"
-                      : "text-gray-500 dark:text-gray-400"
+                      ? "text-text-primary"
+                      : "text-text-secondary"
                   }
                 `}
               >

@@ -212,7 +212,7 @@ export function OrderCard({ order }: OrderCardProps) {
         <div className="p-4 sm:p-5">
           <div className="flex items-center gap-4">
             {/* Product Image */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-bg rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
               {firstProduct?.product.images?.[0]?.url ? (
                 <img
                   src={firstProduct.product.images[0].url}
@@ -227,17 +227,17 @@ export function OrderCard({ order }: OrderCardProps) {
             {/* Order Info */}
             <div className="flex-1 min-w-0">
               {/* Product Name(s) */}
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+              <h3 className="text-base sm:text-lg font-semibold text-text-primary truncate">
                 {firstProduct?.product.name || "Pedido"}
                 {hasMultipleProducts && (
-                  <span className="text-gray-500 dark:text-gray-400 font-normal text-sm ml-2">
+                  <span className="text-text-secondary font-normal text-sm ml-2">
                     +{order.items.length - 1} {order.items.length === 2 ? "item" : "itens"}
                   </span>
                 )}
               </h3>
 
               {/* Quantity and Date */}
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-text-secondary">
                 <span className="flex items-center gap-1">
                   <Package className="w-4 h-4" />
                   {totalItems} {totalItems === 1 ? "item" : "itens"}
@@ -353,10 +353,10 @@ export function OrderCard({ order }: OrderCardProps) {
           isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
         )}
       >
-        <div className="border-t border-gray-100 dark:border-gray-800">
+        <div className="border-t border-gray-border">
           {/* All Products */}
-          <div className="p-5 bg-gray-50/50 dark:bg-gray-800/50">
-            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+          <div className="p-5 bg-gray-bg/50">
+            <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
               <Package className="w-4 h-4" />
               Produtos do pedido
             </h4>
@@ -365,10 +365,10 @@ export function OrderCard({ order }: OrderCardProps) {
               {order.items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-800"
+                  className="flex items-center gap-3 p-3 bg-card-bg rounded-lg border border-gray-border"
                 >
                   {/* Image */}
-                  <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+                  <div className="w-12 h-12 bg-gray-bg rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
                     {item.product.images?.[0]?.url ? (
                       <img
                         src={item.product.images[0].url}
@@ -382,16 +382,16 @@ export function OrderCard({ order }: OrderCardProps) {
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">
+                    <p className="font-medium text-text-primary text-sm truncate">
                       {item.product.name}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-text-secondary">
                       {item.quantity}x {formatCurrency(item.unitPrice)}
                     </p>
                   </div>
 
                   {/* Price */}
-                  <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
+                  <p className="font-semibold text-text-primary text-sm">
                     {formatCurrency(item.totalPrice)}
                   </p>
                 </div>
@@ -400,10 +400,10 @@ export function OrderCard({ order }: OrderCardProps) {
           </div>
 
           {/* Payment & Delivery Grid */}
-          <div className="grid md:grid-cols-2 border-t border-gray-100 dark:border-gray-800">
+          <div className="grid md:grid-cols-2 border-t border-gray-border">
             {/* Payment */}
-            <div className="p-5 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800">
-              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+            <div className="p-5 border-b md:border-b-0 md:border-r border-gray-border">
+              <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
                 <CreditCard className="w-4 h-4" />
                 Pagamento
               </h4>
@@ -411,21 +411,21 @@ export function OrderCard({ order }: OrderCardProps) {
               {payment ? (
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-500 dark:text-gray-400">Método:</span>
-                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                    <span className="text-text-secondary">Método:</span>
+                    <span className="font-medium text-text-primary">
                       {getPaymentMethodLabel(payment.provider)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500 dark:text-gray-400">Subtotal:</span>
-                    <span className="text-gray-700 dark:text-gray-300">
+                    <span className="text-text-secondary">Subtotal:</span>
+                    <span className="text-text-primary">
                       {formatCurrency(order.subtotalAmount)}
                     </span>
                   </div>
                   {order.shippingAmount > 0 && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500 dark:text-gray-400">Frete:</span>
-                      <span className="text-gray-700 dark:text-gray-300">
+                      <span className="text-text-secondary">Frete:</span>
+                      <span className="text-text-primary">
                         {formatCurrency(order.shippingAmount)}
                       </span>
                     </div>
@@ -436,21 +436,21 @@ export function OrderCard({ order }: OrderCardProps) {
                       <span>-{formatCurrency(order.discountAmount)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">Total:</span>
+                  <div className="flex justify-between pt-2 border-t border-gray-border">
+                    <span className="font-semibold text-text-primary">Total:</span>
                     <span className="font-bold text-primary-green">
                       {formatCurrency(order.totalAmount)}
                     </span>
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">Aguardando pagamento</p>
+                <p className="text-sm text-text-secondary">Aguardando pagamento</p>
               )}
             </div>
 
             {/* Delivery */}
             <div className="p-5">
-              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+              <h4 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
                 <Truck className="w-4 h-4" />
                 Entrega
               </h4>
@@ -463,32 +463,32 @@ export function OrderCard({ order }: OrderCardProps) {
                   deliveredAt={shipment.deliveredAt}
                 />
               ) : order.status === "PENDING" ? (
-                <p className="text-sm text-gray-500 dark:text-gray-400">Aguardando pagamento</p>
+                <p className="text-sm text-text-secondary">Aguardando pagamento</p>
               ) : order.status === "PAID" ? (
-                <p className="text-sm text-gray-500 dark:text-gray-400">Preparando para envio</p>
+                <p className="text-sm text-text-secondary">Preparando para envio</p>
               ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">—</p>
+                <p className="text-sm text-text-secondary">—</p>
               )}
             </div>
           </div>
 
           {/* Address */}
           {order.addressSnapshot && (
-            <div className="p-5 bg-gray-50/50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800">
-              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+            <div className="p-5 bg-gray-bg/50 border-t border-gray-border">
+              <h4 className="text-sm font-semibold text-text-primary mb-2 flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
                 Endereço de entrega
               </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-text-secondary">
                 {order.addressSnapshot.street}, {order.addressSnapshot.number}
                 {order.addressSnapshot.complement &&
                   ` - ${order.addressSnapshot.complement}`}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-text-secondary">
                 {order.addressSnapshot.neighborhood} - {order.addressSnapshot.city}/
                 {order.addressSnapshot.state}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-sm text-text-secondary mt-1">
                 CEP: {order.addressSnapshot.zipCode}
               </p>
             </div>

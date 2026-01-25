@@ -85,7 +85,7 @@ export function ProductCard({ product }: ProductCardProps) {
       className="group relative flex flex-col overflow-hidden rounded-xl bg-surface border border-default transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
     >
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
+      <div className="relative aspect-square overflow-hidden bg-gray-bg">
         <Image
           src={getSafeImageUrl(product.primaryImage?.url)}
           alt={product.primaryImage?.altText || product.name}

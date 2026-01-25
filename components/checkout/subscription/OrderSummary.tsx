@@ -52,7 +52,7 @@ export function OrderSummary({
       <h3 className="font-semibold text-default mb-4">Resumo</h3>
 
       {/* Plan Info */}
-      <div className="flex items-start gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-start gap-3 pb-4 border-b border-gray-border">
         <div className="w-12 h-12 bg-primary-green/10 rounded-xl flex items-center justify-center">
           <Crown className="w-6 h-6 text-primary-green" />
         </div>
@@ -73,7 +73,7 @@ export function OrderSummary({
       </div>
 
       {/* Benefits preview */}
-      <div className="py-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="py-4 border-b border-gray-border">
         <p className="text-sm font-medium text-muted mb-2">Inclui:</p>
         <ul className="space-y-1">
           {plan.benefits.slice(0, 3).map((benefit, i) => (

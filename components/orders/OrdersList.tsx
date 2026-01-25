@@ -186,7 +186,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
           <button
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded-lg border border-gray-border hover:bg-hover-bg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -198,7 +198,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
                 onClick={() => setCurrentPage(page)}
                 className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === page
                   ? "bg-primary-green text-white"
-                  : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+                  : "hover:bg-hover-bg text-text-primary"
                   }`}
               >
                 {page}
@@ -209,7 +209,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
           <button
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded-lg border border-gray-border hover:bg-hover-bg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight className="w-5 h-5" />
           </button>

@@ -21,5 +21,9 @@ export function ConditionalSubscriptionBanner() {
     return null;
   }
 
-  return <SubscriptionBanner />;
+  return (
+    <div className="container-main py-4">
+      <SubscriptionBanner />
+    </div>
+  );
 }

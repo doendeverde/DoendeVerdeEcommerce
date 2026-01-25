@@ -90,7 +90,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="mb-3">
               <Link
                 href={`/products?category=${product.category.slug}`}
-                className="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-800 px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+                className="inline-flex items-center rounded-full bg-gray-bg px-3 py-1 text-xs font-medium text-text-primary transition-colors hover:bg-hover-bg"
               >
                 {product.category.name}
               </Link>
@@ -147,18 +147,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {/* Benefits */}
           <div className="mt-8 grid grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+            <div className="flex items-center gap-3 rounded-lg border border-gray-border bg-card-bg p-4">
               <Truck className="h-6 w-6 text-primary-green" />
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Frete Grátis</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Acima de R$ 150</p>
+                <p className="text-sm font-medium text-text-primary">Frete Grátis</p>
+                <p className="text-xs text-text-secondary">Acima de R$ 150</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+            <div className="flex items-center gap-3 rounded-lg border border-gray-border bg-card-bg p-4">
               <Shield className="h-6 w-6 text-primary-green" />
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Compra Segura</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Garantia de 7 dias</p>
+                <p className="text-sm font-medium text-text-primary">Compra Segura</p>
+                <p className="text-xs text-text-secondary">Garantia de 7 dias</p>
               </div>
             </div>
           </div>

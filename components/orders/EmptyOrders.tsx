@@ -11,16 +11,16 @@ import Link from "next/link";
 
 export function EmptyOrders() {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-12 text-center">
-      <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Package className="w-10 h-10 text-gray-400" />
+    <div className="bg-card-bg rounded-xl shadow-sm border border-gray-border p-12 text-center">
+      <div className="w-20 h-20 bg-gray-bg rounded-full flex items-center justify-center mx-auto mb-4">
+        <Package className="w-10 h-10 text-text-secondary" />
       </div>
 
-      <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+      <h3 className="text-xl font-semibold text-text-primary mb-2">
         Nenhum pedido encontrado
       </h3>
 
-      <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
+      <p className="text-text-secondary mb-6 max-w-md mx-auto">
         Você ainda não fez nenhum pedido. Explore nossa loja e encontre produtos incríveis!
       </p>
 
