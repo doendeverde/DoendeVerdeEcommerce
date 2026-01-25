@@ -27,7 +27,17 @@ export function AppProviders({ children }: AppProvidersProps) {
           {children}
           <AuthModal />
           <CartDrawer />
-          <Toaster position="top-right" richColors />
+          <Toaster
+            position="top-right"
+            richColors
+            toastOptions={{
+              style: {
+                padding: '16px',
+                gap: '12px',
+              },
+              duration: 4000,
+            }}
+          />
         </SubscriptionProvider>
       </SessionProvider>
     </ThemeProvider>

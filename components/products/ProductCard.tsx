@@ -70,7 +70,12 @@ export function ProductCard({ product }: ProductCardProps) {
 
     const success = await addItem(product.id);
     if (success) {
-      toast.success('Adicionado ao carrinho!');
+      toast.success('Adicionado ao carrinho!', {
+        action: {
+          label: 'Ver carrinho',
+          onClick: () => useCartStore.getState().openDrawer(),
+        },
+      });
     }
   };
 

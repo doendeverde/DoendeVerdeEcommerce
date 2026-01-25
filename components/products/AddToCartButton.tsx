@@ -59,7 +59,12 @@ export function AddToCartButton({
 
     const success = await addItem(productId, quantity);
     if (success) {
-      toast.success(`${quantity} ${quantity > 1 ? 'itens adicionados' : 'item adicionado'} ao carrinho!`);
+      toast.success(`${quantity} ${quantity > 1 ? 'itens adicionados' : 'item adicionado'} ao carrinho!`, {
+        action: {
+          label: 'Ver carrinho',
+          onClick: () => useCartStore.getState().openDrawer(),
+        },
+      });
       setQuantity(1);
     }
   };
