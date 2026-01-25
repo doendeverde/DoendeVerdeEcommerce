@@ -1,6 +1,8 @@
 /**
  * Script para processar pagamento manualmente quando webhook falha
- * Atualiza o status do pagamento e cria a subscription se for PIX aprovado
+ * Atualiza o status do pagamento e da order quando PIX é aprovado
+ * 
+ * USO: npx tsx scripts/process-payment-manually.ts <MP_PAYMENT_ID>
  */
 import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
@@ -24,7 +26,12 @@ if (!accessToken) throw new Error("MP Access Token not found");
 const mpConfig = new MercadoPagoConfig({ accessToken });
 const paymentClient = new Payment(mpConfig);
 
-const paymentId = process.argv[2] || "142602039851";
+const paymentId = process.argv[2];
+
+if (!paymentId) {
+  console.error("❌ Uso: npx tsx scripts/process-payment-manually.ts <MP_PAYMENT_ID>");
+  process.exit(1);
+}
 
 async function processPayment() {
   console.log("=".repeat(70));
@@ -39,7 +46,9 @@ async function processPayment() {
   const mpPayment = await paymentClient.get({ id: paymentId });
   
   console.log("   Status:", mpPayment.status);
+  console.log("   Status Detail:", mpPayment.status_detail);
   console.log("   External Reference:", mpPayment.external_reference);
+  console.log("   Amount:", mpPayment.transaction_amount);
   
   if (mpPayment.status !== "approved") {
     console.log("\n❌ Pagamento não está aprovado. Status:", mpPayment.status);
@@ -58,8 +67,16 @@ async function processPayment() {
     where: { id: orderId },
     include: { 
       payments: true,
-      items: true,
-      user: true
+      items: {
+        include: {
+          product: {
+            select: { name: true }
+          }
+        }
+      },
+      user: {
+        select: { email: true, fullName: true }
+      }
     }
   });
 
@@ -69,84 +86,50 @@ async function processPayment() {
   }
 
   console.log("   Order ID:", order.id);
-  console.log("   Order Type:", order.type);
   console.log("   Order Status:", order.status);
   console.log("   User:", order.user.email);
   console.log("   Items:", order.items.length);
+  for (const item of order.items) {
+    console.log(`      - ${item.product.name} (qty: ${item.quantity})`);
+  }
 
   // 3. Update payment status
   const payment = order.payments.find(p => p.transactionId === paymentId);
   if (payment) {
-    console.log("\n💳 Atualizando status do pagamento...");
-    await prisma.payment.update({
-      where: { id: payment.id },
-      data: {
-        status: "PAID",
-        paidAt: mpPayment.date_approved ? new Date(mpPayment.date_approved) : new Date()
-      }
-    });
-    console.log("   ✅ Payment atualizado para PAID");
+    if (payment.status === "PAID") {
+      console.log("\n✅ Payment já está PAID");
+    } else {
+      console.log("\n💳 Atualizando status do pagamento...");
+      await prisma.payment.update({
+        where: { id: payment.id },
+        data: {
+          status: "PAID",
+          payload: {
+            ...(payment.payload as object || {}),
+            manuallyProcessed: true,
+            processedAt: new Date().toISOString(),
+            mpStatus: mpPayment.status,
+            mpStatusDetail: mpPayment.status_detail,
+          }
+        }
+      });
+      console.log("   ✅ Payment atualizado para PAID");
+    }
+  } else {
+    console.log("\n⚠️ Payment com transactionId", paymentId, "não encontrado na order");
+    console.log("   Payments existentes:", order.payments.map(p => p.transactionId));
   }
 
   // 4. Update order status
-  console.log("\n📦 Atualizando status da order...");
-  await prisma.order.update({
-    where: { id: orderId },
-    data: { status: "PAID" }
-  });
-  console.log("   ✅ Order atualizada para PAID");
-
-  // 5. If subscription order, create subscription
-  if (order.type === "SUBSCRIPTION") {
-    console.log("\n🔔 Order de subscription detectada!");
-    
-    // Check if subscription already exists
-    const existingSubscription = await prisma.subscription.findFirst({
-      where: { 
-        userId: order.userId,
-        status: "ACTIVE"
-      }
+  if (order.status === "PAID") {
+    console.log("\n✅ Order já está PAID");
+  } else {
+    console.log("\n📦 Atualizando status da order...");
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { status: "PAID" }
     });
-
-    if (existingSubscription) {
-      console.log("   ⚠️ Usuário já tem subscription ativa:", existingSubscription.id);
-    } else {
-      // Get plan ID from order items or metadata
-      // Try to find the subscription plan in order items
-      const subscriptionItem = order.items.find(item => item.subscriptionPlanId);
-      
-      if (subscriptionItem?.subscriptionPlanId) {
-        console.log("   Plan ID encontrado:", subscriptionItem.subscriptionPlanId);
-        
-        const plan = await prisma.subscriptionPlan.findUnique({
-          where: { id: subscriptionItem.subscriptionPlanId }
-        });
-
-        if (plan) {
-          // Calculate next billing date
-          const nextBillingDate = new Date();
-          nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
-
-          // Create subscription
-          const subscription = await prisma.subscription.create({
-            data: {
-              userId: order.userId,
-              planId: plan.id,
-              status: "ACTIVE",
-              currentPeriodStart: new Date(),
-              currentPeriodEnd: nextBillingDate,
-              nextBillingDate: nextBillingDate
-            }
-          });
-          console.log("   ✅ Subscription criada:", subscription.id);
-          console.log("   ✅ Plan:", plan.name);
-          console.log("   ✅ Next billing:", nextBillingDate);
-        }
-      } else {
-        console.log("   ⚠️ Não foi possível encontrar planId nos items da order");
-        console.log("   Items:", JSON.stringify(order.items, null, 2));
-      }
-    }
+    console.log("   ✅ Order atualizada para PAID");
   }
 
   console.log("\n" + "=".repeat(70));

@@ -102,16 +102,33 @@ const MP_STATUS_MAP: Record<string, "PENDING" | "PAID" | "FAILED" | "REFUNDED" |
  * 
  * A string para assinar é:
  * id:{data.id};request-id:{x-request-id};ts:{timestamp};
+ * 
+ * IMPORTANTE: O Mercado Pago envia webhooks em DOIS formatos:
+ * 1. Novo formato (body JSON + query ?data.id=X&type=payment) - assinatura calculada com body.data.id
+ * 2. Legacy formato (query ?id=X&topic=payment, body vazio) - assinatura calculada com query id
+ * 
+ * O formato legacy usa um template de assinatura DIFERENTE que não podemos calcular
+ * porque o MP não documenta como é gerado. Por isso, para o formato legacy,
+ * pulamos a validação de assinatura e confiamos na verificação via API.
  */
 function validateWebhookSignature(
   signature: string | null,
   requestId: string | null,
   dataId: string,
-  body: WebhookPayload
+  body: WebhookPayload,
+  isLegacyFormat: boolean
 ): boolean {
   // Se não temos secret configurado, pule a validação (development)
   if (!webhookSecret) {
     console.warn("[Webhook] ⚠️ MP_WEBHOOK_SECRET não configurado - pulando validação de assinatura");
+    return true;
+  }
+
+  // FORMATO LEGACY: O Mercado Pago usa um template de assinatura diferente
+  // que não é documentádo. A segurança é garantida pela validação via API.
+  // Isso é comportamento NORMAL e esperado do MP.
+  if (isLegacyFormat) {
+    console.log("[Webhook] ⚠️ Legacy format detected - skipping signature validation (will validate via API)");
     return true;
   }
 
@@ -647,10 +664,14 @@ export async function POST(request: NextRequest) {
     const dataId = String(body.data?.id || newFormatId || legacyId || "");
     const notificationType = body.type || newFormatType || legacyTopic || "";
     
+    // Detecta se é formato legacy (sem body.data.id e com query params legacy)
+    const isLegacyFormat = !body.data?.id && !newFormatId && !!legacyId;
+    
     console.log("[Webhook] Type:", notificationType);
     console.log("[Webhook] Action:", body.action);
     console.log("[Webhook] Data ID (resolved):", dataId);
     console.log("[Webhook] Live mode:", body.live_mode);
+    console.log("[Webhook] Format:", isLegacyFormat ? "LEGACY" : "NEW");
 
     // Se não temos dataId, não podemos processar
     if (!dataId) {
@@ -662,7 +683,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Valida assinatura usando o dataId resolvido
-    const isValid = validateWebhookSignature(signature, requestId, dataId, body);
+    const isValid = validateWebhookSignature(signature, requestId, dataId, body, isLegacyFormat);
     
     if (!isValid) {
       console.error("[Webhook] ❌ Invalid signature");

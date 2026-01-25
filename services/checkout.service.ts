@@ -344,14 +344,6 @@ async function processCardPayment(
   const { createCardPayment, buildCardPaymentRequest, isPaymentApproved } = 
     await import("./mercadopago.service");
 
-  console.log("[MercadoPago] Creating card payment:", {
-    amount,
-    externalReference: orderId,
-    email: user.email,
-    paymentMethodId: paymentData.paymentMethodId,
-    installments: paymentData.installments,
-  });
-
   // Validate required fields
   if (!paymentData.token) {
     return { success: false, error: "Token do cartão não fornecido" };
@@ -381,6 +373,7 @@ async function processCardPayment(
   // 2. Build card data (token, installments, etc.)
   // Force installments to 1 for debit cards
   const cardData = {
+    method: paymentData.method as 'credit_card' | 'debit_card',
     token: paymentData.token,
     paymentMethodId: paymentData.paymentMethodId,
     issuerId: paymentData.issuerId || 0,

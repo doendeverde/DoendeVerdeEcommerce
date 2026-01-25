@@ -91,23 +91,19 @@ async function main() {
     }
   }
 
-  // Buscar pedidos de assinatura recentes
+  // Buscar pedidos recentes (não há mais subscriptionPlanId no Order)
   const orders = await prisma.order.findMany({
     where: {
       userId: user.id,
-      subscriptionPlanId: { not: null },
     },
     include: {
-      subscriptionPlan: {
-        select: { name: true, slug: true },
-      },
       payments: {
         select: {
           id: true,
           status: true,
-          method: true,
+          provider: true,
           amount: true,
-          gatewayPaymentId: true,
+          transactionId: true,
           createdAt: true,
         },
       },
@@ -117,11 +113,10 @@ async function main() {
   });
 
   if (orders.length > 0) {
-    console.log("\n\n📦 PEDIDOS DE ASSINATURA RECENTES:");
+    console.log("\n\n📦 PEDIDOS RECENTES:");
     for (const order of orders) {
       console.log("\n" + "-".repeat(60));
       console.log(`   🆔 Order ID: ${order.id}`);
-      console.log(`   🎫 Plano: ${order.subscriptionPlan?.name || order.subscriptionPlanName}`);
       console.log(`   📊 Status: ${order.status}`);
       console.log(`   💰 Total: R$ ${Number(order.totalAmount).toFixed(2)}`);
       console.log(`   📅 Criado em: ${order.createdAt.toLocaleDateString("pt-BR")} ${order.createdAt.toLocaleTimeString("pt-BR")}`);
@@ -129,17 +124,17 @@ async function main() {
       if (order.payments.length > 0) {
         console.log(`   💳 Pagamentos:`);
         for (const payment of order.payments) {
-          console.log(`      - ${payment.method}: ${payment.status}`);
+          console.log(`      - ${payment.provider}: ${payment.status}`);
           console.log(`        Valor: R$ ${Number(payment.amount).toFixed(2)}`);
-          if (payment.gatewayPaymentId) {
-            console.log(`        MP Payment ID: ${payment.gatewayPaymentId}`);
+          if (payment.transactionId) {
+            console.log(`        Transaction ID: ${payment.transactionId}`);
           }
           console.log(`        Criado: ${payment.createdAt.toLocaleDateString("pt-BR")} ${payment.createdAt.toLocaleTimeString("pt-BR")}`);
         }
       }
     }
   } else {
-    console.log("\n\n📦 Nenhum pedido de assinatura encontrado");
+    console.log("\n\n📦 Nenhum pedido encontrado");
   }
 
   console.log("\n" + "=".repeat(70));
