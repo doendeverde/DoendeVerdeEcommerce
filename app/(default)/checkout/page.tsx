@@ -86,10 +86,6 @@ export default async function ProductCheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-page py-8">
-      {/* <div className="container-main"> */}
-      <ProductCheckoutClient data={checkoutData} />
-      {/* </div> */}
-    </div>
+    <ProductCheckoutClient data={checkoutData} />
   );
 }

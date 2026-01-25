@@ -58,7 +58,7 @@ export default async function ProfilePage() {
     : null;
 
   return (
-    <div className="space-y-6">
+    <div className="page-content">
       {/* Header with gradient */}
       <ProfileHeader
         fullName={user.fullName}

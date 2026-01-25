@@ -49,68 +49,66 @@ export default async function SubscriptionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-page">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Header - SEO optimized */}
-        <header className="text-center">
-          <h1 className="text-3xl font-bold text-default sm:text-4xl">
-            Escolha seu plano
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted">
-            Faça parte da comunidade Doende Verde e aproveite descontos
-            exclusivos, acúmulo de pontos e muito mais!
-          </p>
-        </header>
+    <div className="page-content">
+      {/* Header - SEO optimized */}
+      <header className="text-center">
+        <h1 className="text-3xl font-bold text-default sm:text-4xl">
+          Escolha seu plano
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-muted">
+          Faça parte da comunidade Doende Verde e aproveite descontos
+          exclusivos, acúmulo de pontos e muito mais!
+        </p>
+      </header>
 
-        {/* Current Plan Badge - Server rendered */}
-        {currentPlanSlug && (
-          <div className="mt-8 flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-green-100 dark:bg-green-900/40 px-4 py-2 text-sm font-medium text-green-700 dark:text-green-400">
-              <svg
-                className="h-4 w-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>
-                Plano atual:{" "}
-                <strong>
-                  {plans.find((p: SubscriptionPlanItem) => p.slug === currentPlanSlug)?.name ||
-                    "Gratuito"}
-                </strong>
-              </span>
-            </div>
+      {/* Current Plan Badge - Server rendered */}
+      {currentPlanSlug && (
+        <div className="flex justify-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-green-100 dark:bg-green-900/40 px-4 py-2 text-sm font-medium text-green-700 dark:text-green-400">
+            <svg
+              className="h-4 w-4"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>
+              Plano atual:{" "}
+              <strong>
+                {plans.find((p: SubscriptionPlanItem) => p.slug === currentPlanSlug)?.name ||
+                  "Gratuito"}
+              </strong>
+            </span>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Plans Grid - Main content */}
-        <section className="mt-12" aria-labelledby="plans-heading">
-          <h2 id="plans-heading" className="sr-only">
-            Planos disponíveis
-          </h2>
-          <SubscriptionPlans
-            plans={plans}
-            currentPlanSlug={currentPlanSlug}
-            isLoggedIn={!!userId}
-          />
-        </section>
+      {/* Plans Grid - Main content */}
+      <section aria-labelledby="plans-heading">
+        <h2 id="plans-heading" className="sr-only">
+          Planos disponíveis
+        </h2>
+        <SubscriptionPlans
+          plans={plans}
+          currentPlanSlug={currentPlanSlug}
+          isLoggedIn={!!userId}
+        />
+      </section>
 
-        {/* Why Subscribe Section */}
-        <section className="mt-20" aria-labelledby="benefits-heading">
-          <WhySubscribe />
-        </section>
+      {/* Why Subscribe Section */}
+      <section aria-labelledby="benefits-heading">
+        <WhySubscribe />
+      </section>
 
-        {/* FAQ Section - SEO rich content */}
-        <section className="mt-20" aria-labelledby="faq-heading">
-          <SubscriptionFAQ />
-        </section>
-      </div>
+      {/* FAQ Section - SEO rich content */}
+      <section aria-labelledby="faq-heading">
+        <SubscriptionFAQ />
+      </section>
     </div>
   );
 }

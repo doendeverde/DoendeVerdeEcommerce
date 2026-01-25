@@ -32,7 +32,7 @@ export default async function AdminUsersPage({
   });
 
   return (
-    <div className="space-y-6">
+    <div className="page-content">
       <AdminPageHeader
         title="Usuários"
         description={`${usersData.total} usuário(s) cadastrados`}

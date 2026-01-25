@@ -13,12 +13,12 @@ export default async function AdminCategoriesPage() {
   const categories = await adminService.getCategories();
 
   return (
-    <div className="space-y-6">
+    <div className="page-content">
       {/* Header com botão de criar */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Categorias</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <h1 className="text-2xl font-bold text-default">Categorias</h1>
+          <p className="text-muted text-sm">
             {categories.length} categoria(s) cadastrada(s)
           </p>
         </div>

@@ -9,9 +9,23 @@ export const metadata = {
 };
 
 /**
- * Layout para área administrativa
- * Verifica se o usuário é ADMIN antes de renderizar
- * Inclui sidebar fixa e header com breadcrumbs
+ * Admin Layout — Administrative Area Shell
+ * 
+ * Used for all admin pages:
+ * - Dashboard
+ * - Products management
+ * - Orders management
+ * - Users management
+ * - Subscriptions management
+ * 
+ * Layout Structure:
+ * - Fixed Sidebar (hidden on mobile, shown on lg+)
+ * - Admin Header with breadcrumbs
+ * - Main content area with consistent padding
+ * 
+ * Spacing System:
+ * - Admin padding: 16px (mobile) → 32px (desktop)
+ * - Uses page-content class for section spacing
  */
 export default async function AdminLayout({
   children,
@@ -40,8 +54,8 @@ export default async function AdminLayout({
         {/* Header */}
         <AdminHeader user={session.user} />
 
-        {/* Main content */}
-        <main className="p-4 lg:p-8">
+        {/* Main content - padding consistente */}
+        <main className="p-4 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>

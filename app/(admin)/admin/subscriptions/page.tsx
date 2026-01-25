@@ -41,12 +41,12 @@ export default async function AdminSubscriptionPlansPage() {
   const plans = await adminService.getSubscriptionPlans();
 
   return (
-    <div className="space-y-6">
+    <div className="page-content">
       {/* Header com botão de criar */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Planos de Assinatura</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <h1 className="text-2xl font-bold text-default">Planos de Assinatura</h1>
+          <p className="text-muted text-sm">
             {plans.length} plano(s) cadastrado(s)
           </p>
         </div>

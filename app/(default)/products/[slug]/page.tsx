@@ -53,31 +53,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const relatedProducts = product.relatedProducts;
 
   return (
-    <div className="min-h-screen bg-page">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
-        <nav className="mb-8 flex items-center gap-2 text-sm">
-          <Link href="/" className="text-muted hover:text-default transition-colors">
-            Home
-          </Link>
-          <ChevronRight className="h-4 w-4 text-gray-400" />
-          <Link href="/products" className="text-muted hover:text-default transition-colors">
-            Produtos
-          </Link>
-          {product.category && (
-            <>
-              <ChevronRight className="h-4 w-4 text-gray-400" />
-              <Link
-                href={`/products?category=${product.category.slug}`}
-                className="text-muted hover:text-default transition-colors"
-              >
-                {product.category.name}
-              </Link>
-            </>
-          )}
-          <ChevronRight className="h-4 w-4 text-gray-400" />
-          <span className="text-default font-medium truncate">{product.name}</span>
-        </nav>
+    <div className="page-content">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm">
+        <Link href="/" className="text-muted hover:text-default transition-colors">
+          Home
+        </Link>
+        <ChevronRight className="h-4 w-4 text-gray-400" />
+        <Link href="/products" className="text-muted hover:text-default transition-colors">
+          Produtos
+        </Link>
+        {product.category && (
+          <>
+            <ChevronRight className="h-4 w-4 text-gray-400" />
+            <Link
+              href={`/products?category=${product.category.slug}`}
+              className="text-muted hover:text-default transition-colors"
+            >
+              {product.category.name}
+            </Link>
+          </>
+        )}
+        <ChevronRight className="h-4 w-4 text-gray-400" />
+        <span className="text-default font-medium truncate">{product.name}</span>
+      </nav>
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
@@ -168,27 +167,26 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Full Description */}
         {product.description && (
-          <div className="mt-12">
-            <h2 className="text-xl font-semibold text-default mb-4">Descrição</h2>
-            <div className="rounded-xl bg-surface border border-default p-6">
+          <section className="section">
+            <h2 className="text-xl font-semibold text-default">Descrição</h2>
+            <div className="card">
               <div
                 className="prose prose-gray dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: product.description }}
               />
             </div>
-          </div>
+          </section>
         )}
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-xl font-semibold text-default mb-6">
+          <section className="section">
+            <h2 className="text-xl font-semibold text-default">
               Produtos Relacionados
             </h2>
             <ProductGrid products={relatedProducts} />
-          </div>
+          </section>
         )}
-      </div>
     </div>
   );
 }

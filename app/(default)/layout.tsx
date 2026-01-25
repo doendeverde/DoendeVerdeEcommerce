@@ -12,30 +12,33 @@ interface DefaultLayoutProps {
  * - Product catalog
  * - Product details
  * - Subscriptions
- * - Points/Rewards
+ * - Checkout
  * 
- * Contains:
+ * Layout Structure:
  * - Fixed Header with navigation
  * - Subscription Banner (dynamic based on user status)
- * - Main content area
+ * - Main content area with consistent padding
+ * 
+ * Spacing System:
+ * - Container: max-w-7xl (1280px) with responsive padding
+ * - Page padding: 24px (mobile) → 32px (tablet+)
+ * - Section gap: 32px (mobile) → 48px (desktop)
  */
 export default function DefaultLayout({ children }: DefaultLayoutProps) {
   return (
-    <div className="min-h-screen bg-[var(--gray-bg)] flex flex-col">
+    <div className="min-h-screen bg-page flex flex-col">
       {/* Fixed Header */}
       <Header />
 
-      {/* Main Content - flex-1 para ocupar espaço restante, mas não forçar altura extra */}
+      {/* Main Content */}
       <main className="flex-1 flex flex-col">
-        {/* Subscription Banner - Full width, internal padding */}
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
-          <div className="max-w-7xl mx-auto">
-            <ConditionalSubscriptionBanner />
-          </div>
+        {/* Subscription Banner */}
+        <div className="container-main py-4">
+          <ConditionalSubscriptionBanner />
         </div>
 
-        {/* Page Content */}
-        <div className="container-main pb-8">
+        {/* Page Content - Children responsibility for internal spacing */}
+        <div className="container-main page-wrapper flex-1">
           {children}
         </div>
       </main>

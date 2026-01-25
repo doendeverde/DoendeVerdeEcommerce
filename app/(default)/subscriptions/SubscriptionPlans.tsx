@@ -22,10 +22,10 @@ interface SubscriptionPlansProps {
 
 // Icon mapping by plan slug
 const planIcons: Record<string, React.ReactNode> = {
-  gratuito: <Gift className="h-6 w-6" />,
-  "doende-x": <Zap className="h-6 w-6" />,
-  "doende-bronze": <Star className="h-6 w-6" />,
-  "doende-prata": <Crown className="h-6 w-6" />,
+  gratuito: <Gift className="h-5 w-5 sm:h-6 sm:w-6" />,
+  "doende-x": <Zap className="h-5 w-5 sm:h-6 sm:w-6" />,
+  "doende-bronze": <Star className="h-5 w-5 sm:h-6 sm:w-6" />,
+  "doende-prata": <Crown className="h-5 w-5 sm:h-6 sm:w-6" />,
 };
 
 // Color schemes by plan slug (following UX guide)
@@ -208,16 +208,14 @@ export function SubscriptionPlans({
                 }
               }}
               className={`
-                        relative flex flex-col rounded-2xl border-2 bg-surface p-6 
+                        relative flex flex-col rounded-2xl border-2 bg-surface 
                         transition-all duration-200 hover:shadow-lg
                         ${colors.border}
-                        flex-shrink-0 w-[85vw] max-w-[320px]
+                        flex-shrink-0 w-[72vw] max-w-[280px]
                         snap-center
+                        p-4 sm:p-6
                         md:w-auto md:max-w-none md:flex-shrink
                         `}
-              style={{
-                // transform: isSmallHeight ? 'scale(0.7)' : 'scale(0.8)'
-              }}
             >
               {/* Badge - Positioned above card */}
               {plan.badge && (
@@ -230,36 +228,36 @@ export function SubscriptionPlans({
 
               {/* Plan Icon */}
               <div
-                className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${colors.icon}`}
+                className={`inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl ${colors.icon}`}
                 aria-hidden="true"
               >
-                {planIcons[plan.slug] || <Gift className="h-6 w-6" />}
+                {planIcons[plan.slug] || <Gift className="h-5 w-5 sm:h-6 sm:w-6" />}
               </div>
 
               {/* Plan Name & Price */}
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold text-default">
+              <div className="mt-3 sm:mt-4">
+                <h3 className="text-base sm:text-lg font-semibold text-default">
                   {plan.name}
                 </h3>
-                <div className="mt-2 flex items-baseline gap-1">
+                <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1">
                   {plan.price === 0 ? (
-                    <span className="text-3xl font-bold text-default">
+                    <span className="text-2xl sm:text-3xl font-bold text-default">
                       Grátis
                     </span>
                   ) : (
                     <>
-                      <span className="text-sm text-muted">R$</span>
-                      <span className="text-3xl font-bold text-default">
+                      <span className="text-xs sm:text-sm text-muted">R$</span>
+                      <span className="text-2xl sm:text-3xl font-bold text-default">
                         {plan.price.toFixed(2).replace(".", ",")}
                       </span>
-                      <span className="text-sm text-muted">/mês</span>
+                      <span className="text-xs sm:text-sm text-muted">/mês</span>
                     </>
                   )}
                 </div>
 
                 {/* Discount Badge */}
                 {plan.discountPercent > 0 && (
-                  <div className="mt-2 inline-flex rounded-full bg-green-100 dark:bg-green-900/40 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:text-green-400">
+                  <div className="mt-1.5 sm:mt-2 inline-flex rounded-full bg-green-100 dark:bg-green-900/40 px-2 py-0.5 sm:px-2.5 text-[10px] sm:text-xs font-medium text-green-700 dark:text-green-400">
                     {plan.discountPercent}% de desconto permanente
                   </div>
                 )}
@@ -267,7 +265,7 @@ export function SubscriptionPlans({
 
               {/* Benefits List */}
               <ul
-                className={`mt-6 flex-1 space-y-3 ${isMediumHeight ? 'max-h-[200px] overflow-y-auto pr-2' : ''}`}
+                className={`mt-4 sm:mt-6 flex-1 space-y-2 sm:space-y-3 ${isMediumHeight ? 'max-h-[180px] sm:max-h-[200px] overflow-y-auto pr-1 sm:pr-2' : ''}`}
                 role="list"
               >
                 {plan.benefits.map((benefit, index) => {
@@ -277,14 +275,14 @@ export function SubscriptionPlans({
                     benefit.includes("desconto em todas");
 
                   return (
-                    <li key={index} className="flex items-start gap-2">
+                    <li key={index} className="flex items-start gap-1.5 sm:gap-2">
                       <Check
-                        className={`h-5 w-5 flex-shrink-0 ${isHighlight ? "text-primary-green" : "text-muted"
+                        className={`h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 ${isHighlight ? "text-primary-green" : "text-muted"
                           }`}
                         aria-hidden="true"
                       />
                       <span
-                        className={`${isSmallHeight ? 'text-base' : 'text-sm'} ${isHighlight
+                        className={`text-xs sm:text-sm ${isHighlight
                           ? "font-medium text-default"
                           : "text-muted"
                           }`}
@@ -297,11 +295,11 @@ export function SubscriptionPlans({
               </ul>
 
               {/* CTA Button */}
-              <div className="mt-6">
+              <div className="mt-4 sm:mt-6">
                 {isCurrentPlan ? (
                   <button
                     disabled
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-bg px-4 py-3 text-sm font-semibold text-muted cursor-not-allowed"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-bg px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold text-muted cursor-not-allowed"
                     aria-label={`${plan.name} é seu plano atual`}
                   >
                     Plano atual
@@ -309,7 +307,7 @@ export function SubscriptionPlans({
                 ) : plan.slug === "gratuito" ? (
                   <button
                     onClick={() => handleSubscribe(plan.slug)}
-                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${colors.button}`}
+                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold transition-colors ${colors.button}`}
                     aria-label="Usar plano gratuito"
                   >
                     Usar plano gratuito
@@ -317,11 +315,11 @@ export function SubscriptionPlans({
                 ) : (
                   <button
                     onClick={() => handleSubscribe(plan.slug)}
-                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${colors.button}`}
+                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold transition-colors ${colors.button}`}
                     aria-label={`Assinar plano ${plan.name}`}
                   >
                     Assinar agora
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
                   </button>
                 )}
               </div>

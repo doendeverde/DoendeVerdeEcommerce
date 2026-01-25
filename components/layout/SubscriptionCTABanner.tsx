@@ -108,8 +108,8 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
       />
 
       {/* Content */}
-      <div className="relative z-10 p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="relative z-10 p-3 sm:p-4 lg:p-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           {/* Left: Plan info */}
           <div className="flex-1">
             {/* Badge */}
@@ -121,10 +121,10 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
             </div> */}
 
             {/* Plan name with slide animation */}
-            <div className="overflow-hidden mb-2">
+            <div className="overflow-hidden mb-1 sm:mb-2">
               <h3
                 key={currentPlan.id}
-                className="text-4xl sm:text-4xl font-bold text-white animate-slideIn"
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white animate-slideIn"
               >
                 {currentPlan.name}
               </h3>
@@ -136,11 +136,11 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
             </p> */}
 
             {/* Plan highlights - simplified */}
-            <div className="flex items-center gap-6 mt-4 absolute sm:relative">
+            <div className="hidden sm:flex items-center gap-4 lg:gap-6 mt-3 sm:mt-4">
               {currentPlan.discountPercent > 0 && (
-                <span className="flex items-center gap-2 text-white/90">
-                  <Gift className="w-5 h-5" />
-                  <span className="text-sm font-medium">
+                <span className="flex items-center gap-1.5 sm:gap-2 text-white/90">
+                  <Gift className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-xs sm:text-sm font-medium">
                     {currentPlan.discountPercent}% desconto
                   </span>
                 </span>
@@ -169,10 +169,10 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
           <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
             {/* Price */}
             <div className="flex items-baseline justify-center sm:justify-end gap-1 text-white">
-              <p className="text-3xl sm:text-4xl font-bold">
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold">
                 R$ {currentPlan.price.toFixed(2).replace(".", ",")}
               </p>
-              <p className="text-sm font-light opacity-80">
+              <p className="text-xs sm:text-sm font-light opacity-80">
                 /mês
               </p>
             </div>
@@ -181,7 +181,7 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
             {/* CTA Button */}
             <Link
               href={`/checkout/subscription/${currentPlan.slug}`}
-              className="px-6 py-3 bg-white rounded-lg text-base font-semibold transition-all duration-200 hover:scale-105 hover:shadow-xl whitespace-nowrap"
+              className="px-4 py-2 sm:px-6 sm:py-3 bg-white rounded-lg text-sm sm:text-base font-semibold transition-all duration-200 hover:scale-105 hover:shadow-xl whitespace-nowrap"
               style={{ color: currentPlan.colorDark }}
             >
               Assinar agora

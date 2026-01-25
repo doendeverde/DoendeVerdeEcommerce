@@ -34,14 +34,47 @@
   --error: #EF4444;
   --info: #3B82F6;
 
-  /* ─── Spacing & Radius ─── */
+  /* ─── Spacing System ─── */
+  /* Base unit: 4px - seguindo escala 4px */
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+  
+  /* ─── Page Spacing (vertical) ─── */
+  --page-padding-y: var(--space-6);      /* 24px mobile */
+  --page-padding-y-sm: var(--space-8);   /* 32px tablet+ */
+  
+  /* ─── Section Spacing (between sections) ─── */
+  --section-gap: var(--space-8);         /* 32px mobile */
+  --section-gap-lg: var(--space-12);     /* 48px desktop */
+  
+  /* ─── Card Spacing ─── */
+  --card-padding: var(--space-4);        /* 16px mobile */
+  --card-padding-lg: var(--space-6);     /* 24px desktop */
+  --card-gap: var(--space-4);            /* 16px gap between cards */
+
+  /* ─── Radius ─── */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
   /* ─── Header ─── */
   --header-height: 64px;
+
+  /* ─── Container ─── */
+  --container-max: 1280px;
+  --container-padding: var(--space-4);   /* 16px mobile */
+  --container-padding-sm: var(--space-6); /* 24px tablet */
+  --container-padding-lg: var(--space-8); /* 32px desktop */
 
   /* ─── Cards & Surfaces ─── */
   --card-bg: #ffffff;
@@ -139,25 +172,149 @@ body {
 }
 
 /* ─── Utility Classes ─── */
+
+/* 
+ * CONTAINER PRINCIPAL
+ * Usado em layouts para centralizar conteúdo
+ * Breakpoints: mobile (16px) → tablet (24px) → desktop (32px)
+ */
 .container-main {
-  max-width: 1280px;
+  width: 100%;
+  max-width: var(--container-max);
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
 }
 
 @media (min-width: 640px) {
   .container-main {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: var(--container-padding-sm);
+    padding-right: var(--container-padding-sm);
   }
 }
 
 @media (min-width: 1024px) {
   .container-main {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: var(--container-padding-lg);
+    padding-right: var(--container-padding-lg);
+  }
+}
+
+/*
+ * PAGE WRAPPER
+ * Container de página com padding vertical consistente
+ */
+.page-wrapper {
+  padding-top: var(--page-padding-y);
+  padding-bottom: var(--page-padding-y);
+}
+
+@media (min-width: 640px) {
+  .page-wrapper {
+    padding-top: var(--page-padding-y-sm);
+    padding-bottom: var(--page-padding-y-sm);
+  }
+}
+
+/*
+ * PAGE CONTENT
+ * Espaçamento entre seções de uma página
+ */
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}
+
+@media (min-width: 1024px) {
+  .page-content {
+    gap: var(--section-gap-lg);
+  }
+}
+
+/*
+ * SECTION
+ * Uma seção dentro de uma página
+ */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .section {
+    gap: var(--space-6);
+  }
+}
+
+/*
+ * CARD BASE
+ * Estilo base para cards
+ */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: var(--card-padding);
+}
+
+@media (min-width: 640px) {
+  .card {
+    padding: var(--card-padding-lg);
+  }
+}
+
+/*
+ * GRID CARDS
+ * Grid responsivo para cards
+ * 1 col mobile → 2 cols tablet → 3 cols desktop → 4 cols wide
+ */
+.grid-cards {
+  display: grid;
+  gap: var(--card-gap);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .grid-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/*
+ * STAT CARDS GRID
+ * Grid específico para cards de estatísticas
+ * 1 col mobile → 2 cols tablet → 4 cols desktop
+ */
+.grid-stats {
+  display: grid;
+  gap: var(--card-gap);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .grid-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 

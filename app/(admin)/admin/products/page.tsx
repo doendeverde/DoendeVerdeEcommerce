@@ -46,7 +46,7 @@ export default async function AdminProductsPage({
   const lowStockCount = productsData.products.filter((p) => p.isLowStock).length;
 
   return (
-    <div className="space-y-6">
+    <div className="page-content">
       <AdminPageHeader
         title="Produtos"
         description={`${totalProducts} produto(s) cadastrados`}

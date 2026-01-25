@@ -52,12 +52,12 @@ export default async function AdminUserSubscriptionsPage({ searchParams }: PageP
   const plans = await adminService.getSubscriptionPlans();
 
   return (
-    <div className="space-y-6">
+    <div className="page-content">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Assinaturas de Usuários</h1>
-          <p className="text-text-secondary text-sm">
+          <h1 className="text-2xl font-bold text-default">Assinaturas de Usuários</h1>
+          <p className="text-muted text-sm">
             {result.total} assinatura(s) encontrada(s)
           </p>
         </div>

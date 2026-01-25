@@ -39,7 +39,7 @@ export default async function AdminOrdersPage({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="page-content">
       <AdminPageHeader
         title="Pedidos"
         description={`${ordersData.total} pedido(s) no total`}

@@ -75,7 +75,7 @@ export default async function OrdersPage() {
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="page-content">
       {/* Header with gradient */}
       <OrdersHeader totalOrders={orders.length} />
 

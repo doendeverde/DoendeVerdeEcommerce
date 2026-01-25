@@ -15,7 +15,7 @@ export const metadata = {
 
 export default function ShippingProfilesPage() {
   return (
-    <div className="space-y-6">
+    <div className="page-content">
       <AdminPageHeader
         title="Perfis de Frete"
         description="Gerencie os perfis de frete usados para calcular o valor do envio"

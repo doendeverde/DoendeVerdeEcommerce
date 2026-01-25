@@ -40,7 +40,7 @@ export default function AdminSettingsPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="page-content">
       <AdminPageHeader
         title="Configurações"
         description="Gerencie as configurações do sistema"

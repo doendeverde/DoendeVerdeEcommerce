@@ -33,10 +33,10 @@ export default async function HomePage() {
   const { products, categories } = result;
 
   return (
-    <div className="space-y-16">
+    <div className="page-content">
       {/* Hero Section */}
       {showHero && (
-        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-purple to-purple-600 px-6 py-12 text-white sm:px-12 sm:py-16">
+        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-purple to-purple-600 p-6 sm:p-12 text-white">
           <div className="relative z-10 max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 text-sm font-medium backdrop-blur-sm">
               <Crown className="h-4 w-4" />
@@ -72,53 +72,42 @@ export default async function HomePage() {
 
       {/* Benefits Bar */}
       {showBenefits && (
-        <section className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+        <section className="grid-stats">
+          <div className="card flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
               <Truck className="h-5 w-5 text-primary-green" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Frete Grátis</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Acima de R$ 150</p>
+              <p className="text-sm font-semibold text-default">Frete Grátis</p>
+              <p className="text-xs text-muted">Acima de R$ 150</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+          <div className="card flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
               <Shield className="h-5 w-5 text-primary-green" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Compra Segura</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Garantia de 7 dias</p>
+              <p className="text-sm font-semibold text-default">Compra Segura</p>
+              <p className="text-xs text-muted">Garantia de 7 dias</p>
             </div>
           </div>
-          {/* FEATURE DISABLED: Points card will be implemented in the future */}
-          {/* <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
-            <Gift className="h-5 w-5 text-primary-purple" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Ganhe Pontos</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">A cada compra</p>
-          </div>
-        </div> */}
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+          <div className="card flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
               <Crown className="h-5 w-5 text-primary-purple" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Planos VIP</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Descontos exclusivos</p>
+              <p className="text-sm font-semibold text-default">Planos VIP</p>
+              <p className="text-xs text-muted">Descontos exclusivos</p>
             </div>
           </div>
         </section>
       )}
 
       {/* Categories */}
-      {/* {categories.length > 0 && ( */}
-      {false && (
-        <section>
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Categorias</h2>
+      {false && categories.length > 0 && (
+        <section className="section">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-default">Categorias</h2>
             <Link
               href="/products"
               className="text-sm font-medium text-primary-green hover:underline"
@@ -131,11 +120,11 @@ export default async function HomePage() {
       )}
 
       {/* Featured Products */}
-      <section>
-        <div className="mb-6 flex items-center justify-between">
+      <section className="section">
+        <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Produtos em Destaque</h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <h2 className="text-xl font-bold text-default">Produtos em Destaque</h2>
+            <p className="mt-1 text-sm text-muted">
               Os mais pedidos pelos nossos clientes
             </p>
           </div>
@@ -150,11 +139,11 @@ export default async function HomePage() {
         {products.length > 0 ? (
           <ProductGrid products={products} />
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16 text-center">
-            <p className="text-lg font-medium text-gray-600 dark:text-gray-400">
+          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-default py-16 text-center">
+            <p className="text-lg font-medium text-muted">
               Nenhum produto cadastrado ainda
             </p>
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
+            <p className="mt-2 text-sm text-muted">
               Os produtos aparecerão aqui assim que forem adicionados.
             </p>
           </div>
@@ -163,6 +152,6 @@ export default async function HomePage() {
 
       {/* CTA Section - Only for non-authenticated users */}
       <GuestCTASection />
-    </div >
+    </div>
   );
 }
