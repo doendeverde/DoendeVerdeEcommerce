@@ -320,7 +320,7 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
           <div className="md:col-span-2">
             <PixWaitingStep
               pixData={pixData}
-              amount={data.plan.price}
+              amount={data.plan.price + (selectedShippingOption?.price || 0)}
               orderId={orderId}
               onBack={goBackToPayment}
               onPaymentConfirmed={handlePixConfirmed}
