@@ -4,17 +4,27 @@
  * POST /api/shipping/quote
  *
  * Calculate shipping options for a given CEP and products/plan.
+ * Admin users get free shipping option even in production.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { shippingQuoteRequestSchema } from "@/schemas/shipping.schema";
 import { shippingService } from "@/services/shipping.service";
+import { auth } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
     console.log("[Shipping Quote API] Request body:", JSON.stringify(body, null, 2));
+
+    // Check if user is admin (for free shipping option)
+    const session = await auth();
+    const isAdmin = session?.user?.role === "ADMIN";
+    
+    if (isAdmin) {
+      console.log("[Shipping Quote API] Admin user detected - free shipping enabled");
+    }
 
     // Validate request
     const validation = shippingQuoteRequestSchema.safeParse(body);
@@ -30,8 +40,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calculate shipping
-    const result = await shippingService.calculateShipping(validation.data);
+    // Calculate shipping (admin gets free shipping option)
+    const result = await shippingService.calculateShipping(validation.data, isAdmin);
 
     if (!result.success) {
       return NextResponse.json(

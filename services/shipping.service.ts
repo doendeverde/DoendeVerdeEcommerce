@@ -133,31 +133,38 @@ const DEFAULT_RATE: RegionalShippingRate = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Dev Free Shipping Helper
+// Free Shipping Helper (Dev + Admin)
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * 🚀 DEV ONLY: Add free shipping option in development environment
- * This option should NEVER appear in production
+ * 🚀 Add free shipping option
+ * Available in:
+ * - Development environment (for testing)
+ * - Production for ADMIN users (for testing payments)
  */
-function addDevFreeShipping(options: ShippingOption[]): ShippingOption[] {
-  if (process.env.NODE_ENV === "production") {
+function addFreeShipping(options: ShippingOption[], isAdmin: boolean = false): ShippingOption[] {
+  const isDev = process.env.NODE_ENV !== "production";
+  
+  // Allow free shipping in dev OR for admin users in prod
+  if (!isDev && !isAdmin) {
     return options;
   }
   
+  const label = isDev ? "DEV" : "ADMIN";
+  
   const freeShippingOption: ShippingOption = {
     id: "dev_free",
-    carrier: "DEV",
+    carrier: label,
     service: "Grátis",
-    name: "🚀 Frete Grátis (DEV ONLY)",
+    name: `🚀 Frete Grátis (${label} ONLY)`,
     price: 0,
     deliveryDays: 0,
     estimatedDays: 0,
-    deliveryTime: "Imediato (apenas desenvolvimento)",
+    deliveryTime: isDev ? "Imediato (apenas desenvolvimento)" : "Imediato (apenas admin)",
     recommended: true,
   };
   
-  logSuccess("✅ Opção de frete grátis adicionada (DEV MODE)");
+  logSuccess(`✅ Opção de frete grátis adicionada (${label} MODE)`);
   return [freeShippingOption, ...options];
 }
 
@@ -235,9 +242,12 @@ function isValidCep(cep: string): boolean {
 
 /**
  * Calculate shipping options for a given request
+ * @param request - The shipping quote request
+ * @param isAdmin - Whether the user is an admin (for free shipping option)
  */
 export async function calculateShipping(
-  request: ShippingQuoteRequest
+  request: ShippingQuoteRequest,
+  isAdmin: boolean = false
 ): Promise<ShippingQuoteResponse> {
   const cep = normalizeCep(request.cep);
   const state = getStateFromCep(cep);
@@ -326,8 +336,8 @@ export async function calculateShipping(
           })),
         });
         
-        // 🚀 DEV ONLY: Add free shipping option in development
-        const finalOptions = addDevFreeShipping(externalOptions);
+        // 🚀 Add free shipping option (dev or admin)
+        const finalOptions = addFreeShipping(externalOptions, isAdmin);
         
         return {
           success: true,
@@ -354,7 +364,7 @@ export async function calculateShipping(
 
   // Use fallback rates
   logStep(`Calculando taxas de fallback para estado: ${state || "Desconhecido"}`);
-  const fallbackOptions = calculateFallbackRates(cep, profile);
+  const fallbackOptions = calculateFallbackRates(cep, profile, isAdmin);
 
   logShippingInfo("RESULTADO FINAL (FALLBACK)", {
     "Estado": state || "Não identificado",
@@ -491,7 +501,8 @@ async function fetchMelhorEnvioQuotes(
  */
 function calculateFallbackRates(
   destinationCep: string,
-  profile: ShippingProfile
+  profile: ShippingProfile,
+  isAdmin: boolean = false
 ): ShippingOption[] {
   const state = getStateFromCep(destinationCep);
   const rate = state ? REGIONAL_RATES[state] : DEFAULT_RATE;
@@ -562,8 +573,8 @@ function calculateFallbackRates(
     },
   });
 
-  // 🚀 DEV ONLY: Add free shipping option in development
-  return addDevFreeShipping([pacOption, sedexOption]);
+  // 🚀 Add free shipping option (dev or admin)
+  return addFreeShipping([pacOption, sedexOption], isAdmin);
 }
 
 /**
