@@ -4,10 +4,35 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Sparkles, Gift, Truck } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import type { SubscriptionPlanItem } from "@/types/subscription";
+import type { SubscriptionPlanItem, PlanColorScheme } from "@/types/subscription";
+import { DEFAULT_COLOR_SCHEMES } from "@/types/subscription";
 
 interface SubscriptionCTABannerProps {
   className?: string;
+}
+
+/**
+ * Get colors from plan or fallback to defaults
+ */
+function getPlanColors(plan: SubscriptionPlanItem): { primary: string; dark: string } {
+  const colorScheme = plan.colorScheme as PlanColorScheme | undefined;
+  if (colorScheme) {
+    return {
+      primary: colorScheme.primary,
+      dark: colorScheme.primaryDark,
+    };
+  }
+  // Fallback based on plan position (featured vs regular)
+  if (plan.isFeatured) {
+    return {
+      primary: DEFAULT_COLOR_SCHEMES.popular.primary,
+      dark: DEFAULT_COLOR_SCHEMES.popular.primaryDark,
+    };
+  }
+  return {
+    primary: DEFAULT_COLOR_SCHEMES.basic.primary,
+    dark: DEFAULT_COLOR_SCHEMES.basic.primaryDark,
+  };
 }
 
 /**
@@ -91,6 +116,7 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
   }
 
   const currentPlan = plans[currentIndex];
+  const planColors = getPlanColors(currentPlan);
 
   return (
     <div
@@ -103,7 +129,7 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
       <div
         className="absolute inset-0 transition-all duration-500 ease-in-out"
         style={{
-          background: `linear-gradient(135deg, ${currentPlan.colorDark} 0%, ${currentPlan.color} 50%, ${currentPlan.colorDark} 100%)`,
+          background: `linear-gradient(135deg, ${planColors.dark} 0%, ${planColors.primary} 50%, ${planColors.dark} 100%)`,
         }}
       />
 
@@ -182,7 +208,7 @@ export function SubscriptionCTABanner({ className }: SubscriptionCTABannerProps)
             <Link
               href={`/checkout/subscription/${currentPlan.slug}`}
               className="px-4 py-2 sm:px-6 sm:py-3 bg-white rounded-lg text-sm sm:text-base font-semibold transition-all duration-200 hover:scale-105 hover:shadow-xl whitespace-nowrap"
-              style={{ color: currentPlan.colorDark }}
+              style={{ color: planColors.dark }}
             >
               Assinar agora
             </Link>

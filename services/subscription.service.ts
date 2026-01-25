@@ -3,14 +3,59 @@
  *
  * Business logic for subscription plans and user subscriptions.
  * Optimizado para SSR - dados sempre frescos do banco.
+ * Todos os dados vêm do banco de dados, não há mock/hardcoded.
  */
 
 import { subscriptionRepository } from "@/repositories/subscription.repository";
 import {
   type SubscriptionPlanItem,
   type UserSubscriptionInfo,
-  getPlanConfig,
+  type BenefitItem,
+  type PlanColorScheme,
+  DEFAULT_COLOR_SCHEMES,
+  getPlanColorScheme,
+  FREE_PLAN,
 } from "@/types/subscription";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helper Functions
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Transform database plan benefits to BenefitItem array
+ * Includes enabled status for showing which benefits are included
+ */
+function transformBenefits(planBenefits: Array<{
+  enabled: boolean;
+  customValue: string | null;
+  benefit: {
+    id?: string;
+    name: string;
+    slug: string;
+    description?: string | null;
+    icon?: string | null;
+    displayOrder?: number;
+  };
+}>): BenefitItem[] {
+  return planBenefits.map((pb) => ({
+    id: pb.benefit.id,
+    name: pb.benefit.name,
+    slug: pb.benefit.slug,
+    description: pb.benefit.description,
+    icon: pb.benefit.icon,
+    customValue: pb.customValue,
+    enabled: pb.enabled,
+  }));
+}
+
+/**
+ * Determine badge type based on isFeatured flag
+ */
+function determineBadge(isFeatured: boolean): "popular" | "premium" | undefined {
+  // For now, featured plans get "popular" badge
+  // This can be expanded to support different badge types
+  return isFeatured ? "popular" : undefined;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Service Functions
@@ -26,51 +71,35 @@ async function getPlans(): Promise<SubscriptionPlanItem[]> {
 
   // Transform database plans to display format
   const plans: SubscriptionPlanItem[] = dbPlans.map((plan) => {
-    const config = getPlanConfig(plan.slug);
+    const colorScheme = plan.colorScheme as PlanColorScheme | null;
     return {
       id: plan.id,
       name: plan.name,
       slug: plan.slug,
       description: plan.description || "",
+      shortDescription: plan.shortDescription || plan.description || "",
       price: Number(plan.price),
       billingCycle: plan.billingCycle,
       active: plan.active,
-      discountPercent: config.discountPercent,
-      monthlyPoints: config.monthlyPoints,
-      benefits: config.benefits,
-      badge: config.badge,
-      order: config.order,
-      color: config.color,
-      colorDark: config.colorDark,
-      shortDescription: config.shortDescription,
+      isFeatured: plan.isFeatured,
+      discountPercent: plan.discountPercent,
+      colorScheme: colorScheme || getPlanColorScheme(null, plan.isFeatured),
+      benefits: transformBenefits(plan.planBenefits),
+      badge: determineBadge(plan.isFeatured),
     };
   });
 
   // Add virtual "Free" plan if not in database
   const hasFree = plans.some((p) => p.slug === "gratuito");
   if (!hasFree) {
-    const freeConfig = getPlanConfig("gratuito");
-    plans.unshift({
-      id: "free",
-      name: "Gratuito",
-      slug: "gratuito",
-      description: "Acesso básico à plataforma",
-      price: 0,
-      billingCycle: "MONTHLY",
-      active: true,
-      discountPercent: freeConfig.discountPercent,
-      monthlyPoints: freeConfig.monthlyPoints,
-      benefits: freeConfig.benefits,
-      badge: freeConfig.badge,
-      order: freeConfig.order,
-      color: freeConfig.color,
-      colorDark: freeConfig.colorDark,
-      shortDescription: freeConfig.shortDescription,
+    plans.unshift({ 
+      ...FREE_PLAN,
+      colorScheme: DEFAULT_COLOR_SCHEMES.free,
     });
   }
 
-  // Sort by order (ensures consistent display)
-  return plans.sort((a, b) => a.order - b.order);
+  // Sort by price (free first, then ascending)
+  return plans.sort((a, b) => a.price - b.price);
 }
 
 /**
@@ -87,6 +116,8 @@ async function getUserSubscription(
     return null;
   }
 
+  const colorScheme = subscription.plan.colorScheme as PlanColorScheme | null;
+
   return {
     id: subscription.id,
     status: subscription.status,
@@ -97,6 +128,9 @@ async function getUserSubscription(
       name: subscription.plan.name,
       slug: subscription.plan.slug,
       price: Number(subscription.plan.price),
+      discountPercent: subscription.plan.discountPercent,
+      colorScheme: colorScheme || getPlanColorScheme(null, false),
+      benefits: transformBenefits(subscription.plan.planBenefits),
     },
   };
 }
@@ -113,6 +147,17 @@ async function getUserPlanSlug(userId: string): Promise<string> {
 }
 
 /**
+ * Get user's discount percentage from active subscription
+ * Returns 0 if no active subscription
+ */
+async function getUserDiscountPercent(userId: string): Promise<number> {
+  const subscription =
+    await subscriptionRepository.findUserActiveSubscription(userId);
+
+  return subscription?.plan.discountPercent || 0;
+}
+
+/**
  * Check if user has a specific plan
  */
 async function userHasPlan(userId: string, planSlug: string): Promise<boolean> {
@@ -121,69 +166,12 @@ async function userHasPlan(userId: string, planSlug: string): Promise<boolean> {
 }
 
 /**
- * Get plan display config (colors, discount, etc.)
- * Used by API to return display data
+ * Get all paid plans for display (CTA banners, etc)
+ * Excludes free plan
  */
-function getPlanDisplayConfig(slug: string) {
-  return getPlanConfig(slug);
-}
-
-/**
- * Get all plans with color information for display
- * Used by SubscriptionCTABanner carousel
- */
-async function getPlansWithColors(): Promise<SubscriptionPlanItem[]> {
-  const dbPlans = await subscriptionRepository.findActivePlans();
-
-  // Transform database plans to display format with colors
-  const plans: SubscriptionPlanItem[] = dbPlans.map((plan) => {
-    const config = getPlanConfig(plan.slug);
-    return {
-      id: plan.id,
-      name: plan.name,
-      slug: plan.slug,
-      description: plan.description || "",
-      price: Number(plan.price),
-      billingCycle: plan.billingCycle,
-      active: plan.active,
-      discountPercent: config.discountPercent,
-      monthlyPoints: config.monthlyPoints,
-      benefits: config.benefits,
-      badge: config.badge,
-      order: config.order,
-      color: config.color,
-      colorDark: config.colorDark,
-      shortDescription: config.shortDescription,
-    };
-  });
-
-  // Add virtual "Free" plan if not in database
-  const hasFree = plans.some((p) => p.slug === "gratuito");
-  if (!hasFree) {
-    const freeConfig = getPlanConfig("gratuito");
-    plans.unshift({
-      id: "free",
-      name: "Gratuito",
-      slug: "gratuito",
-      description: "Acesso básico à plataforma",
-      price: 0,
-      billingCycle: "MONTHLY",
-      active: true,
-      discountPercent: freeConfig.discountPercent,
-      monthlyPoints: freeConfig.monthlyPoints,
-      benefits: freeConfig.benefits,
-      badge: freeConfig.badge,
-      order: freeConfig.order,
-      color: freeConfig.color,
-      colorDark: freeConfig.colorDark,
-      shortDescription: freeConfig.shortDescription,
-    });
-  }
-
-  // Sort by order and filter only paid plans (skip free for CTA)
-  return plans
-    .filter((p) => p.price > 0)
-    .sort((a, b) => a.order - b.order);
+async function getPaidPlans(): Promise<SubscriptionPlanItem[]> {
+  const plans = await getPlans();
+  return plans.filter((p) => p.price > 0);
 }
 
 /**
@@ -211,12 +199,13 @@ async function getUserSubscriptionDiscount(userId: string): Promise<Subscription
     };
   }
   
-  const planConfig = getPlanConfig(subscription.plan.slug);
+  // Use discount from database
+  const discountPercent = subscription.plan.discountPercent;
   
   return {
     hasActiveSubscription: true,
-    discountPercent: planConfig.discountPercent,
-    discountLabel: planConfig.discountPercent > 0 
+    discountPercent,
+    discountLabel: discountPercent > 0 
       ? `Desconto ${subscription.plan.name}` 
       : null,
     planSlug: subscription.plan.slug,
@@ -226,10 +215,10 @@ async function getUserSubscriptionDiscount(userId: string): Promise<Subscription
 
 export const subscriptionService = {
   getPlans,
+  getPaidPlans,
   getUserSubscription,
   getUserSubscriptionDiscount,
   getUserPlanSlug,
+  getUserDiscountPercent,
   userHasPlan,
-  getPlanDisplayConfig,
-  getPlansWithColors,
 };

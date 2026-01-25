@@ -15,6 +15,7 @@ import type {
   MelhorEnvioQuoteResponse,
   RegionalShippingRate,
   SelectedShippingOption,
+  CreateOrderShippingInfoData,
 } from "@/types/shipping";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -628,6 +629,31 @@ export function buildOrderShippingData(
   };
 }
 
+/**
+ * Build structured OrderShippingInfo data for database
+ */
+export function buildOrderShippingInfo(
+  selectedOption: ShippingOption | SelectedShippingOption,
+  profile?: ShippingProfile | null
+): CreateOrderShippingInfoData {
+  return {
+    carrier: selectedOption.carrier,
+    serviceCode: selectedOption.id,
+    serviceName: selectedOption.service,
+    estimatedDays: selectedOption.deliveryDays,
+    shippingCost: selectedOption.price,
+    packageWeight: profile?.weightKg,
+    packageDimensions: profile
+      ? {
+          width: profile.widthCm,
+          height: profile.heightCm,
+          length: profile.lengthCm,
+        }
+      : undefined,
+    quotedAt: new Date(),
+  };
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Validation Helpers
 // ─────────────────────────────────────────────────────────────────────────────
@@ -669,6 +695,7 @@ export async function validateShippingAvailability(
 export const shippingService = {
   calculateShipping,
   buildOrderShippingData,
+  buildOrderShippingInfo,
   validateShippingAvailability,
   getStateFromCep,
   isValidCep,

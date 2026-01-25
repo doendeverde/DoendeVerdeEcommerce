@@ -3,6 +3,16 @@ import { auth } from "@/lib/auth";
 import { adminService } from "@/services/admin.service";
 import { z } from "zod";
 
+// Schema de validação para colorScheme
+const colorSchemeSchema = z.object({
+  primary: z.string(),
+  text: z.string(),
+  primaryDark: z.string(),
+  textDark: z.string(),
+  badge: z.string().optional(),
+  icon: z.string().optional(),
+}).nullable().optional();
+
 // Schema de validação para atualização de plano
 const updatePlanSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").optional(),
@@ -10,11 +20,12 @@ const updatePlanSchema = z.object({
   description: z.string().optional().nullable(),
   shortDescription: z.string().optional().nullable(),
   price: z.number().positive("Preço deve ser maior que zero").optional(),
+  discountPercent: z.number().min(0).max(100).optional(),
   billingCycle: z.enum(["MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL"]).optional(),
-  features: z.array(z.string()).optional(),
-  imageUrl: z.string().url("URL inválida").optional().or(z.literal("")).nullable(),
+  colorScheme: colorSchemeSchema,
   isActive: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
+  shippingProfileId: z.string().uuid().optional().nullable(),
 });
 
 /**
@@ -107,7 +118,7 @@ export async function PATCH(
 
     const plan = await adminService.updateSubscriptionPlan(id, {
       ...validated.data,
-      imageUrl: validated.data.imageUrl === "" ? null : validated.data.imageUrl,
+      shippingProfileId: validated.data.shippingProfileId,
     });
 
     return NextResponse.json({ success: true, data: plan });

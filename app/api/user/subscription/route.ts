@@ -30,11 +30,6 @@ export async function GET() {
       );
     }
 
-    // Get plan config for additional display data (discount, color)
-    const planConfig = subscriptionService.getPlanDisplayConfig(
-      subscription.plan.slug
-    );
-
     return NextResponse.json({
       isLoggedIn: true,
       subscription: {
@@ -44,9 +39,7 @@ export async function GET() {
         nextBillingAt: subscription.nextBillingAt,
         plan: {
           ...subscription.plan,
-          discountPercent: planConfig.discountPercent,
-          color: planConfig.color,
-          colorDark: planConfig.colorDark,
+          // colorScheme is already included in subscription.plan from service
         },
       },
     });

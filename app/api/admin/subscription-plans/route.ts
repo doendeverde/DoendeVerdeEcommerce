@@ -3,6 +3,16 @@ import { auth } from "@/lib/auth";
 import { adminService } from "@/services/admin.service";
 import { z } from "zod";
 
+// Schema de validação para colorScheme
+const colorSchemeSchema = z.object({
+  primary: z.string(),
+  text: z.string(),
+  primaryDark: z.string(),
+  textDark: z.string(),
+  badge: z.string().optional(),
+  icon: z.string().optional(),
+}).nullable().optional();
+
 // Schema de validação para criação de plano
 const createPlanSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -10,9 +20,9 @@ const createPlanSchema = z.object({
   description: z.string().optional(),
   shortDescription: z.string().optional(),
   price: z.number().positive("Preço deve ser maior que zero"),
+  discountPercent: z.number().min(0).max(100).default(0),
   billingCycle: z.enum(["MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL"]).default("MONTHLY"),
-  features: z.array(z.string()).optional(),
-  imageUrl: z.string().url("URL inválida").optional().or(z.literal("")),
+  colorScheme: colorSchemeSchema,
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
 });
@@ -82,8 +92,7 @@ export async function POST(request: NextRequest) {
 
     const plan = await adminService.createSubscriptionPlan({
       ...validated.data,
-      imageUrl: validated.data.imageUrl || undefined,
-      features: validated.data.features || [],
+      colorScheme: validated.data.colorScheme || undefined,
     });
 
     return NextResponse.json({ success: true, data: plan }, { status: 201 });

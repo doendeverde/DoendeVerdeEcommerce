@@ -13,10 +13,11 @@
  * 1. O preço NUNCA venha do cliente (anti-fraude)
  * 2. A validação de assinatura ativa seja feita no banco
  * 3. Arredondamentos sejam consistentes
+ * 
+ * IMPORTANTE: Todos os dados de desconto vêm do banco de dados (SubscriptionPlan.discountPercent)
  */
 
 import { prisma } from "@/lib/prisma";
-import { PLAN_CONFIG } from "@/types/subscription";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -95,7 +96,7 @@ export async function computePriceForUser(
     };
   }
 
-  // 3. Verificar assinatura ativa do usuário
+  // 3. Verificar assinatura ativa do usuário (com discountPercent do banco)
   const subscription = await prisma.subscription.findFirst({
     where: {
       userId,
@@ -106,6 +107,7 @@ export async function computePriceForUser(
         select: {
           slug: true,
           name: true,
+          discountPercent: true,
         },
       },
     },
@@ -124,9 +126,8 @@ export async function computePriceForUser(
     };
   }
 
-  // 5. Obter configuração do plano (discountPercent)
-  const planConfig = PLAN_CONFIG[subscription.plan.slug] || PLAN_CONFIG["gratuito"];
-  const discountPercent = planConfig.discountPercent;
+  // 5. Obter desconto do plano do banco de dados
+  const discountPercent = subscription.plan.discountPercent;
 
   // 6. Se plano não tem desconto (ex: gratuito), retornar preço base
   if (discountPercent <= 0) {
@@ -159,17 +160,20 @@ export async function computePriceForUser(
 /**
  * Calcula preço usando slug do plano diretamente (para preview/checkout).
  * Útil quando o usuário está selecionando um plano mas ainda não assinou.
+ * NOTA: Esta função requer o discountPercent diretamente pois não tem acesso ao banco.
  * 
  * @param basePrice - Preço base do produto
  * @param planSlug - Slug do plano de assinatura (opcional)
+ * @param discountPercent - Percentual de desconto do plano (deve vir do banco)
  * @returns Resultado do cálculo de preço
  */
 export function computePriceWithPlan(
   basePrice: number,
-  planSlug?: string | null
+  planSlug?: string | null,
+  discountPercent?: number
 ): PriceCalculationResult {
-  // Se não há plano, não há desconto
-  if (!planSlug) {
+  // Se não há plano ou desconto, não há desconto
+  if (!planSlug || !discountPercent || discountPercent <= 0) {
     return {
       basePrice,
       finalPrice: basePrice,
@@ -177,22 +181,7 @@ export function computePriceWithPlan(
       discountPercent: 0,
       hasDiscount: false,
       discountLabel: null,
-      planSlug: null,
-    };
-  }
-
-  const planConfig = PLAN_CONFIG[planSlug] || PLAN_CONFIG["gratuito"];
-  const discountPercent = planConfig.discountPercent;
-
-  if (discountPercent <= 0) {
-    return {
-      basePrice,
-      finalPrice: basePrice,
-      discountAmount: 0,
-      discountPercent: 0,
-      hasDiscount: false,
-      discountLabel: null,
-      planSlug,
+      planSlug: planSlug || null,
     };
   }
 
@@ -247,16 +236,15 @@ export async function computeCartPrices(userId: string): Promise<CartPriceSummar
     };
   }
 
-  // 2. Buscar assinatura ativa
+  // 2. Buscar assinatura ativa com discountPercent do banco
   const subscription = await prisma.subscription.findFirst({
     where: { userId, status: "ACTIVE" },
-    include: { plan: { select: { slug: true, name: true } } },
+    include: { plan: { select: { slug: true, name: true, discountPercent: true } } },
   });
 
   const planSlug = subscription?.plan.slug || null;
-  const planConfig = planSlug ? (PLAN_CONFIG[planSlug] || PLAN_CONFIG["gratuito"]) : null;
-  const discountPercent = planConfig?.discountPercent || 0;
-  const discountLabel = subscription ? `Desconto ${subscription.plan.name}` : null;
+  const discountPercent = subscription?.plan.discountPercent || 0;
+  const discountLabel = subscription && discountPercent > 0 ? `Desconto ${subscription.plan.name}` : null;
   const hasSubscriptionDiscount = discountPercent > 0;
 
   // 3. Calcular cada item
@@ -380,10 +368,15 @@ function getPlanDisplayName(slug: string): string {
 
 /**
  * Obtém o percentual de desconto de um plano pelo slug.
- * Útil para exibição rápida sem precisar do contexto completo.
+ * Busca do banco de dados para garantir dados atualizados.
  */
-export function getPlanDiscountPercent(planSlug: string | null): number {
+export async function getPlanDiscountPercent(planSlug: string | null): Promise<number> {
   if (!planSlug) return 0;
-  const config = PLAN_CONFIG[planSlug];
-  return config?.discountPercent || 0;
+  
+  const plan = await prisma.subscriptionPlan.findUnique({
+    where: { slug: planSlug },
+    select: { discountPercent: true },
+  });
+  
+  return plan?.discountPercent || 0;
 }

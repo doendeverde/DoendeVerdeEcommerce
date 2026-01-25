@@ -2,10 +2,58 @@
  * Subscription Types for Frontend
  *
  * Tipos para planos de assinatura e assinaturas do usuário.
- * Os benefícios são configuração estática para flexibilidade de marketing.
+ * Todos os dados vêm do banco de dados via API/repository.
  */
 
 import type { Prisma } from "@prisma/client";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Color Scheme Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Color scheme stored in database as JSON
+ */
+export interface PlanColorScheme {
+  primary: string;      // Primary background color
+  text: string;         // Text color on primary
+  primaryDark: string;  // Primary color for dark mode
+  textDark: string;     // Text color for dark mode
+  badge?: string;       // Badge background color (optional)
+  icon?: string;        // Icon background color (optional)
+}
+
+/**
+ * Default color schemes by plan type
+ */
+export const DEFAULT_COLOR_SCHEMES: Record<string, PlanColorScheme> = {
+  free: {
+    primary: "#6B7280",
+    text: "#FFFFFF",
+    primaryDark: "#4B5563",
+    textDark: "#FFFFFF",
+  },
+  basic: {
+    primary: "#22C55E",
+    text: "#FFFFFF",
+    primaryDark: "#16A34A",
+    textDark: "#FFFFFF",
+  },
+  popular: {
+    primary: "#22C55E",
+    text: "#FFFFFF",
+    primaryDark: "#16A34A",
+    textDark: "#FFFFFF",
+    badge: "#22C55E",
+  },
+  premium: {
+    primary: "#8B5CF6",
+    text: "#FFFFFF",
+    primaryDark: "#7C3AED",
+    textDark: "#FFFFFF",
+    badge: "#8B5CF6",
+  },
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Plan Types
@@ -27,143 +75,104 @@ export type SubscriptionPlanWithRelations = Prisma.SubscriptionPlanGetPayload<{
   };
 }>;
 
+// Benefit item for display (includes enabled state for showing disabled benefits)
+export interface BenefitItem {
+  id?: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  icon?: string | null;
+  customValue?: string | null;
+  enabled?: boolean; // Whether this benefit is included in the plan
+}
+
 // Plan for display in subscription page (SSR optimized)
 export interface SubscriptionPlanItem {
   id: string;
   name: string;
   slug: string;
   description: string;
+  shortDescription: string;
   price: number;
   billingCycle: string;
   active: boolean;
-  // Computed/Display fields
+  isFeatured: boolean;
+  // From database
   discountPercent: number;
-  monthlyPoints: number;
-  benefits: string[];
+  colorScheme?: PlanColorScheme | null;
+  benefits: BenefitItem[];
+  // Derived from isFeatured
   badge?: "popular" | "premium";
-  order: number;
-  // Color fields for display
-  color: string;
-  colorDark: string;
-  shortDescription: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // User Subscription Types
 // ─────────────────────────────────────────────────────────────────────────────
 
+export interface UserSubscriptionPlan {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  discountPercent: number;
+  colorScheme?: PlanColorScheme | null;
+  benefits?: BenefitItem[];
+}
+
 export interface UserSubscriptionInfo {
   id: string;
   status: string;
   startedAt: Date;
   nextBillingAt: Date;
-  plan: {
-    id: string;
-    name: string;
-    slug: string;
-    price: number;
+  plan: UserSubscriptionPlan;
+}
+
+// Subscription with full plan details for dashboard
+export type SubscriptionWithDetails = Prisma.SubscriptionGetPayload<{
+  include: {
+    plan: true;
   };
-}
+}>;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Plan Benefits Configuration
+// Helper Functions
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Plan display configuration interface
+ * Get color scheme for a plan (from database or default)
  */
-export interface PlanDisplayConfig {
-  discountPercent: number;
-  monthlyPoints: number;
-  benefits: string[];
-  badge?: "popular" | "premium";
-  order: number;
-  color: string; // Primary gradient color
-  colorDark: string; // Secondary gradient color
-  shortDescription: string; // Short description for carousel
+export function getPlanColorScheme(colorScheme: PlanColorScheme | null | undefined, isFeatured: boolean): PlanColorScheme {
+  if (colorScheme) return colorScheme;
+  
+  // Return default based on featured status
+  return isFeatured ? DEFAULT_COLOR_SCHEMES.premium : DEFAULT_COLOR_SCHEMES.basic;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Free Plan Constants
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
- * Benefits configuration for each plan tier
- * This is configuration data, not database data
- * Allows marketing flexibility without database migrations
+ * Virtual free plan for users without subscription
+ * Used when user has no active subscription
  */
-export const PLAN_CONFIG: Record<string, PlanDisplayConfig> = {
-  gratuito: {
-    discountPercent: 0,
-    monthlyPoints: 0,
-    benefits: [
-      "Acesso ao catálogo completo",
-      "Acúmulo de pontos nas compras",
-      "Troca de pontos por cupons",
-      "Suporte por email",
-    ],
-    order: 0,
-    color: "#6B7280", // Gray
-    colorDark: "#4B5563",
-    shortDescription: "Acesso básico à plataforma",
-  },
-  "doende-x": {
-    discountPercent: 5,
-    monthlyPoints: 200,
-    benefits: [
-      "Tudo do plano Gratuito",
-      "200 pontos mensais automáticos",
-      "5% de desconto em todas as compras",
-      "Acúmulo de pontos 1.2x mais rápido",
-      "Frete grátis acima de R$ 150",
-      "Acesso a produtos exclusivos",
-      "Suporte prioritário",
-    ],
-    order: 1,
-    color: "#22C55E", // Green
-    colorDark: "#16A34A",
-    shortDescription: "5% de desconto + 200 pontos/mês",
-  },
-  "doende-bronze": {
-    discountPercent: 15,
-    monthlyPoints: 350,
-    benefits: [
-      "Tudo do plano Doende X",
-      "350 pontos mensais automáticos",
-      "15% de desconto em todas as compras",
-      "Acúmulo de pontos 1.5x mais rápido",
-      "Frete grátis acima de R$ 100",
-      "Brindes mensais exclusivos",
-      "Acesso antecipado a lançamentos",
-      "Suporte VIP 24/7",
-    ],
-    badge: "popular",
-    order: 2,
-    color: "#CD7F32", // Bronze
-    colorDark: "#A0522D",
-    shortDescription: "15% de desconto + 350 pontos/mês",
-  },
-  "doende-prata": {
-    discountPercent: 20,
-    monthlyPoints: 500,
-    benefits: [
-      "Tudo do plano Bronze",
-      "500 pontos mensais automáticos",
-      "20% de desconto em todas as compras",
-      "Acúmulo de pontos 2x mais rápido",
-      "Frete grátis em todas as compras",
-      "Produtos exclusivos premium",
-      "Kit de boas-vindas premium",
-      "Convite para eventos exclusivos",
-      "Suporte VIP dedicado",
-    ],
-    badge: "premium",
-    order: 3,
-    color: "#C0C0C0", // Silver
-    colorDark: "#A8A8A8",
-    shortDescription: "20% de desconto + 500 pontos/mês",
-  },
+export const FREE_PLAN: SubscriptionPlanItem = {
+  id: "free",
+  name: "Gratuito",
+  slug: "gratuito",
+  description: "Acesso básico à plataforma",
+  shortDescription: "Acesso básico à plataforma",
+  price: 0,
+  billingCycle: "MONTHLY",
+  active: true,
+  isFeatured: false,
+  discountPercent: 0,
+  colorScheme: DEFAULT_COLOR_SCHEMES.free,
+  benefits: [
+    { name: "Acesso ao catálogo completo", slug: "catalogo-completo", enabled: true },
+    { name: "Acúmulo de pontos nas compras", slug: "acumulo-pontos", enabled: true },
+    { name: "Troca de pontos por cupons", slug: "troca-cupons", enabled: true },
+    { name: "Suporte por email", slug: "suporte-email", enabled: true },
+  ],
 };
 
-/**
- * Helper to get plan display info
- */
-export function getPlanConfig(slug: string) {
-  return PLAN_CONFIG[slug] || PLAN_CONFIG["gratuito"];
-}

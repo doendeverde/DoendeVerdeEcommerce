@@ -6,13 +6,18 @@
  * 
  * Mobile: Carrossel horizontal com snap scroll, iniciando no plano popular.
  * Desktop: Grid 4 colunas.
+ * 
+ * Benefits Display:
+ * - Shows ALL benefits (enabled and disabled) 
+ * - Enabled benefits: checkmark icon, full opacity
+ * - Disabled benefits: X icon, reduced opacity, strikethrough
  */
 
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Gift, Zap, Star, Crown, Check, ArrowRight } from "lucide-react";
-import type { SubscriptionPlanItem } from "@/types/subscription";
+import { Gift, Zap, Star, Crown, Check, X, ArrowRight } from "lucide-react";
+import type { SubscriptionPlanItem, BenefitItem, PlanColorScheme } from "@/types/subscription";
 
 interface SubscriptionPlansProps {
   plans: SubscriptionPlanItem[];
@@ -28,8 +33,8 @@ const planIcons: Record<string, React.ReactNode> = {
   "doende-prata": <Crown className="h-5 w-5 sm:h-6 sm:w-6" />,
 };
 
-// Color schemes by plan slug (following UX guide)
-const planColors: Record<
+// Fallback color schemes by plan slug (used when plan.colorScheme is not set)
+const fallbackColors: Record<
   string,
   { icon: string; badge: string; button: string; border: string }
 > = {
@@ -58,6 +63,35 @@ const planColors: Record<
     border: "border-primary-purple",
   },
 };
+
+/**
+ * Get plan display colors
+ * Uses colorScheme from DB if available, otherwise falls back to slug-based colors
+ */
+function getPlanDisplayColors(plan: SubscriptionPlanItem) {
+  const fallback = fallbackColors[plan.slug] || fallbackColors.gratuito;
+  const colorScheme = plan.colorScheme as PlanColorScheme | undefined;
+
+  if (!colorScheme) {
+    return fallback;
+  }
+
+  // Generate Tailwind-compatible classes from colorScheme
+  return {
+    icon: fallback.icon, // Keep icon style from fallback for now
+    badge: colorScheme.badge ? `bg-[${colorScheme.badge}]` : fallback.badge,
+    button: `bg-[${colorScheme.primary}] text-[${colorScheme.text}] hover:opacity-90`,
+    border: `border-[${colorScheme.primary}]/50 hover:border-[${colorScheme.primary}]`,
+    // Raw colors for inline styles
+    raw: {
+      primary: colorScheme.primary,
+      text: colorScheme.text,
+      primaryDark: colorScheme.primaryDark,
+      textDark: colorScheme.textDark,
+      badge: colorScheme.badge,
+    },
+  };
+}
 
 export function SubscriptionPlans({
   plans,
@@ -194,9 +228,10 @@ export function SubscriptionPlans({
       >
         {plans.map((plan, index) => {
           const isCurrentPlan = currentPlanSlug === plan.slug;
-          const colors = planColors[plan.slug] || planColors.gratuito;
+          const colors = getPlanDisplayColors(plan);
           const isPremium = plan.badge === "premium";
           const isPopular = plan.badge === "popular";
+          const hasRawColors = 'raw' in colors && colors.raw;
 
           return (
             <article
@@ -210,17 +245,23 @@ export function SubscriptionPlans({
               className={`
                         relative flex flex-col rounded-2xl border-2 bg-surface 
                         transition-all duration-200 hover:shadow-lg
-                        ${colors.border}
+                        ${!hasRawColors ? colors.border : ''}
                         flex-shrink-0 w-[72vw] max-w-[280px]
                         snap-center
                         p-4 sm:p-6
                         md:w-auto md:max-w-none md:flex-shrink
                         `}
+              style={hasRawColors ? {
+                borderColor: `${colors.raw.primary}50`,
+              } : undefined}
             >
               {/* Badge - Positioned above card */}
               {plan.badge && (
                 <div
-                  className={`absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold text-white ${colors.badge}`}
+                  className={`absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold text-white ${!hasRawColors ? colors.badge : ''}`}
+                  style={hasRawColors && colors.raw.badge ? {
+                    backgroundColor: colors.raw.badge,
+                  } : undefined}
                 >
                   {plan.badge === "popular" ? "Mais popular" : "Premium"}
                 </div>
@@ -263,31 +304,47 @@ export function SubscriptionPlans({
                 )}
               </div>
 
-              {/* Benefits List */}
+              {/* Benefits List - Shows ALL benefits (enabled and disabled) */}
               <ul
                 className={`mt-4 sm:mt-6 flex-1 space-y-2 sm:space-y-3 ${isMediumHeight ? 'max-h-[180px] sm:max-h-[200px] overflow-y-auto pr-1 sm:pr-2' : ''}`}
                 role="list"
               >
-                {plan.benefits.map((benefit, index) => {
-                  // Highlight key benefits (points and discount)
-                  const isHighlight =
-                    benefit.includes("pontos mensais") ||
-                    benefit.includes("desconto em todas");
+                {plan.benefits.map((benefit, benefitIndex) => {
+                  // Get benefit details (handles both string and BenefitItem)
+                  const benefitName = typeof benefit === "string" ? benefit : benefit.name;
+                  const isEnabled = typeof benefit === "string" ? true : benefit.enabled !== false;
+
+                  // Highlight key benefits (points and discount) - only if enabled
+                  const isHighlight = isEnabled && (
+                    benefitName.includes("pontos") ||
+                    benefitName.includes("desconto")
+                  );
 
                   return (
-                    <li key={index} className="flex items-start gap-1.5 sm:gap-2">
-                      <Check
-                        className={`h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 ${isHighlight ? "text-primary-green" : "text-muted"
-                          }`}
-                        aria-hidden="true"
-                      />
+                    <li
+                      key={benefitIndex}
+                      className={`flex items-start gap-1.5 sm:gap-2 ${!isEnabled ? 'opacity-50' : ''}`}
+                    >
+                      {isEnabled ? (
+                        <Check
+                          className={`h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 ${isHighlight ? "text-primary-green" : "text-muted"}`}
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <X
+                          className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-gray-400"
+                          aria-hidden="true"
+                        />
+                      )}
                       <span
-                        className={`text-xs sm:text-sm ${isHighlight
-                          ? "font-medium text-default"
-                          : "text-muted"
+                        className={`text-xs sm:text-sm ${!isEnabled
+                            ? "text-gray-400 line-through"
+                            : isHighlight
+                              ? "font-medium text-default"
+                              : "text-muted"
                           }`}
                       >
-                        {benefit}
+                        {benefitName}
                       </span>
                     </li>
                   );
@@ -307,7 +364,11 @@ export function SubscriptionPlans({
                 ) : plan.slug === "gratuito" ? (
                   <button
                     onClick={() => handleSubscribe(plan.slug)}
-                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold transition-colors ${colors.button}`}
+                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold transition-colors ${!hasRawColors ? colors.button : ''}`}
+                    style={hasRawColors ? {
+                      backgroundColor: colors.raw.primary,
+                      color: colors.raw.text,
+                    } : undefined}
                     aria-label="Usar plano gratuito"
                   >
                     Usar plano gratuito
@@ -315,7 +376,11 @@ export function SubscriptionPlans({
                 ) : (
                   <button
                     onClick={() => handleSubscribe(plan.slug)}
-                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold transition-colors ${colors.button}`}
+                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold transition-colors hover:opacity-90 ${!hasRawColors ? colors.button : ''}`}
+                    style={hasRawColors ? {
+                      backgroundColor: colors.raw.primary,
+                      color: colors.raw.text,
+                    } : undefined}
                     aria-label={`Assinar plano ${plan.name}`}
                   >
                     Assinar agora
@@ -332,7 +397,8 @@ export function SubscriptionPlans({
       <div className="flex justify-center gap-2 mt-4 md:hidden" role="tablist" aria-label="Navegação de planos">
         {plans.map((plan, index) => {
           const isActive = index === activeIndex;
-          const colors = planColors[plan.slug] || planColors.gratuito;
+          const planColorScheme = plan.colorScheme as PlanColorScheme | undefined;
+          const indicatorColor = planColorScheme?.primary;
 
           return (
             <button
@@ -344,10 +410,11 @@ export function SubscriptionPlans({
               className={`
                 rounded-full transition-all duration-300 ease-out
                 ${isActive
-                  ? `w-6 h-2 ${plan.badge === "premium" ? "bg-primary-purple" : "bg-primary-green"}`
+                  ? `w-6 h-2 ${!indicatorColor ? (plan.badge === "premium" ? "bg-primary-purple" : "bg-primary-green") : ''}`
                   : "w-2 h-2 bg-gray-border hover:bg-gray-muted"
                 }
               `}
+              style={isActive && indicatorColor ? { backgroundColor: indicatorColor } : undefined}
             />
           );
         })}

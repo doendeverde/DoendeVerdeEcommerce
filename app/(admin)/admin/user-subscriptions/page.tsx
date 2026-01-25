@@ -89,7 +89,9 @@ export default async function AdminUserSubscriptionsPage({ searchParams }: PageP
             <option value="">Todos os status</option>
             <option value="ACTIVE">Ativas</option>
             <option value="PAUSED">Pausadas</option>
+            <option value="PENDING_CANCELLATION">Cancelamento Pendente</option>
             <option value="CANCELED">Canceladas</option>
+            <option value="EXPIRED">Expiradas</option>
           </select>
 
           {/* Plano */}
@@ -176,12 +178,21 @@ export default async function AdminUserSubscriptionsPage({ searchParams }: PageP
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="w-4 h-4 text-primary-purple" />
-                        <span className="text-sm text-text-primary">{sub.plan.name}</span>
-                        <span className="text-xs text-text-secondary">
-                          {formatCurrency(Number(sub.plan.price))}
-                        </span>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="w-4 h-4 text-primary-purple" />
+                          <span className="text-sm text-text-primary">{sub.plan.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-text-secondary">
+                            {formatCurrency(Number(sub.plan.price))}
+                          </span>
+                          {sub.plan.discountPercent > 0 && (
+                            <span className="text-xs bg-green-500/10 text-green-400 px-1.5 py-0.5 rounded">
+                              {sub.plan.discountPercent}% off
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className="px-4 py-4">

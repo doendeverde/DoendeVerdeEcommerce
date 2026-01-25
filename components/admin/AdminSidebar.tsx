@@ -17,6 +17,7 @@ import {
   UserCheck,
   Leaf,
   Truck,
+  Gift,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -43,13 +44,13 @@ const navItems: NavItem[] = [
   { href: "/admin/users", label: "Usuários", icon: Users },
   { href: "/admin/categories", label: "Categorias", icon: Tag },
   { href: "/admin/subscriptions", label: "Planos", icon: CreditCard },
+  { href: "/admin/benefits", label: "Benefícios", icon: Gift },
   { href: "/admin/user-subscriptions", label: "Assinaturas", icon: UserCheck },
   { href: "/admin/shipping", label: "Frete", icon: Truck },
   { href: "/admin/settings", label: "Configurações", icon: Settings },
 ];
 
 /**
- * Sidebar administrativa com navegação
  * Mobile: drawer que abre/fecha
  * Desktop: fixa à esquerda
  */

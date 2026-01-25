@@ -7,8 +7,9 @@ interface UserStatusBannerProps {
   className?: string;
   planName: string;
   discountPercent: number;
-  color: string;
-  colorDark: string;
+  primaryColor: string;
+  primaryDark: string;
+  textColor?: string;
 }
 
 /**
@@ -20,8 +21,9 @@ export function UserStatusBanner({
   className,
   planName,
   discountPercent,
-  color,
-  colorDark,
+  primaryColor,
+  primaryDark,
+  textColor = "#FFFFFF",
 }: UserStatusBannerProps) {
   return (
     <div
@@ -30,7 +32,7 @@ export function UserStatusBanner({
         className
       )}
       style={{
-        background: `linear-gradient(135deg, ${colorDark} 0%, ${color} 100%)`,
+        background: `linear-gradient(135deg, ${primaryDark} 0%, ${primaryColor} 100%)`,
       }}
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -49,7 +51,7 @@ export function UserStatusBanner({
               </h3>
               {discountPercent > 0 && (
                 <span className="px-2 py-0.5 text-xs font-medium bg-white rounded-full"
-                  style={{ color: colorDark }}
+                  style={{ color: primaryDark }}
                 >
                   {discountPercent}% de desconto
                 </span>

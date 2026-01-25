@@ -6,7 +6,7 @@
  * 
  * BUSINESS RULE:
  * - If user has active subscription, show discounted prices on all products
- * - Discount percentage comes from the user's active plan
+ * - Discount percentage comes from the user's active plan (from database)
  * - Free plan (gratuito) has 0% discount
  */
 
@@ -14,7 +14,6 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useSession } from "next-auth/react";
-import { getPlanConfig } from "@/types/subscription";
 
 interface SubscriptionInfo {
   hasActiveSubscription: boolean;
@@ -68,14 +67,14 @@ export function SubscriptionProvider({ children, initialData }: SubscriptionProv
   const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo>(() => {
     // Use initial data if provided (for SSR)
     if (initialData?.hasActiveSubscription && initialData.planSlug) {
-      const planConfig = getPlanConfig(initialData.planSlug);
       return {
         hasActiveSubscription: true,
         planName: initialData.planName,
         planSlug: initialData.planSlug,
-        discountPercent: planConfig.discountPercent,
-        discountLabel: `Desconto ${initialData.planName}`,
-        isLoading: false,
+        // Will be fetched from API on client
+        discountPercent: 0,
+        discountLabel: initialData.planName ? `Desconto ${initialData.planName}` : null,
+        isLoading: true,
       };
     }
     return {
@@ -110,13 +109,14 @@ export function SubscriptionProvider({ children, initialData }: SubscriptionProv
           const data = await response.json();
 
           if (data.subscription?.status === "ACTIVE" && data.subscription?.plan) {
-            const planConfig = getPlanConfig(data.subscription.plan.slug);
+            // Use discountPercent from API (comes from database)
+            const discountPercent = data.subscription.plan.discountPercent || 0;
             setSubscriptionInfo({
               hasActiveSubscription: true,
               planName: data.subscription.plan.name,
               planSlug: data.subscription.plan.slug,
-              discountPercent: planConfig.discountPercent,
-              discountLabel: `Desconto ${data.subscription.plan.name}`,
+              discountPercent,
+              discountLabel: discountPercent > 0 ? `Desconto ${data.subscription.plan.name}` : null,
               isLoading: false,
             });
           } else {

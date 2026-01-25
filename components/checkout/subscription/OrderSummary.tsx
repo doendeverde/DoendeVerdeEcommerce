@@ -79,7 +79,7 @@ export function OrderSummary({
           {plan.benefits.slice(0, 3).map((benefit, i) => (
             <li key={i} className="text-xs text-muted flex items-start gap-1.5">
               <Check className="w-3.5 h-3.5 text-primary-green flex-shrink-0 mt-0.5" />
-              {benefit}
+              {typeof benefit === 'string' ? benefit : benefit.name}
             </li>
           ))}
           {plan.benefits.length > 3 && (

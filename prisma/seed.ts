@@ -238,6 +238,7 @@ async function main() {
       slug: 'doende-x',
       description: 'Plano inicial com 5% de desconto permanente e 200 pontos mensais',
       price: 29.90,
+      discountPercent: 5,
       billingCycle: BillingCycle.MONTHLY,
       active: true,
     },
@@ -246,30 +247,160 @@ async function main() {
       slug: 'doende-bronze',
       description: 'O plano mais popular! 15% de desconto e 350 pontos mensais',
       price: 49.90,
+      discountPercent: 15,
       billingCycle: BillingCycle.MONTHLY,
       active: true,
+      isFeatured: true,
     },
     {
       name: 'Doende Prata',
       slug: 'doende-prata',
       description: 'Experiência premium com 20% de desconto e 500 pontos mensais',
       price: 79.90,
+      discountPercent: 20,
       billingCycle: BillingCycle.MONTHLY,
       active: true,
     },
   ];
 
+  const createdPlans: Array<{ id: string; slug: string }> = [];
   for (const planData of subscriptionPlans) {
-    await prisma.subscriptionPlan.create({
+    const plan = await prisma.subscriptionPlan.create({
       data: planData,
     });
+    createdPlans.push({ id: plan.id, slug: plan.slug });
     console.log(`  ✅ Created plan: ${planData.name}`);
+  }
+
+  // Create benefits
+  console.log('\n🎁 Creating subscription benefits...');
+  
+  // First, clean existing benefits
+  await prisma.planBenefit.deleteMany();
+  await prisma.benefit.deleteMany();
+  
+  const benefitsData = [
+    {
+      name: 'Frete Grátis',
+      slug: 'frete-gratis',
+      description: 'Frete grátis em todos os pedidos acima de R$ 50',
+      icon: 'Truck',
+      displayOrder: 1,
+    },
+    {
+      name: 'Desconto em Produtos',
+      slug: 'desconto-produtos',
+      description: 'Desconto percentual exclusivo em todos os produtos da loja',
+      icon: 'Percent',
+      displayOrder: 2,
+    },
+    {
+      name: 'Brinde Mensal',
+      slug: 'brinde-mensal',
+      description: 'Receba um brinde surpresa todo mês junto com seu kit',
+      icon: 'Gift',
+      displayOrder: 3,
+    },
+    {
+      name: 'Acesso Antecipado',
+      slug: 'acesso-antecipado',
+      description: 'Seja o primeiro a ter acesso a novos produtos e lançamentos',
+      icon: 'Zap',
+      displayOrder: 4,
+    },
+    {
+      name: 'Suporte Prioritário',
+      slug: 'suporte-prioritario',
+      description: 'Atendimento preferencial via WhatsApp e email',
+      icon: 'Headset',
+      displayOrder: 5,
+    },
+    {
+      name: 'Pontos em Dobro',
+      slug: 'pontos-dobro',
+      description: 'Ganhe o dobro de pontos de fidelidade em todas as compras',
+      icon: 'Star',
+      displayOrder: 6,
+    },
+  ];
+
+  const createdBenefits: Array<{ id: string; slug: string }> = [];
+  for (const benefitData of benefitsData) {
+    const benefit = await prisma.benefit.create({
+      data: benefitData,
+    });
+    createdBenefits.push({ id: benefit.id, slug: benefit.slug });
+    console.log(`  ✅ Created benefit: ${benefitData.name}`);
+  }
+
+  // Create plan-benefit relationships
+  console.log('\n🔗 Linking benefits to plans...');
+  
+  // Helper to get benefit id by slug
+  const getBenefitId = (slug: string) => createdBenefits.find(b => b.slug === slug)?.id;
+  const getPlanId = (slug: string) => createdPlans.find(p => p.slug === slug)?.id;
+
+  // Doende X benefits (basic plan)
+  const doendeXBenefits = [
+    { benefitSlug: 'desconto-produtos', enabled: true, customValue: '5%' },
+    { benefitSlug: 'frete-gratis', enabled: false },
+    { benefitSlug: 'brinde-mensal', enabled: false },
+    { benefitSlug: 'acesso-antecipado', enabled: false },
+    { benefitSlug: 'suporte-prioritario', enabled: false },
+    { benefitSlug: 'pontos-dobro', enabled: false },
+  ];
+
+  // Doende Bronze benefits (popular plan)
+  const doendeBronzeBenefits = [
+    { benefitSlug: 'desconto-produtos', enabled: true, customValue: '15%' },
+    { benefitSlug: 'frete-gratis', enabled: true, customValue: 'Acima de R$ 100' },
+    { benefitSlug: 'brinde-mensal', enabled: true },
+    { benefitSlug: 'acesso-antecipado', enabled: false },
+    { benefitSlug: 'suporte-prioritario', enabled: false },
+    { benefitSlug: 'pontos-dobro', enabled: false },
+  ];
+
+  // Doende Prata benefits (premium plan)
+  const doendePrataBenefits = [
+    { benefitSlug: 'desconto-produtos', enabled: true, customValue: '20%' },
+    { benefitSlug: 'frete-gratis', enabled: true, customValue: 'Sempre grátis' },
+    { benefitSlug: 'brinde-mensal', enabled: true },
+    { benefitSlug: 'acesso-antecipado', enabled: true },
+    { benefitSlug: 'suporte-prioritario', enabled: true },
+    { benefitSlug: 'pontos-dobro', enabled: true },
+  ];
+
+  const planBenefitsMap = [
+    { planSlug: 'doende-x', benefits: doendeXBenefits },
+    { planSlug: 'doende-bronze', benefits: doendeBronzeBenefits },
+    { planSlug: 'doende-prata', benefits: doendePrataBenefits },
+  ];
+
+  for (const { planSlug, benefits } of planBenefitsMap) {
+    const planId = getPlanId(planSlug);
+    if (!planId) continue;
+
+    for (const { benefitSlug, enabled, customValue } of benefits) {
+      const benefitId = getBenefitId(benefitSlug);
+      if (!benefitId) continue;
+
+      await prisma.planBenefit.create({
+        data: {
+          planId,
+          benefitId,
+          enabled,
+          customValue: customValue || null,
+        },
+      });
+    }
+    console.log(`  ✅ Linked benefits to: ${planSlug}`);
   }
 
   console.log(`\n✅ Seed completed!`);
   console.log(`   - ${categories.length} categories`);
   console.log(`   - ${products.length} products`);
   console.log(`   - ${subscriptionPlans.length} subscription plans`);
+  console.log(`   - ${benefitsData.length} benefits`);
 }
 
 main()

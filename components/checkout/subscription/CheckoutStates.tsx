@@ -33,13 +33,22 @@ export function ProcessingState({ message = "Processando pagamento..." }: Proces
 // Success State
 // ─────────────────────────────────────────────────────────────────────────────
 
+interface BenefitData {
+  name: string;
+  slug?: string;
+}
+
 interface SuccessStateProps {
   planName: string;
-  benefits: string[];
+  benefits: (string | BenefitData)[];
 }
 
 export function SuccessState({ planName, benefits }: SuccessStateProps) {
   const router = useRouter();
+
+  // Helper to get benefit text
+  const getBenefitText = (benefit: string | BenefitData) =>
+    typeof benefit === 'string' ? benefit : benefit.name;
 
   return (
     <div className="bg-surface rounded-2xl shadow-sm p-8 text-center">
@@ -59,7 +68,7 @@ export function SuccessState({ planName, benefits }: SuccessStateProps) {
           {benefits.slice(0, 4).map((benefit, i) => (
             <li key={i} className="flex items-center gap-2 text-sm text-muted">
               <Check className="w-4 h-4 text-primary-green flex-shrink-0" />
-              {benefit}
+              {getBenefitText(benefit)}
             </li>
           ))}
         </ul>

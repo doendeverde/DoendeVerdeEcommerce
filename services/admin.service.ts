@@ -1440,23 +1440,40 @@ async function deleteCategory(id: string) {
 // SUBSCRIPTION PLANS CRUD
 // ===============================
 
+interface PlanColorScheme {
+  primary: string;
+  text: string;
+  primaryDark: string;
+  textDark: string;
+  badge?: string;
+  icon?: string;
+}
+
 interface SubscriptionPlanInput {
   name: string;
   slug?: string;
   description?: string | null;
   shortDescription?: string | null;
   price: number;
+  discountPercent?: number;
   billingCycle?: "MONTHLY" | "QUARTERLY" | "SEMIANNUAL" | "ANNUAL";
-  features?: string[];
-  imageUrl?: string | null;
+  colorScheme?: PlanColorScheme | null;
   isActive?: boolean;
   isFeatured?: boolean;
+  shippingProfileId?: string | null;
 }
 
 async function getSubscriptionPlans() {
   const plans = await prisma.subscriptionPlan.findMany({
     include: {
-      _count: { select: { subscriptions: true } },
+      _count: { 
+        select: { 
+          subscriptions: true,
+          planBenefits: {
+            where: { enabled: true },
+          },
+        } 
+      },
     },
     orderBy: { price: "asc" },
   });
@@ -1469,14 +1486,15 @@ async function getSubscriptionPlans() {
     description: plan.description,
     shortDescription: plan.shortDescription,
     price: plan.price.toNumber(),
+    discountPercent: plan.discountPercent,
     billingCycle: plan.billingCycle,
-    features: plan.features,
-    imageUrl: plan.imageUrl,
+    colorScheme: plan.colorScheme as PlanColorScheme | null,
     isActive: plan.active,
     isFeatured: plan.isFeatured,
     createdAt: plan.createdAt,
     updatedAt: plan.updatedAt,
     subscribersCount: plan._count.subscriptions,
+    planBenefitsCount: plan._count.planBenefits,
   }));
 }
 
@@ -1500,9 +1518,9 @@ async function getSubscriptionPlanById(id: string) {
     description: plan.description,
     shortDescription: plan.shortDescription,
     price: plan.price.toNumber(),
+    discountPercent: plan.discountPercent,
     billingCycle: plan.billingCycle,
-    features: plan.features,
-    imageUrl: plan.imageUrl,
+    colorScheme: plan.colorScheme as PlanColorScheme | null,
     isActive: plan.active,
     isFeatured: plan.isFeatured,
     shippingProfileId: plan.shippingProfileId,
@@ -1521,20 +1539,42 @@ async function createSubscriptionPlan(data: SubscriptionPlanInput) {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
   
-  return prisma.subscriptionPlan.create({
+  // Convert colorScheme to JSON-compatible format for Prisma
+  const colorSchemeData = data.colorScheme ? { ...data.colorScheme } : undefined;
+  
+  // Create the plan
+  const plan = await prisma.subscriptionPlan.create({
     data: {
       name: data.name,
       slug,
       description: data.description,
       shortDescription: data.shortDescription,
       price: data.price,
+      discountPercent: data.discountPercent ?? 0,
       billingCycle: data.billingCycle || "MONTHLY",
-      features: data.features || [],
-      imageUrl: data.imageUrl,
+      colorScheme: colorSchemeData,
       active: data.isActive ?? true,
       isFeatured: data.isFeatured ?? false,
     },
   });
+
+  // Attach all existing benefits to the new plan as disabled
+  const allBenefits = await prisma.benefit.findMany({
+    select: { id: true },
+  });
+
+  if (allBenefits.length > 0) {
+    await prisma.planBenefit.createMany({
+      data: allBenefits.map((b) => ({
+        planId: plan.id,
+        benefitId: b.id,
+        enabled: false,
+      })),
+      skipDuplicates: true,
+    });
+  }
+
+  return plan;
 }
 
 async function updateSubscriptionPlan(id: string, data: Partial<SubscriptionPlanInput>) {
@@ -1545,11 +1585,12 @@ async function updateSubscriptionPlan(id: string, data: Partial<SubscriptionPlan
   if (data.description !== undefined) updateData.description = data.description;
   if (data.shortDescription !== undefined) updateData.shortDescription = data.shortDescription;
   if (data.price !== undefined) updateData.price = data.price;
+  if (data.discountPercent !== undefined) updateData.discountPercent = data.discountPercent;
   if (data.billingCycle !== undefined) updateData.billingCycle = data.billingCycle;
-  if (data.features !== undefined) updateData.features = data.features;
-  if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
+  if (data.colorScheme !== undefined) updateData.colorScheme = data.colorScheme ? { ...data.colorScheme } : null;
   if (data.isActive !== undefined) updateData.active = data.isActive;
   if (data.isFeatured !== undefined) updateData.isFeatured = data.isFeatured;
+  if (data.shippingProfileId !== undefined) updateData.shippingProfileId = data.shippingProfileId;
   
   return prisma.subscriptionPlan.update({
     where: { id },
@@ -1609,7 +1650,7 @@ async function getUserSubscriptions(filters: UserSubscriptionFilters = {}) {
       where,
       include: {
         user: { select: { id: true, fullName: true, email: true } },
-        plan: { select: { id: true, name: true, price: true } },
+        plan: { select: { id: true, name: true, price: true, discountPercent: true } },
       },
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * pageSize,

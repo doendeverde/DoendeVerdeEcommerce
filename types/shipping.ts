@@ -203,3 +203,51 @@ export interface ShippingCalculatorState {
   selectedOption: ShippingOption | null;
   error: string | null;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// OrderShippingInfo Types (Database Model)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Data required to create an OrderShippingInfo record
+ */
+export interface CreateOrderShippingInfoData {
+  carrier: string;
+  serviceCode: string;
+  serviceName: string;
+  estimatedDays: number;
+  shippingCost: number;
+  packageWeight?: number;
+  packageDimensions?: {
+    width: number;
+    height: number;
+    length: number;
+  };
+  quotedAt: Date;
+}
+
+/**
+ * Build CreateOrderShippingInfoData from shipping option and quote data
+ */
+export function buildOrderShippingInfoData(
+  option: SelectedShippingOption,
+  weight?: number,
+  dimensions?: { widthCm: number; heightCm: number; lengthCm: number }
+): CreateOrderShippingInfoData {
+  return {
+    carrier: option.carrier,
+    serviceCode: option.id,
+    serviceName: option.service,
+    estimatedDays: option.deliveryDays,
+    shippingCost: option.price,
+    packageWeight: weight,
+    packageDimensions: dimensions
+      ? {
+          width: dimensions.widthCm,
+          height: dimensions.heightCm,
+          length: dimensions.lengthCm,
+        }
+      : undefined,
+    quotedAt: new Date(),
+  };
+}

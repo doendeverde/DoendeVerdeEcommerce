@@ -7,6 +7,7 @@
 
 import { prisma } from "@/lib/prisma";
 import type { Order, OrderItem, OrderStatus, Prisma } from "@prisma/client";
+import type { CreateOrderShippingInfoData } from "@/types/shipping";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -19,8 +20,10 @@ export interface CreateOrderData {
   shippingAmount?: number;
   totalAmount: number;
   notes?: string;
-  /** Shipping data to persist with the order */
+  /** Shipping data to persist with the order (JSON blob - legacy) */
   shippingData?: Record<string, unknown> | null;
+  /** Structured shipping info (new) */
+  shippingInfo?: CreateOrderShippingInfoData;
 }
 
 export interface CreateOrderItemData {
@@ -51,9 +54,19 @@ export type OrderWithRelations = Prisma.OrderGetPayload<{
     items: true;
     payments: true;
     addressSnapshot: true;
+    shippingInfo: true;
     discounts: { include: { coupon: true } };
   };
 }>;
+
+// Default include for queries
+const orderInclude = {
+  items: true,
+  payments: true,
+  addressSnapshot: true,
+  shippingInfo: true,
+  discounts: { include: { coupon: true } },
+} satisfies Prisma.OrderInclude;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Repository Functions
@@ -65,12 +78,7 @@ export type OrderWithRelations = Prisma.OrderGetPayload<{
 export async function findOrderById(orderId: string): Promise<OrderWithRelations | null> {
   return prisma.order.findUnique({
     where: { id: orderId },
-    include: {
-      items: true,
-      payments: true,
-      addressSnapshot: true,
-      discounts: { include: { coupon: true } },
-    },
+    include: orderInclude,
   });
 }
 
@@ -83,12 +91,7 @@ export async function findUserOrderById(
 ): Promise<OrderWithRelations | null> {
   return prisma.order.findFirst({
     where: { id: orderId, userId },
-    include: {
-      items: true,
-      payments: true,
-      addressSnapshot: true,
-      discounts: { include: { coupon: true } },
-    },
+    include: orderInclude,
   });
 }
 
@@ -108,12 +111,7 @@ export async function findUserOrders(
   const [orders, total] = await Promise.all([
     prisma.order.findMany({
       where,
-      include: {
-        items: true,
-        payments: true,
-        addressSnapshot: true,
-        discounts: { include: { coupon: true } },
-      },
+      include: orderInclude,
       orderBy: { createdAt: "desc" },
       skip,
       take: limit,
@@ -125,7 +123,7 @@ export async function findUserOrders(
 }
 
 /**
- * Create a new order with items and address snapshot
+ * Create a new order with items, address snapshot, and optional shipping info
  */
 export async function createOrder(
   orderData: CreateOrderData,
@@ -150,13 +148,25 @@ export async function createOrder(
           country: addressSnapshot.country || "BR",
         },
       },
+      // Create structured shipping info if provided
+      ...(orderData.shippingInfo && {
+        shippingInfo: {
+          create: {
+            carrier: orderData.shippingInfo.carrier,
+            serviceCode: orderData.shippingInfo.serviceCode,
+            serviceName: orderData.shippingInfo.serviceName,
+            estimatedDays: orderData.shippingInfo.estimatedDays,
+            shippingCost: orderData.shippingInfo.shippingCost,
+            packageWeight: orderData.shippingInfo.packageWeight,
+            packageDimensions: orderData.shippingInfo.packageDimensions
+              ? JSON.parse(JSON.stringify(orderData.shippingInfo.packageDimensions))
+              : undefined,
+            quotedAt: orderData.shippingInfo.quotedAt,
+          },
+        },
+      }),
     },
-    include: {
-      items: true,
-      payments: true,
-      addressSnapshot: true,
-      discounts: { include: { coupon: true } },
-    },
+    include: orderInclude,
   });
 }
 
@@ -170,7 +180,8 @@ export async function createSubscriptionOrder(
   planPrice: number,
   addressSnapshot: CreateOrderAddressSnapshotData,
   shippingAmount: number = 0,
-  shippingData?: Record<string, unknown> | null
+  shippingData?: Record<string, unknown> | null,
+  shippingInfo?: CreateOrderShippingInfoData
 ): Promise<OrderWithRelations> {
   console.log("[Order Repository] Creating subscription order...");
   console.log("[Order Repository] Plan ID:", planId);
@@ -192,6 +203,7 @@ export async function createSubscriptionOrder(
       totalAmount,
       notes: `Assinatura: ${planName} (Plan ID: ${planId})`,
       shippingData,
+      shippingInfo,
     },
     [], // SEM items - assinatura não tem produto físico associado
     addressSnapshot

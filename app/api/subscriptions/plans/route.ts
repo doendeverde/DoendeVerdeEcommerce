@@ -10,7 +10,7 @@ import { subscriptionService } from "@/services";
  */
 export async function GET() {
   try {
-    const plans = await subscriptionService.getPlansWithColors();
+    const plans = await subscriptionService.getPaidPlans();
 
     return NextResponse.json({ plans });
   } catch (error) {

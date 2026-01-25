@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Rotas que requerem autenticação
-  const protectedRoutes = ["/profile", "/orders", "/subscriptions"];
+  const protectedRoutes = ["/profile", "/orders"];
   
   // Rotas de autenticação (login/register)
   const authRoutes = ["/login", "/register"];

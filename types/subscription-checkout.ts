@@ -25,6 +25,13 @@ export type ConsumptionMoment = "MORNING" | "AFTERNOON" | "NIGHT" | "WEEKEND";
 // Plan Types
 // ─────────────────────────────────────────────────────────────────────────────
 
+export interface PlanBenefitData {
+  name: string;
+  slug: string;
+  icon?: string | null;
+  customValue?: string | null;
+}
+
 export interface PlanData {
   id: string;
   name: string;
@@ -33,8 +40,7 @@ export interface PlanData {
   price: number;
   billingCycle: string;
   discountPercent: number;
-  monthlyPoints: number;
-  benefits: string[];
+  benefits: PlanBenefitData[];
   badge?: string;
 }
 

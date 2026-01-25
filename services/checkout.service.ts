@@ -15,7 +15,6 @@ import * as paymentRepository from "@/repositories/payment.repository";
 import { createSubscriptionPayment, createPixPaymentDirect } from "./payment.service";
 import { cartService } from "./cart.service";
 import { shippingService } from "./shipping.service";
-import { getPlanConfig } from "@/types/subscription";
 import type {
   SubscriptionCheckoutRequest,
   SubscriptionCheckoutResponse,
@@ -23,7 +22,7 @@ import type {
   ProductCheckoutResponse,
   PaymentPreference,
 } from "@/types/checkout";
-import type { SelectedShippingOption, OrderShippingData } from "@/types/shipping";
+import type { SelectedShippingOption, OrderShippingData, CreateOrderShippingInfoData } from "@/types/shipping";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -125,6 +124,7 @@ async function processSubscriptionCheckout(
   // Calculate shipping if option provided
   let shippingAmount = 0;
   let orderShippingData: OrderShippingData | null = null;
+  let orderShippingInfo: CreateOrderShippingInfoData | undefined = undefined;
   
   if (data.shippingOption) {
     shippingAmount = data.shippingOption.price;
@@ -132,12 +132,14 @@ async function processSubscriptionCheckout(
       data.shippingOption,
       address.zipCode
     );
+    // Also build structured shipping info for the new model
+    orderShippingInfo = shippingService.buildOrderShippingInfo(data.shippingOption);
   }
   
   const totalAmount = roundMoney(planPrice + shippingAmount);
 
   try {
-    // 3. Create order with address snapshot
+    // 3. Create order with address snapshot and shipping info
     const order = await orderRepository.createSubscriptionOrder(
       userId,
       plan.id,
@@ -156,7 +158,8 @@ async function processSubscriptionCheckout(
         country: address.country,
       },
       shippingAmount,
-      orderShippingData as Record<string, unknown> | null
+      orderShippingData as Record<string, unknown> | null,
+      orderShippingInfo
     );
 
     // 4. Create payment record
@@ -576,6 +579,7 @@ async function processProductCheckout(
   // Calculate shipping from provided option
   let shippingAmount = 0;
   let orderShippingData: OrderShippingData | null = null;
+  let orderShippingInfo: CreateOrderShippingInfoData | undefined = undefined;
   
   if (data.shippingOption) {
     shippingAmount = Number(data.shippingOption.price) || 0;
@@ -583,6 +587,8 @@ async function processProductCheckout(
       data.shippingOption,
       address.zipCode
     );
+    // Also build structured shipping info for the new model
+    orderShippingInfo = shippingService.buildOrderShippingInfo(data.shippingOption);
   }
   
   // Apply subscription discount if user has active subscription
@@ -592,8 +598,8 @@ async function processProductCheckout(
   
   const activeSubscription = await subscriptionRepository.findUserActiveSubscription(userId);
   if (activeSubscription) {
-    const planConfig = getPlanConfig(activeSubscription.plan.slug);
-    subscriptionDiscountPercent = planConfig.discountPercent;
+    // Use discountPercent from database
+    subscriptionDiscountPercent = activeSubscription.plan.discountPercent;
     
     if (subscriptionDiscountPercent > 0) {
       discount = Math.round(subtotal * (subscriptionDiscountPercent / 100) * 100) / 100;
@@ -637,6 +643,7 @@ async function processProductCheckout(
         totalAmount: total,
         notes: data.notes,
         shippingData: orderShippingData as Record<string, unknown> | null,
+        shippingInfo: orderShippingInfo,
       },
       orderItems,
       {

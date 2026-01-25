@@ -6,6 +6,15 @@ import { UserStatusBanner } from "./UserStatusBanner";
 import { SubscriptionCTABanner } from "./SubscriptionCTABanner";
 import { cn } from "@/lib/utils";
 
+interface PlanColorScheme {
+  primary: string;
+  text: string;
+  primaryDark: string;
+  textDark: string;
+  badge?: string;
+  icon?: string;
+}
+
 interface UserSubscriptionData {
   id: string;
   status: string;
@@ -15,8 +24,7 @@ interface UserSubscriptionData {
     slug: string;
     price: number;
     discountPercent: number;
-    color: string;
-    colorDark: string;
+    colorScheme?: PlanColorScheme;
   };
 }
 
@@ -82,13 +90,15 @@ export function SubscriptionBanner({ className }: SubscriptionBannerProps) {
 
   // User is logged in AND has subscription → Show status banner
   if (session?.user && subscription) {
+    const colorScheme = subscription.plan.colorScheme;
     return (
       <UserStatusBanner
         className={className}
         planName={subscription.plan.name}
         discountPercent={subscription.plan.discountPercent}
-        color={subscription.plan.color}
-        colorDark={subscription.plan.colorDark}
+        primaryColor={colorScheme?.primary || "#22C55E"}
+        primaryDark={colorScheme?.primaryDark || "#16A34A"}
+        textColor={colorScheme?.text || "#FFFFFF"}
       />
     );
   }

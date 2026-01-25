@@ -11,7 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { subscriptionRepository } from "@/repositories/subscription.repository";
 import * as addressRepository from "@/repositories/address.repository";
 import * as preferencesRepository from "@/repositories/preferences.repository";
-import { getPlanConfig } from "@/types/subscription";
+import { getPlanColorScheme, type PlanColorScheme } from "@/types/subscription";
 import { SubscriptionCheckoutClient } from "./SubscriptionCheckoutClient";
 
 export const dynamic = "force-dynamic";
@@ -29,13 +29,15 @@ export default async function SubscriptionCheckoutPage({ params }: PageProps) {
     redirect(`/login?callbackUrl=${encodeURIComponent(`/checkout/subscription/${slug}`)}`);
   }
 
-  // 2. Fetch plan details
+  // 2. Fetch plan details with benefits from database
   const plan = await subscriptionRepository.findPlanBySlug(slug);
   if (!plan) {
     notFound();
   }
 
-  const planConfig = getPlanConfig(slug);
+  // Get color scheme from plan or default
+  const colorScheme = plan.colorScheme as PlanColorScheme | null;
+  const planColors = colorScheme || getPlanColorScheme(null, plan.isFeatured);
 
   // 3. Check if user already has active subscription
   const hasActiveSubscription = await subscriptionRepository.userHasAnyActiveSubscription(
@@ -71,10 +73,16 @@ export default async function SubscriptionCheckoutPage({ params }: PageProps) {
       description: plan.description || "",
       price: Number(plan.price),
       billingCycle: plan.billingCycle,
-      discountPercent: planConfig.discountPercent,
-      monthlyPoints: planConfig.monthlyPoints,
-      benefits: planConfig.benefits,
-      badge: planConfig.badge,
+      discountPercent: plan.discountPercent,
+      benefits: plan.planBenefits.map(pb => ({
+        name: pb.benefit.name,
+        slug: pb.benefit.slug,
+        icon: pb.benefit.icon,
+        customValue: pb.customValue,
+        enabled: pb.enabled,
+      })),
+      badge: plan.isFeatured ? "popular" : undefined,
+      colorScheme: planColors,
     },
     user: {
       id: user.id,

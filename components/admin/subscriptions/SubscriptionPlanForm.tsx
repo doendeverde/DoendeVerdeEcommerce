@@ -2,9 +2,58 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Loader2, ImageIcon, Plus, X, Star } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Palette, Star } from "lucide-react";
 import Link from "next/link";
 import { ShippingProfileSelector } from "@/components/admin/shipping";
+import { PlanBenefitsEditor } from "@/components/admin/benefits";
+
+// Color scheme interface
+interface ColorScheme {
+  primary: string;
+  text: string;
+  primaryDark: string;
+  textDark: string;
+  badge?: string;
+  icon?: string;
+}
+
+// Default color presets
+const COLOR_PRESETS: Record<string, ColorScheme> = {
+  green: {
+    primary: "#22C55E",
+    text: "#FFFFFF",
+    primaryDark: "#16A34A",
+    textDark: "#FFFFFF",
+    badge: "#22C55E",
+  },
+  purple: {
+    primary: "#8B5CF6",
+    text: "#FFFFFF",
+    primaryDark: "#7C3AED",
+    textDark: "#FFFFFF",
+    badge: "#8B5CF6",
+  },
+  blue: {
+    primary: "#3B82F6",
+    text: "#FFFFFF",
+    primaryDark: "#2563EB",
+    textDark: "#FFFFFF",
+    badge: "#3B82F6",
+  },
+  amber: {
+    primary: "#F59E0B",
+    text: "#1F2937",
+    primaryDark: "#D97706",
+    textDark: "#1F2937",
+    badge: "#F59E0B",
+  },
+  gray: {
+    primary: "#6B7280",
+    text: "#FFFFFF",
+    primaryDark: "#4B5563",
+    textDark: "#FFFFFF",
+  },
+};
 
 interface PlanFormData {
   name: string;
@@ -12,9 +61,9 @@ interface PlanFormData {
   description: string;
   shortDescription: string;
   price: number;
+  discountPercent: number;
   billingCycle: "MONTHLY" | "QUARTERLY" | "SEMIANNUAL" | "ANNUAL";
-  features: string[];
-  imageUrl: string;
+  colorScheme: ColorScheme | null;
   isActive: boolean;
   isFeatured: boolean;
   shippingProfileId: string | null;
@@ -53,16 +102,15 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [newFeature, setNewFeature] = useState("");
   const [formData, setFormData] = useState<PlanFormData>({
     name: initialData?.name || "",
     slug: initialData?.slug || "",
     description: initialData?.description || "",
     shortDescription: initialData?.shortDescription || "",
     price: initialData?.price || 0,
+    discountPercent: initialData?.discountPercent || 0,
     billingCycle: initialData?.billingCycle || "MONTHLY",
-    features: initialData?.features || [],
-    imageUrl: initialData?.imageUrl || "",
+    colorScheme: initialData?.colorScheme || COLOR_PRESETS.green,
     isActive: initialData?.isActive ?? true,
     isFeatured: initialData?.isFeatured ?? false,
     shippingProfileId: initialData?.shippingProfileId ?? null,
@@ -92,20 +140,20 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
     }));
   };
 
-  const addFeature = () => {
-    if (newFeature.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        features: [...prev.features, newFeature.trim()],
-      }));
-      setNewFeature("");
-    }
-  };
-
-  const removeFeature = (index: number) => {
+  const handleColorPreset = (presetKey: string) => {
     setFormData((prev) => ({
       ...prev,
-      features: prev.features.filter((_, i) => i !== index),
+      colorScheme: COLOR_PRESETS[presetKey],
+    }));
+  };
+
+  const handleColorChange = (field: keyof ColorScheme, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      colorScheme: {
+        ...(prev.colorScheme || COLOR_PRESETS.green),
+        [field]: value,
+      },
     }));
   };
 
@@ -294,56 +342,178 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                   </select>
                 </div>
               </div>
+
+              {/* Desconto em Produtos */}
+              <div>
+                <label htmlFor="discountPercent" className="block text-sm font-medium text-text-secondary mb-2">
+                  Desconto em Produtos (%)
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    id="discountPercent"
+                    name="discountPercent"
+                    value={formData.discountPercent}
+                    onChange={handleChange}
+                    min="0"
+                    max="100"
+                    step="1"
+                    className="w-32 px-4 py-3 bg-gray-bg border border-gray-border rounded-lg text-text-primary placeholder-gray-muted focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  />
+                  <span className="text-text-secondary">%</span>
+                </div>
+                <p className="mt-1 text-xs text-text-secondary">
+                  Percentual de desconto que assinantes deste plano terão em todas as compras de produtos.
+                </p>
+              </div>
             </div>
 
-            {/* Features */}
+            {/* Color Scheme */}
             <div className="bg-card-bg rounded-xl border border-gray-border p-6 space-y-4">
-              <h2 className="text-lg font-semibold text-text-primary">Benefícios do Plano</h2>
+              <div className="flex items-center gap-2">
+                <Palette className="w-5 h-5 text-text-secondary" />
+                <h2 className="text-lg font-semibold text-text-primary">Cores do Plano</h2>
+              </div>
+              <p className="text-sm text-text-secondary">
+                Defina as cores que serão usadas para exibir este plano no site.
+              </p>
 
-              {/* Adicionar Feature */}
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={newFeature}
-                  onChange={(e) => setNewFeature(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addFeature())}
-                  className="flex-1 px-4 py-3 bg-gray-bg border border-gray-border rounded-lg text-text-primary placeholder-gray-muted focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                  placeholder="Ex: Frete grátis em todas as entregas"
-                />
-                <button
-                  type="button"
-                  onClick={addFeature}
-                  className="px-4 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors"
-                >
-                  <Plus className="w-5 h-5" />
-                </button>
+              {/* Presets */}
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-2">
+                  Presets
+                </label>
+                <div className="flex gap-2 flex-wrap">
+                  {Object.entries(COLOR_PRESETS).map(([key, preset]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => handleColorPreset(key)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-border hover:border-gray-muted transition-colors"
+                      style={{ borderColor: formData.colorScheme?.primary === preset.primary ? preset.primary : undefined }}
+                    >
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: preset.primary }}
+                      />
+                      <span className="text-sm text-text-secondary capitalize">{key}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Lista de Features */}
-              {formData.features.length > 0 ? (
-                <ul className="space-y-2">
-                  {formData.features.map((feature, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center justify-between px-4 py-2 bg-gray-bg rounded-lg"
-                    >
-                      <span className="text-text-secondary">{feature}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeFeature(index)}
-                        className="p-1 text-gray-muted hover:text-red-400 transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-text-secondary">
-                  Adicione benefícios para destacar o plano
-                </p>
-              )}
+              {/* Custom Colors */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-2">
+                    Cor Principal (Light)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={formData.colorScheme?.primary || "#22C55E"}
+                      onChange={(e) => handleColorChange("primary", e.target.value)}
+                      className="w-12 h-10 rounded border border-gray-border cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={formData.colorScheme?.primary || "#22C55E"}
+                      onChange={(e) => handleColorChange("primary", e.target.value)}
+                      className="flex-1 px-3 py-2 bg-gray-bg border border-gray-border rounded-lg text-text-primary text-sm"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-2">
+                    Cor do Texto (Light)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={formData.colorScheme?.text || "#FFFFFF"}
+                      onChange={(e) => handleColorChange("text", e.target.value)}
+                      className="w-12 h-10 rounded border border-gray-border cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={formData.colorScheme?.text || "#FFFFFF"}
+                      onChange={(e) => handleColorChange("text", e.target.value)}
+                      className="flex-1 px-3 py-2 bg-gray-bg border border-gray-border rounded-lg text-text-primary text-sm"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-2">
+                    Cor Principal (Dark)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={formData.colorScheme?.primaryDark || "#16A34A"}
+                      onChange={(e) => handleColorChange("primaryDark", e.target.value)}
+                      className="w-12 h-10 rounded border border-gray-border cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={formData.colorScheme?.primaryDark || "#16A34A"}
+                      onChange={(e) => handleColorChange("primaryDark", e.target.value)}
+                      className="flex-1 px-3 py-2 bg-gray-bg border border-gray-border rounded-lg text-text-primary text-sm"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-2">
+                    Cor do Texto (Dark)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={formData.colorScheme?.textDark || "#FFFFFF"}
+                      onChange={(e) => handleColorChange("textDark", e.target.value)}
+                      className="w-12 h-10 rounded border border-gray-border cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={formData.colorScheme?.textDark || "#FFFFFF"}
+                      onChange={(e) => handleColorChange("textDark", e.target.value)}
+                      className="flex-1 px-3 py-2 bg-gray-bg border border-gray-border rounded-lg text-text-primary text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-2">
+                  Preview
+                </label>
+                <div className="flex gap-4">
+                  <div
+                    className="flex-1 p-4 rounded-lg text-center"
+                    style={{
+                      backgroundColor: formData.colorScheme?.primary || "#22C55E",
+                      color: formData.colorScheme?.text || "#FFFFFF",
+                    }}
+                  >
+                    <span className="font-medium">Light Mode</span>
+                  </div>
+                  <div
+                    className="flex-1 p-4 rounded-lg text-center"
+                    style={{
+                      backgroundColor: formData.colorScheme?.primaryDark || "#16A34A",
+                      color: formData.colorScheme?.textDark || "#FFFFFF",
+                    }}
+                  >
+                    <span className="font-medium">Dark Mode</span>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {/* Benefícios do Sistema (apenas no modo de edição) */}
+            {mode === "edit" && initialData?.id && (
+              <PlanBenefitsEditor planId={initialData.id} planName={initialData.name} />
+            )}
           </div>
 
           {/* Coluna Lateral */}
@@ -388,46 +558,6 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
               </label>
             </div>
 
-            {/* Imagem */}
-            <div className="bg-card-bg rounded-xl border border-gray-border p-6">
-              <h2 className="text-lg font-semibold text-text-primary mb-4">Imagem</h2>
-              <div>
-                <label htmlFor="imageUrl" className="block text-sm font-medium text-text-secondary mb-2">
-                  URL da Imagem
-                </label>
-                <input
-                  type="url"
-                  id="imageUrl"
-                  name="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-bg border border-gray-border rounded-lg text-text-primary placeholder-gray-muted focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                  placeholder="https://exemplo.com/imagem.jpg"
-                />
-              </div>
-
-              {/* Preview */}
-              <div className="mt-4">
-                {formData.imageUrl ? (
-                  <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-bg">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={formData.imageUrl}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-video rounded-lg bg-gray-bg flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-gray-muted" />
-                  </div>
-                )}
-              </div>
-            </div>
-
             {/* Shipping Profile */}
             <div className="bg-card-bg rounded-xl border border-gray-border p-6 space-y-4">
               <h2 className="text-lg font-semibold text-text-primary">Frete</h2>
@@ -443,10 +573,17 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
             </div>
 
             {/* Preview do Preço */}
-            <div className="bg-gradient-to-br from-purple-600/20 to-green-600/20 rounded-xl border border-purple-500/30 p-6">
-              <h2 className="text-lg font-semibold text-text-primary mb-2">Preview</h2>
+            <div
+              className="rounded-xl border p-6"
+              style={{
+                background: `linear-gradient(135deg, ${formData.colorScheme?.primary || "#22C55E"}20, ${formData.colorScheme?.primaryDark || "#16A34A"}20)`,
+                borderColor: `${formData.colorScheme?.primary || "#22C55E"}50`,
+              }}
+            >
+              <h2 className="text-lg font-semibold text-text-primary mb-2">Preview do Card</h2>
               <div className="text-center">
-                <p className="text-sm text-text-secondary">
+                <p className="text-2xl font-bold text-text-primary">{formData.name || "Nome do Plano"}</p>
+                <p className="text-sm text-text-secondary mt-1">
                   {formData.billingCycle === "MONTHLY"
                     ? "por mês"
                     : formData.billingCycle === "QUARTERLY"
@@ -455,9 +592,20 @@ export default function SubscriptionPlanForm({ initialData, mode }: PlanFormProp
                         ? "por semestre"
                         : "por ano"}
                 </p>
-                <p className="text-3xl font-bold text-text-primary mt-1">
+                <p className="text-3xl font-bold text-text-primary mt-2">
                   {formatCurrency(formData.price)}
                 </p>
+                {formData.discountPercent > 0 && (
+                  <span
+                    className="inline-block mt-2 px-2 py-1 rounded-full text-xs font-medium"
+                    style={{
+                      backgroundColor: `${formData.colorScheme?.primary || "#22C55E"}20`,
+                      color: formData.colorScheme?.primary || "#22C55E",
+                    }}
+                  >
+                    {formData.discountPercent}% de desconto em produtos
+                  </span>
+                )}
               </div>
             </div>
           </div>

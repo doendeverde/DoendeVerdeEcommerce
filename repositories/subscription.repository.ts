@@ -9,8 +9,8 @@ import { prisma } from "@/lib/prisma";
 
 export const subscriptionRepository = {
   /**
-   * Find all active subscription plans
-   * Optimized: Only fetches necessary fields, ordered by price
+   * Find all active subscription plans with ALL benefits (enabled and disabled)
+   * Includes all display fields from database including colorScheme
    */
   async findActivePlans() {
     return prisma.subscriptionPlan.findMany({
@@ -21,15 +21,37 @@ export const subscriptionRepository = {
         name: true,
         slug: true,
         description: true,
+        shortDescription: true,
         price: true,
+        discountPercent: true,
         billingCycle: true,
+        colorScheme: true,
         active: true,
+        isFeatured: true,
+        planBenefits: {
+          where: { benefit: { isActive: true } },
+          orderBy: { benefit: { displayOrder: "asc" } },
+          select: {
+            enabled: true,
+            customValue: true,
+            benefit: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                description: true,
+                icon: true,
+                displayOrder: true,
+              },
+            },
+          },
+        },
       },
     });
   },
 
   /**
-   * Find plan by slug
+   * Find plan by slug with all details (including all benefits)
    */
   async findPlanBySlug(slug: string) {
     return prisma.subscriptionPlan.findUnique({
@@ -43,6 +65,21 @@ export const subscriptionRepository = {
                 name: true,
                 slug: true,
                 basePrice: true,
+              },
+            },
+          },
+        },
+        planBenefits: {
+          where: { benefit: { isActive: true } },
+          orderBy: { benefit: { displayOrder: "asc" } },
+          select: {
+            enabled: true,
+            customValue: true,
+            benefit: {
+              select: {
+                name: true,
+                slug: true,
+                icon: true,
               },
             },
           },
@@ -61,7 +98,7 @@ export const subscriptionRepository = {
   },
 
   /**
-   * Find user's active subscription
+   * Find user's active subscription with full plan details
    * Single query with plan info for SSR
    */
   async findUserActiveSubscription(userId: string) {
@@ -81,6 +118,23 @@ export const subscriptionRepository = {
             name: true,
             slug: true,
             price: true,
+            discountPercent: true,
+            colorScheme: true,
+            planBenefits: {
+              where: { enabled: true, benefit: { isActive: true } },
+              orderBy: { benefit: { displayOrder: "asc" } },
+              select: {
+                enabled: true,
+                customValue: true,
+                benefit: {
+                  select: {
+                    name: true,
+                    slug: true,
+                    icon: true,
+                  },
+                },
+              },
+            },
           },
         },
       },

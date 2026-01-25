@@ -129,6 +129,7 @@ model Order {
   payments        Payment[]
   refunds         Refund[]
   shipments       Shipment[]
+  shippingInfo    OrderShippingInfo?
 
   @@index([status])
   @@index([userId])
@@ -391,20 +392,26 @@ model StockMovement {
 }
 
 model Subscription {
-  id            String              @id @default(uuid())
-  userId        String
-  planId        String
-  status        SubscriptionStatus  @default(ACTIVE)
-  startedAt     DateTime
-  nextBillingAt DateTime
-  canceledAt    DateTime?
-  provider      PaymentProvider?
-  providerSubId String?
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-  plan          SubscriptionPlan    @relation(fields: [planId], references: [id])
-  user          User                @relation(fields: [userId], references: [id])
-  cycles        SubscriptionCycle[]
+  id                  String              @id @default(uuid())
+  userId              String
+  planId              String
+  status              SubscriptionStatus  @default(ACTIVE)
+  startedAt           DateTime
+  nextBillingAt       DateTime
+  canceledAt          DateTime?
+  provider            PaymentProvider?
+  providerSubId       String?
+  // Novos campos para melhor controle
+  pausedAt            DateTime?           // Quando foi pausada
+  cancelRequestedAt   DateTime?           // Quando solicitou cancelamento
+  cancelReason        String?             // Motivo do cancelamento
+  currentPeriodStart  DateTime?           // Início do período atual
+  currentPeriodEnd    DateTime?           // Fim do período atual (quando expira)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  plan                SubscriptionPlan    @relation(fields: [planId], references: [id])
+  user                User                @relation(fields: [userId], references: [id])
+  cycles              SubscriptionCycle[]
 
   @@index([planId])
   @@index([status])
@@ -436,8 +443,7 @@ model SubscriptionPlan {
   price             Decimal               @db.Decimal(10, 2)
   discountPercent   Int                   @default(0) // Percentual de desconto em produtos (0-100)
   billingCycle      BillingCycle          @default(MONTHLY)
-  features          String[]              @default([])
-  imageUrl          String?
+  colorScheme       Json?                 // { primary, text, primaryDark, textDark, badge } - cores do plano
   active            Boolean               @default(true)
   isFeatured        Boolean               @default(false)
   shippingProfileId String?
@@ -446,6 +452,7 @@ model SubscriptionPlan {
   subscriptions     Subscription[]
   products          SubscriptionProduct[]
   shippingProfile   ShippingProfile?      @relation(fields: [shippingProfileId], references: [id])
+  planBenefits      PlanBenefit[]
 
   @@index([active])
   @@index([slug])
@@ -463,6 +470,60 @@ model SubscriptionProduct {
   @@unique([planId, productId])
   @@index([planId])
   @@index([productId])
+}
+
+// ==========================================
+// BENEFÍCIOS DE ASSINATURA
+// ==========================================
+
+model Benefit {
+  id           String        @id @default(uuid())
+  name         String        // Ex: "Frete Grátis"
+  slug         String        @unique // Ex: "frete-gratis"
+  description  String?       // Descrição longa
+  icon         String?       // Ícone lucide: "Truck", "Percent", etc.
+  isActive     Boolean       @default(true)
+  displayOrder Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  planBenefits PlanBenefit[]
+
+  @@index([isActive])
+  @@index([slug])
+}
+
+model PlanBenefit {
+  id          String           @id @default(uuid())
+  planId      String
+  benefitId   String
+  enabled     Boolean          @default(true) // true = plano TEM este benefício
+  customValue String?          // Valor customizado (ex: "10%" em vez do padrão)
+  createdAt   DateTime         @default(now())
+  plan        SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  benefit     Benefit          @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, benefitId])
+  @@index([planId])
+  @@index([benefitId])
+}
+
+// ==========================================
+// INFORMAÇÕES DE FRETE DO PEDIDO
+// ==========================================
+
+model OrderShippingInfo {
+  id                String   @id @default(uuid())
+  orderId           String   @unique
+  carrier           String   // Ex: "Correios", "Jadlog"
+  serviceCode       String   // Ex: "04014" (SEDEX)
+  serviceName       String   // Ex: "SEDEX"
+  estimatedDays     Int      // Prazo em dias úteis
+  shippingCost      Decimal  @db.Decimal(10, 2)
+  packageWeight     Decimal? @db.Decimal(10, 3) // kg
+  packageDimensions Json?    // { width, height, length }
+  quotedAt          DateTime // Quando a cotação foi feita
+  createdAt         DateTime @default(now())
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model Tag {
@@ -720,6 +781,8 @@ enum SubscriptionStatus {
   ACTIVE
   PAUSED
   CANCELED
+  PENDING_CANCELLATION
+  EXPIRED
 }
 
 enum TobaccoUsage {
