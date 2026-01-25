@@ -109,7 +109,7 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Orders */}
         <div className="bg-surface rounded-xl border border-default">
-          <div className="flex items-center justify-between p-4 border-b border-default">
+          <div className="flex items-center justify-between p-4 border-b">
             <h2 className="text-lg font-semibold text-text-primary">
               Pedidos Recentes
             </h2>
@@ -154,7 +154,7 @@ export default async function AdminDashboardPage() {
 
         {/* Top Products */}
         <div className="bg-surface rounded-xl border border-default">
-          <div className="flex items-center justify-between p-4 border-b border-default">
+          <div className="flex items-center justify-between p-4 border-b">
             <h2 className="text-lg font-semibold text-text-primary">
               Produtos Mais Vendidos
             </h2>

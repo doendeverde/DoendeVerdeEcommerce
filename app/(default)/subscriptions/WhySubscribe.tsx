@@ -36,7 +36,7 @@ const benefits = [
 
 export function WhySubscribe() {
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-6 py-12 sm:px-12">
+    <div className="rounded-2xl bg-default px-6 py-12 sm:px-12">
       <h2
         id="benefits-heading"
         className="text-center text-2xl font-bold text-default"
