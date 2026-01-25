@@ -192,18 +192,62 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
           </button>
 
           <div className="flex items-center gap-1">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === page
-                  ? "bg-primary-green text-white"
-                  : "hover:bg-hover-bg text-text-primary"
-                  }`}
-              >
-                {page}
-              </button>
-            ))}
+            {/* Smart pagination: show first, last, current and neighbors */}
+            {(() => {
+              const pages: (number | string)[] = [];
+              const maxVisible = 5; // Max visible page buttons
+              
+              if (totalPages <= maxVisible) {
+                // Show all pages if few
+                for (let i = 1; i <= totalPages; i++) pages.push(i);
+              } else {
+                // Always show first page
+                pages.push(1);
+                
+                // Calculate range around current page
+                let start = Math.max(2, currentPage - 1);
+                let end = Math.min(totalPages - 1, currentPage + 1);
+                
+                // Adjust range to show more pages when near edges
+                if (currentPage <= 3) {
+                  end = Math.min(totalPages - 1, 4);
+                }
+                if (currentPage >= totalPages - 2) {
+                  start = Math.max(2, totalPages - 3);
+                }
+                
+                // Add ellipsis if gap after first page
+                if (start > 2) pages.push("...");
+                
+                // Add middle pages
+                for (let i = start; i <= end; i++) pages.push(i);
+                
+                // Add ellipsis if gap before last page
+                if (end < totalPages - 1) pages.push("...");
+                
+                // Always show last page
+                pages.push(totalPages);
+              }
+              
+              return pages.map((page, index) => 
+                typeof page === "string" ? (
+                  <span key={`ellipsis-${index}`} className="px-2 text-muted">
+                    {page}
+                  </span>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`min-w-[40px] h-10 px-3 rounded-lg font-medium transition-colors ${currentPage === page
+                      ? "bg-primary-green text-white"
+                      : "hover:bg-hover-bg text-text-primary"
+                      }`}
+                  >
+                    {page}
+                  </button>
+                )
+              );
+            })()}
           </div>
 
           <button
