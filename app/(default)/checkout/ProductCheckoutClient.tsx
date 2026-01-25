@@ -304,7 +304,7 @@ export function ProductCheckoutClient({ data }: ProductCheckoutClientProps) {
           setCurrentStep("address");
         }}
         showBackButton
-        backHref="/cart"
+        backHref="/"
         backLabel="Voltar ao Carrinho"
       />
     );
