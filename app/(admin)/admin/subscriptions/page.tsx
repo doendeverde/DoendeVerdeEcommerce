@@ -62,8 +62,8 @@ export default async function AdminSubscriptionPlansPage() {
       {/* Grid de Planos */}
       {plans.length === 0 ? (
         <div className="bg-surface rounded-xl border border-default p-12 text-center">
-          <CreditCard className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
-          <p className="text-gray-500 dark:text-gray-400 mb-4">Nenhum plano de assinatura cadastrado</p>
+          <CreditCard className="w-12 h-12 text-gray-muted mx-auto mb-3" />
+          <p className="text-muted mb-4">Nenhum plano de assinatura cadastrado</p>
           <Link
             href="/admin/subscriptions/new"
             className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm font-medium rounded-lg transition-colors"
@@ -102,7 +102,7 @@ export default async function AdminSubscriptionPlansPage() {
                     </span>
                   )}
                   {!plan.isActive && (
-                    <span className="px-2 py-1 bg-gray-200/90 dark:bg-gray-800/90 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-full">
+                    <span className="px-2 py-1 bg-gray-bg text-muted text-xs font-medium rounded-full">
                       Inativo
                     </span>
                   )}
@@ -129,9 +129,9 @@ export default async function AdminSubscriptionPlansPage() {
               <div className="p-4 space-y-4">
                 {/* Nome e Preço */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{plan.name}</h3>
+                  <h3 className="text-lg font-semibold text-default">{plan.name}</h3>
                   {plan.shortDescription && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                    <p className="text-sm text-muted mt-1 line-clamp-2">
                       {plan.shortDescription}
                     </p>
                   )}
@@ -139,10 +139,10 @@ export default async function AdminSubscriptionPlansPage() {
 
                 {/* Preço */}
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  <span className="text-2xl font-bold text-default">
                     {formatCurrency(plan.price)}
                   </span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                  <span className="text-sm text-muted">
                     / {getCycleText(plan.billingCycle).toLowerCase()}
                   </span>
                 </div>
@@ -153,14 +153,14 @@ export default async function AdminSubscriptionPlansPage() {
                     {plan.features.slice(0, 3).map((feature, index) => (
                       <li
                         key={index}
-                        className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+                        className="flex items-center gap-2 text-sm text-muted"
                       >
                         <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
                         {feature}
                       </li>
                     ))}
                     {plan.features.length > 3 && (
-                      <li className="text-xs text-gray-500 dark:text-gray-500">
+                      <li className="text-xs text-muted">
                         +{plan.features.length - 3} mais benefícios
                       </li>
                     )}
@@ -171,15 +171,15 @@ export default async function AdminSubscriptionPlansPage() {
                 <div className="flex items-center justify-between pt-4 border-t border-gray-border">
                   <Link
                     href={`/admin/user-subscriptions?plan=${plan.id}`}
-                    className="flex items-center gap-1 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 transition-colors"
+                    className="flex items-center gap-1 text-sm text-purple-text hover:opacity-80 transition-colors"
                   >
                     <Users className="w-4 h-4" />
                     {plan.subscribersCount} assinante(s)
                   </Link>
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded-full ${plan.isActive
-                      ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                      ? "bg-green-bg text-green-text"
+                      : "bg-gray-bg text-text-secondary"
                       }`}
                   >
                     {plan.isActive ? "Ativo" : "Inativo"}

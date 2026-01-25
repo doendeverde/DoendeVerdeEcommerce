@@ -146,7 +146,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
       />
 
       {/* Results count */}
-      <div className="text-sm text-gray-500 dark:text-gray-400">
+      <div className="text-sm text-muted">
         {filteredOrders.length === initialOrders.length ? (
           <span>Mostrando {filteredOrders.length} pedidos</span>
         ) : (

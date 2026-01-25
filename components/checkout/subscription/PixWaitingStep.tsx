@@ -173,8 +173,8 @@ export function PixWaitingStep({
     return (
       <div className="bg-surface rounded-xl shadow-sm p-8">
         <div className="flex flex-col items-center text-center space-y-4">
-          <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-            <CheckCircle className="w-10 h-10 text-green-500" />
+          <div className="w-20 h-20 bg-green-bg rounded-full flex items-center justify-center">
+            <CheckCircle className="w-10 h-10 text-green-text" />
           </div>
 
           <h3 className="text-xl font-semibold text-default">
@@ -199,8 +199,8 @@ export function PixWaitingStep({
     return (
       <div className="bg-surface rounded-xl shadow-sm p-8">
         <div className="flex flex-col items-center text-center space-y-4">
-          <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-            <XCircle className="w-10 h-10 text-red-500" />
+          <div className="w-20 h-20 bg-red-bg rounded-full flex items-center justify-center">
+            <XCircle className="w-10 h-10 text-red-text" />
           </div>
 
           <h3 className="text-xl font-semibold text-default">

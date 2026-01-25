@@ -247,13 +247,80 @@ Isso permite usar classes como:
 
 ### Quando Usar dark: Variants
 
-Ainda é válido usar `dark:` quando você precisa de cores específicas que não fazem parte do sistema:
+**EVITE** usar `dark:` para cores de status. Use os tokens semânticos que já adaptam automaticamente:
 
 ```tsx
-// ✅ OK para cores semânticas específicas
-<div className="bg-green-100 dark:bg-green-900/40" />  // Success background
-<div className="bg-red-50 dark:bg-red-900/30" />       // Error background
-<div className="bg-purple-100 dark:bg-purple-900/40" /> // Premium indicator
+// ❌ NÃO FAÇA ISSO
+<div className="bg-green-100 dark:bg-green-900/40" />
+
+// ✅ CORRETO — Use tokens que adaptam automaticamente
+<div className="bg-green-bg text-green-text" />
+<div className="bg-red-bg text-red-text" />
+<div className="bg-yellow-bg text-yellow-text" />
+<div className="bg-purple-bg text-purple-text" />
+```
+
+---
+
+## Color Variant Tokens (NEW)
+
+Tokens semânticos para cores de status que adaptam automaticamente ao tema:
+
+### Disponíveis
+
+| Variante | Background | Text | Border | Hover |
+|----------|------------|------|--------|-------|
+| Green | `bg-green-bg` | `text-green-text` | `border-green-border` | `hover:bg-green-bg-hover` |
+| Red | `bg-red-bg` | `text-red-text` | `border-red-border` | `hover:bg-red-bg-hover` |
+| Yellow | `bg-yellow-bg` | `text-yellow-text` | `border-yellow-border` | `hover:bg-yellow-bg-hover` |
+| Blue | `bg-blue-bg` | `text-blue-text` | `border-blue-border` | `hover:bg-blue-bg-hover` |
+| Purple | `bg-purple-bg` | `text-purple-text` | `border-purple-border` | `hover:bg-purple-bg-hover` |
+| Orange | `bg-orange-bg` | `text-orange-text` | `border-orange-border` | `hover:bg-orange-bg-hover` |
+
+### Uso Correto
+
+```tsx
+// Status badges
+<span className="bg-green-bg text-green-text">Ativo</span>
+<span className="bg-red-bg text-red-text">Bloqueado</span>
+<span className="bg-yellow-bg text-yellow-text">Pendente</span>
+
+// Alerts
+<div className="bg-red-bg border border-red-border text-red-text">
+  Erro ao processar
+</div>
+
+// Success icons
+<div className="bg-green-bg rounded-full p-2">
+  <Check className="text-green-text" />
+</div>
+
+// Buttons with hover
+<button className="bg-green-bg text-green-text hover:bg-green-bg-hover">
+  Confirmar
+</button>
+```
+
+### Valores dos Tokens
+
+#### Light Mode
+```css
+--green-bg: #DCFCE7;      --green-text: #166534;    --green-border: #86EFAC;
+--red-bg: #FEE2E2;        --red-text: #991B1B;      --red-border: #FCA5A5;
+--yellow-bg: #FEF9C3;     --yellow-text: #854D0E;   --yellow-border: #FDE047;
+--blue-bg: #DBEAFE;       --blue-text: #1E40AF;     --blue-border: #93C5FD;
+--purple-bg: #F3E8FF;     --purple-text: #6B21A8;   --purple-border: #C4B5FD;
+--orange-bg: #FFEDD5;     --orange-text: #9A3412;   --orange-border: #FDBA74;
+```
+
+#### Dark Mode
+```css
+--green-bg: rgba(34, 197, 94, 0.15);   --green-text: #4ade80;   --green-border: rgba(34, 197, 94, 0.4);
+--red-bg: rgba(239, 68, 68, 0.15);     --red-text: #f87171;     --red-border: rgba(239, 68, 68, 0.4);
+--yellow-bg: rgba(234, 179, 8, 0.15);  --yellow-text: #facc15;  --yellow-border: rgba(234, 179, 8, 0.4);
+--blue-bg: rgba(59, 130, 246, 0.15);   --blue-text: #60a5fa;    --blue-border: rgba(59, 130, 246, 0.4);
+--purple-bg: rgba(139, 92, 246, 0.15); --purple-text: #a78bfa;  --purple-border: rgba(139, 92, 246, 0.4);
+--orange-bg: rgba(249, 115, 22, 0.15); --orange-text: #fb923c;  --orange-border: rgba(249, 115, 22, 0.4);
 ```
 
 ---

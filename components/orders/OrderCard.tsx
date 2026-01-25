@@ -111,32 +111,32 @@ interface StatusConfig {
 const ORDER_STATUS_CONFIG: Record<OrderStatusType, StatusConfig> = {
   PENDING: {
     label: "Aguardando Pagamento",
-    color: "text-yellow-700",
-    bgColor: "bg-yellow-100",
+    color: "text-yellow-text",
+    bgColor: "bg-yellow-bg",
     icon: <Clock className="w-4 h-4" />,
   },
   PAID: {
     label: "Pago",
-    color: "text-blue-700",
-    bgColor: "bg-blue-100",
+    color: "text-blue-text",
+    bgColor: "bg-blue-bg",
     icon: <CheckCircle2 className="w-4 h-4" />,
   },
   SHIPPED: {
     label: "Enviado",
-    color: "text-indigo-700",
-    bgColor: "bg-indigo-100",
+    color: "text-purple-text",
+    bgColor: "bg-purple-bg",
     icon: <Truck className="w-4 h-4" />,
   },
   DELIVERED: {
     label: "Entregue",
-    color: "text-green-700",
-    bgColor: "bg-green-100",
+    color: "text-green-text",
+    bgColor: "bg-green-bg",
     icon: <PackageCheck className="w-4 h-4" />,
   },
   CANCELED: {
     label: "Cancelado",
-    color: "text-red-700",
-    bgColor: "bg-red-100",
+    color: "text-red-text",
+    bgColor: "bg-red-bg",
     icon: <XCircle className="w-4 h-4" />,
   },
 };
@@ -145,8 +145,8 @@ function getStatusConfig(status: string): StatusConfig {
   return (
     ORDER_STATUS_CONFIG[status as OrderStatusType] || {
       label: status,
-      color: "text-gray-700",
-      bgColor: "bg-gray-100",
+      color: "text-text-secondary",
+      bgColor: "bg-gray-bg",
       icon: <Loader2 className="w-4 h-4" />,
     }
   );
@@ -271,7 +271,7 @@ export function OrderCard({ order }: OrderCardProps) {
                     e.stopPropagation();
                     setShowPixModal(true);
                   }}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-green-100 text-green-700 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-green-bg text-green-text rounded-lg text-sm font-medium hover:bg-green-bg-hover transition-colors"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -323,7 +323,7 @@ export function OrderCard({ order }: OrderCardProps) {
                     e.stopPropagation();
                     setShowPixModal(true);
                   }}
-                  className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-medium hover:bg-green-200 transition-colors"
+                  className="flex items-center gap-1 px-2 py-1 bg-green-bg text-green-text rounded-lg text-xs font-medium hover:bg-green-bg-hover transition-colors"
                 >
                   <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="3" width="7" height="7" rx="1" />

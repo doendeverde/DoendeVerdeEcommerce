@@ -121,7 +121,7 @@ export function ProductFilters({
           />
 
           {/* Modal */}
-          <div className="fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-auto rounded-t-2xl bg-white dark:bg-gray-900 p-6 shadow-xl md:inset-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl">
+          <div className="fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-auto rounded-t-2xl bg-surface p-6 shadow-xl md:inset-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl">
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-text-primary">Filtros</h2>

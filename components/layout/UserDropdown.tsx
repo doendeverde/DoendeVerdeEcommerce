@@ -146,7 +146,7 @@ export function UserDropdown({ className }: UserDropdownProps) {
           <div className="border-t border-gray-border pt-2">
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-error-bg transition-colors"
+              className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-text hover:bg-error-bg transition-colors"
             >
               <LogOut className="w-4 h-4" />
               Sair

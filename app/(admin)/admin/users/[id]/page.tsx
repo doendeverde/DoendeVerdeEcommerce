@@ -48,17 +48,17 @@ function formatDate(date: Date): string {
  */
 function StatusBadge({ status }: { status: string }) {
   const configs: Record<string, { label: string; className: string }> = {
-    ACTIVE: { label: "Ativo", className: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" },
-    BLOCKED: { label: "Bloqueado", className: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" },
-    PENDING: { label: "Pendente", className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" },
-    PAID: { label: "Pago", className: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" },
-    SHIPPED: { label: "Enviado", className: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" },
-    DELIVERED: { label: "Entregue", className: "bg-primary-purple/10 text-primary-purple" },
-    CANCELED: { label: "Cancelado", className: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" },
-    PAUSED: { label: "Pausado", className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" },
+    ACTIVE: { label: "Ativo", className: "bg-green-bg text-green-text" },
+    BLOCKED: { label: "Bloqueado", className: "bg-red-bg text-red-text" },
+    PENDING: { label: "Pendente", className: "bg-yellow-bg text-yellow-text" },
+    PAID: { label: "Pago", className: "bg-green-bg text-green-text" },
+    SHIPPED: { label: "Enviado", className: "bg-blue-bg text-blue-text" },
+    DELIVERED: { label: "Entregue", className: "bg-purple-bg text-purple-text" },
+    CANCELED: { label: "Cancelado", className: "bg-red-bg text-red-text" },
+    PAUSED: { label: "Pausado", className: "bg-yellow-bg text-yellow-text" },
   };
 
-  const config = configs[status] || { label: status, className: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300" };
+  const config = configs[status] || { label: status, className: "bg-gray-bg text-muted" };
 
   return (
     <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${config.className}`}>
@@ -128,8 +128,8 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
 
         <div className="bg-surface rounded-xl border border-default p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <div className="p-2 bg-blue-bg rounded-lg">
+              <Calendar className="w-5 h-5 text-blue-text" />
             </div>
             <div>
               <p className="text-2xl font-bold text-text-primary">{user.totals.subscriptionsCount}</p>
@@ -140,8 +140,8 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
 
         <div className="bg-surface rounded-xl border border-default p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-              <MapPin className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            <div className="p-2 bg-orange-bg rounded-lg">
+              <MapPin className="w-5 h-5 text-orange-text" />
             </div>
             <div>
               <p className="text-2xl font-bold text-text-primary">{user.addresses.length}</p>
@@ -169,8 +169,8 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
             <div className="flex items-center justify-between py-2 border-b border-default">
               <span className="text-text-secondary">Role</span>
               <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${user.role === "ADMIN"
-                ? "bg-primary-purple/10 text-primary-purple"
-                : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
+                ? "bg-purple-bg text-purple-text"
+                : "bg-gray-bg text-muted"
                 }`}>
                 {user.role === "ADMIN" ? "Administrador" : "Cliente"}
               </span>
@@ -214,7 +214,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
         {/* Endereços */}
         <div className="bg-surface rounded-xl border border-default p-6">
           <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            <MapPin className="w-5 h-5 text-yellow-text" />
             Endereços
           </h2>
 
@@ -235,7 +235,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                       <span className="text-sm font-medium text-text-primary">{address.label}</span>
                     )}
                     {address.isDefault && (
-                      <span className="px-1.5 py-0.5 text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded">
+                      <span className="px-1.5 py-0.5 text-xs bg-green-bg text-green-text rounded">
                         Padrão
                       </span>
                     )}

@@ -74,7 +74,7 @@ export default async function HomePage() {
       {showBenefits && (
         <section className="grid-stats">
           <div className="card flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-bg">
               <Truck className="h-5 w-5 text-primary-green" />
             </div>
             <div>
@@ -83,7 +83,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="card flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-bg">
               <Shield className="h-5 w-5 text-primary-green" />
             </div>
             <div>
@@ -92,7 +92,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="card flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-bg">
               <Crown className="h-5 w-5 text-primary-purple" />
             </div>
             <div>

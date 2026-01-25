@@ -352,7 +352,7 @@ function PaymentOptionCard({ option, isSelected, onSelect, disabled, isSubscript
         <p className="text-sm text-muted">{description}</p>
       </div>
       {badge && (
-        <div className="bg-green-100 text-primary-green text-xs px-2 py-1 rounded-full font-medium">
+        <div className="bg-green-bg text-green-text text-xs px-2 py-1 rounded-full font-medium">
           {badge}
         </div>
       )}

@@ -46,15 +46,15 @@ export default async function AdminUsersPage({
             {usersData.total}
           </p>
         </div>
-        <div className="bg-green-100 dark:bg-green-900/30 rounded-xl border border-green-200 dark:border-green-800 p-4">
-          <span className="text-sm text-green-700 dark:text-green-400">Ativos</span>
-          <p className="text-2xl font-bold text-green-800 dark:text-green-300 mt-1">
+        <div className="bg-green-bg rounded-xl border border-green-border p-4">
+          <span className="text-sm text-green-text">Ativos</span>
+          <p className="text-2xl font-bold text-green-text mt-1">
             {usersData.users.filter((u) => u.status === "ACTIVE").length}
           </p>
         </div>
-        <div className="bg-red-100 dark:bg-red-900/30 rounded-xl border border-red-200 dark:border-red-800 p-4">
-          <span className="text-sm text-red-700 dark:text-red-400">Bloqueados</span>
-          <p className="text-2xl font-bold text-red-800 dark:text-red-300 mt-1">
+        <div className="bg-red-bg rounded-xl border border-red-border p-4">
+          <span className="text-sm text-red-text">Bloqueados</span>
+          <p className="text-2xl font-bold text-red-text mt-1">
             {usersData.users.filter((u) => u.status === "BLOCKED").length}
           </p>
         </div>

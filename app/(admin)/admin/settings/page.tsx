@@ -83,7 +83,7 @@ export default function AdminSettingsPage() {
         })}
       </div>
 
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 text-sm text-blue-700 dark:text-blue-300">
+      <div className="bg-blue-bg border border-blue-border rounded-xl p-4 text-sm text-blue-text">
         <strong>Nota:</strong> As configurações serão implementadas em fases posteriores.
         Esta página serve como preview das funcionalidades planejadas.
       </div>

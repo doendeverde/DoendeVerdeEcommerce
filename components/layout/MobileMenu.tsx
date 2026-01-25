@@ -91,7 +91,7 @@ export function MobileMenu({ className }: MobileMenuProps) {
                     className={cn(
                       "block px-4 py-3 text-sm font-medium rounded-lg transition-colors",
                       isActive
-                        ? "text-primary-green bg-primary-green-light dark:bg-green-950"
+                        ? "text-primary-green bg-green-bg"
                         : "text-text-primary hover:bg-hover-bg"
                     )}
                   >

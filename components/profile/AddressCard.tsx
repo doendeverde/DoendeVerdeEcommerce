@@ -47,7 +47,7 @@ export function AddressCard({
   return (
     <div
       className={`relative bg-card-bg rounded-xl border-2 p-4 transition-all ${address.isDefault
-        ? "border-primary-green bg-green-50/30 dark:bg-green-900/20"
+        ? "border-primary-green bg-green-bg/50"
         : "border-gray-border hover:border-gray-muted"
         }`}
     >
@@ -86,7 +86,7 @@ export function AddressCard({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+      <div className="flex items-center gap-2 mt-4 pt-3 border-t border-default">
         {!address.isDefault && (
           <button
             onClick={onSetDefault}

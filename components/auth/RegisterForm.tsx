@@ -188,7 +188,7 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           type="date"
           value={formData.birthDate}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 ${errors.birthDate
+          className={`w-full px-3 py-2 border rounded-md bg-card-bg focus:outline-none focus:ring-2 ${errors.birthDate
             ? "border-red-500 focus:ring-red-500"
             : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
@@ -210,7 +210,7 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           placeholder="(11) 99999-9999"
           value={formData.whatsapp}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 ${errors.whatsapp
+          className={`w-full px-3 py-2 border rounded-md bg-card-bg focus:outline-none focus:ring-2 ${errors.whatsapp
             ? "border-red-500 focus:ring-red-500"
             : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
@@ -231,7 +231,7 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           type="password"
           value={formData.password}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 ${errors.password
+          className={`w-full px-3 py-2 border rounded-md bg-card-bg focus:outline-none focus:ring-2 ${errors.password
             ? "border-red-500 focus:ring-red-500"
             : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}
@@ -255,7 +255,7 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           type="password"
           value={formData.confirmPassword}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 ${errors.confirmPassword
+          className={`w-full px-3 py-2 border rounded-md bg-card-bg focus:outline-none focus:ring-2 ${errors.confirmPassword
             ? "border-red-500 focus:ring-red-500"
             : "border-gray-border focus:ring-primary-green/20 focus:border-primary-green"
             }`}

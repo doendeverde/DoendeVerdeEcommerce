@@ -62,10 +62,10 @@ const statusLabels: Record<ProductStatus, string> = {
 };
 
 const statusStyles: Record<ProductStatus, string> = {
-  DRAFT: "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200",
-  ACTIVE: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  OUT_OF_STOCK: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
-  DISCONTINUED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+  DRAFT: "bg-gray-bg text-muted",
+  ACTIVE: "bg-green-bg text-green-text",
+  OUT_OF_STOCK: "bg-yellow-bg text-yellow-text",
+  DISCONTINUED: "bg-red-bg text-red-text",
 };
 
 /**

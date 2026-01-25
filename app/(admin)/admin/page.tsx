@@ -89,13 +89,13 @@ export default async function AdminDashboardPage() {
 
       {/* Alerts */}
       {stats.lowStockProducts > 0 && (
-        <div className="bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 rounded-xl p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-400 flex-shrink-0 mt-0.5" />
+        <div className="bg-orange-bg border border-orange-border rounded-xl p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-orange-text flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="text-sm font-semibold text-orange-800 dark:text-orange-300">
+            <h3 className="text-sm font-semibold text-orange-text">
               Produtos com estoque baixo
             </h3>
-            <p className="text-sm text-orange-700 dark:text-orange-400 mt-1">
+            <p className="text-sm text-orange-text/80 mt-1">
               {stats.lowStockProducts} produto(s) estão com estoque abaixo do limite.{" "}
               <Link href="/admin/products?lowStock=true" className="underline font-medium">
                 Ver produtos
@@ -228,11 +228,11 @@ export default async function AdminDashboardPage() {
 // Status badge component
 function OrderStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    PENDING: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-    PAID: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    SHIPPED: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-    DELIVERED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    CANCELED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+    PENDING: "bg-yellow-bg text-yellow-text",
+    PAID: "bg-blue-bg text-blue-text",
+    SHIPPED: "bg-purple-bg text-purple-text",
+    DELIVERED: "bg-green-bg text-green-text",
+    CANCELED: "bg-red-bg text-red-text",
   };
 
   const labels: Record<string, string> = {
@@ -245,7 +245,7 @@ function OrderStatusBadge({ status }: { status: string }) {
 
   return (
     <span
-      className={`px-2 py-0.5 text-xs font-medium rounded-full ${styles[status] || "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300"}`}
+      className={`px-2 py-0.5 text-xs font-medium rounded-full ${styles[status] || "bg-gray-bg text-text-secondary"}`}
     >
       {labels[status] || status}
     </span>

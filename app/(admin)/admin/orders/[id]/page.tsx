@@ -213,10 +213,10 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                           className={cn(
                             "text-xs px-2 py-0.5 rounded-full",
                             payment.status === "PAID"
-                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                              ? "bg-green-bg text-green-text"
                               : payment.status === "PENDING"
-                                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-                                : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                                ? "bg-yellow-bg text-yellow-text"
+                                : "bg-red-bg text-red-text"
                           )}
                         >
                           {paymentStatusLabels[payment.status]}
@@ -267,10 +267,10 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                         className={cn(
                           "text-xs px-2 py-0.5 rounded-full",
                           shipment.status === "DELIVERED"
-                            ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                            ? "bg-green-bg text-green-text"
                             : shipment.status === "IN_TRANSIT"
-                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-                              : "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200"
+                              ? "bg-blue-bg text-blue-text"
+                              : "bg-gray-bg text-muted"
                         )}
                       >
                         {shipmentStatusLabels[shipment.status]}

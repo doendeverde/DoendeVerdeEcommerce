@@ -227,8 +227,8 @@ export function PreferencesStep({
 
       {/* Validation Message */}
       {!hasMinimumPreferences && (
-        <div className="mt-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
-          <p className="text-sm text-yellow-800 dark:text-yellow-200">
+        <div className="mt-4 bg-yellow-bg border border-yellow-border rounded-lg p-3">
+          <p className="text-sm text-yellow-text">
             Selecione pelo menos sua frequência de consumo para continuar.
           </p>
         </div>
@@ -337,7 +337,7 @@ function ConsumptionSection({
           }}
           placeholder="Ex: 5"
           className={`input-default ${form.yearsSmoking !== null && form.yearsSmoking > 100
-            ? "!border-red-500 !bg-red-50 dark:!bg-red-900/20"
+            ? "!border-red-border !bg-red-bg"
             : ""
             }`}
         />

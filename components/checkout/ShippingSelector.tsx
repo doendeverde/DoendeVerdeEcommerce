@@ -213,7 +213,7 @@ export function ShippingSelector({
 
       {/* Error State */}
       {error && !isLoading && (
-        <div className="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm bg-red-50 dark:bg-red-900/20 rounded-lg p-3">
+        <div className="flex items-center gap-2 text-red-text text-sm bg-red-bg rounded-lg p-3">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
           <button

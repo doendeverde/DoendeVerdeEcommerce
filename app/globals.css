@@ -82,6 +82,43 @@
   
   /* Hover states */
   --hover-bg: #f3f4f6;
+
+  /* ─── Color Variants (Background & Text) ─── */
+  /* Green */
+  --green-bg: #DCFCE7;
+  --green-bg-hover: #BBF7D0;
+  --green-text: #166534;
+  --green-border: #86EFAC;
+  
+  /* Purple */
+  --purple-bg: #F3E8FF;
+  --purple-bg-hover: #E9D5FF;
+  --purple-text: #6B21A8;
+  --purple-border: #C4B5FD;
+  
+  /* Orange */
+  --orange-bg: #FFEDD5;
+  --orange-bg-hover: #FED7AA;
+  --orange-text: #9A3412;
+  --orange-border: #FDBA74;
+  
+  /* Yellow */
+  --yellow-bg: #FEF9C3;
+  --yellow-bg-hover: #FEF08A;
+  --yellow-text: #854D0E;
+  --yellow-border: #FDE047;
+  
+  /* Red */
+  --red-bg: #FEE2E2;
+  --red-bg-hover: #FECACA;
+  --red-text: #991B1B;
+  --red-border: #FCA5A5;
+  
+  /* Blue */
+  --blue-bg: #DBEAFE;
+  --blue-bg-hover: #BFDBFE;
+  --blue-text: #1E40AF;
+  --blue-border: #93C5FD;
 }
 
 /* ─── Dark Mode Variables ─── */
@@ -117,6 +154,43 @@
   
   /* Hover states */
   --hover-bg: #27272a;
+
+  /* ─── Color Variants (Background & Text) - Dark Mode ─── */
+  /* Green */
+  --green-bg: rgba(34, 197, 94, 0.15);
+  --green-bg-hover: rgba(34, 197, 94, 0.25);
+  --green-text: #4ade80;
+  --green-border: rgba(34, 197, 94, 0.3);
+  
+  /* Purple */
+  --purple-bg: rgba(139, 92, 246, 0.15);
+  --purple-bg-hover: rgba(139, 92, 246, 0.25);
+  --purple-text: #a78bfa;
+  --purple-border: rgba(139, 92, 246, 0.3);
+  
+  /* Orange */
+  --orange-bg: rgba(249, 115, 22, 0.15);
+  --orange-bg-hover: rgba(249, 115, 22, 0.25);
+  --orange-text: #fb923c;
+  --orange-border: rgba(249, 115, 22, 0.3);
+  
+  /* Yellow */
+  --yellow-bg: rgba(234, 179, 8, 0.15);
+  --yellow-bg-hover: rgba(234, 179, 8, 0.25);
+  --yellow-text: #fbbf24;
+  --yellow-border: rgba(234, 179, 8, 0.3);
+  
+  /* Red */
+  --red-bg: rgba(239, 68, 68, 0.15);
+  --red-bg-hover: rgba(239, 68, 68, 0.25);
+  --red-text: #f87171;
+  --red-border: rgba(239, 68, 68, 0.3);
+  
+  /* Blue */
+  --blue-bg: rgba(59, 130, 246, 0.15);
+  --blue-bg-hover: rgba(59, 130, 246, 0.25);
+  --blue-text: #60a5fa;
+  --blue-border: rgba(59, 130, 246, 0.3);
 }
 
 @theme inline {
@@ -153,6 +227,43 @@
   
   /* Hover */
   --color-hover-bg: var(--hover-bg);
+
+  /* ─── Color Variants ─── */
+  /* Green */
+  --color-green-bg: var(--green-bg);
+  --color-green-bg-hover: var(--green-bg-hover);
+  --color-green-text: var(--green-text);
+  --color-green-border: var(--green-border);
+  
+  /* Purple */
+  --color-purple-bg: var(--purple-bg);
+  --color-purple-bg-hover: var(--purple-bg-hover);
+  --color-purple-text: var(--purple-text);
+  --color-purple-border: var(--purple-border);
+  
+  /* Orange */
+  --color-orange-bg: var(--orange-bg);
+  --color-orange-bg-hover: var(--orange-bg-hover);
+  --color-orange-text: var(--orange-text);
+  --color-orange-border: var(--orange-border);
+  
+  /* Yellow */
+  --color-yellow-bg: var(--yellow-bg);
+  --color-yellow-bg-hover: var(--yellow-bg-hover);
+  --color-yellow-text: var(--yellow-text);
+  --color-yellow-border: var(--yellow-border);
+  
+  /* Red */
+  --color-red-bg: var(--red-bg);
+  --color-red-bg-hover: var(--red-bg-hover);
+  --color-red-text: var(--red-text);
+  --color-red-border: var(--red-border);
+  
+  /* Blue */
+  --color-blue-bg: var(--blue-bg);
+  --color-blue-bg-hover: var(--blue-bg-hover);
+  --color-blue-text: var(--blue-text);
+  --color-blue-border: var(--blue-border);
 
   /* Fonts */
   --font-sans: var(--font-geist-sans);

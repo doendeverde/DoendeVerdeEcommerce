@@ -132,7 +132,7 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Content */}
       <div className="flex flex-1 flex-col p-3 sm:p-4">
         {/* Product Name */}
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-primary-green transition-colors">
+        <h3 className="text-sm sm:text-base font-semibold text-text-primary line-clamp-2 group-hover:text-primary-green transition-colors">
           {product.name}
         </h3>
 
@@ -149,7 +149,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart || product.isOutOfStock}
-            className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary-green text-white transition-all hover:bg-green-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed flex-shrink-0"
+            className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary-green text-white transition-all hover:bg-green-600 disabled:bg-gray-bg disabled:text-muted disabled:cursor-not-allowed flex-shrink-0"
             aria-label="Adicionar ao carrinho"
           >
             {isAddingToCart ? (

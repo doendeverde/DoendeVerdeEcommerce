@@ -207,7 +207,7 @@ export function PreferencesFormModal({
                 onChange={(e) =>
                   handleChange("consumptionFrequency", (e.target.value as ConsumptionFrequency) || null)
                 }
-                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
+                className="input-default"
               >
                 <option value="">Selecione...</option>
                 <option value="OCCASIONAL">Ocasional</option>
@@ -257,7 +257,7 @@ export function PreferencesFormModal({
                   handleChange("yearsSmoking", e.target.value ? parseInt(e.target.value) : null)
                 }
                 placeholder="Ex: 5"
-                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
+                className="input-default"
               />
             </div>
           </section>
@@ -299,7 +299,7 @@ export function PreferencesFormModal({
                   onChange={(e) =>
                     handleChange("favoritePaperType", (e.target.value as PaperType) || null)
                   }
-                  className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
+                  className="input-default"
                 >
                   <option value="">Selecione...</option>
                   <option value="WHITE">Branca</option>
@@ -318,7 +318,7 @@ export function PreferencesFormModal({
                   onChange={(e) =>
                     handleChange("favoritePaperSize", (e.target.value as PaperSize) || null)
                   }
-                  className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
+                  className="input-default"
                 >
                   <option value="">Selecione...</option>
                   <option value="MINI">Mini</option>
@@ -339,7 +339,7 @@ export function PreferencesFormModal({
                 onChange={(e) =>
                   handleChange("paperFilterSize", (e.target.value as FilterPaperSize) || null)
                 }
-                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
+                className="input-default"
               >
                 <option value="">Selecione...</option>
                 <option value="SHORT">Curto</option>
@@ -364,7 +364,7 @@ export function PreferencesFormModal({
                   onChange={(e) =>
                     handleChange("glassFilterSize", (e.target.value as GlassFilterSize) || null)
                   }
-                  className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
+                  className="input-default"
                 >
                   <option value="">Selecione...</option>
                   <option value="SHORT">Curta (2-4cm)</option>
@@ -383,7 +383,7 @@ export function PreferencesFormModal({
                   onChange={(e) =>
                     handleChange("glassFilterThickness", (e.target.value as GlassFilterThickness) || null)
                   }
-                  className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
+                  className="input-default"
                 >
                   <option value="">Selecione...</option>
                   <option value="THIN">Fina (2-4mm)</option>
@@ -407,7 +407,7 @@ export function PreferencesFormModal({
                 onChange={(e) =>
                   handleChange("tobaccoUsage", (e.target.value as TobaccoUsage) || null)
                 }
-                className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none"
+                className="input-default"
               >
                 <option value="">Selecione...</option>
                 <option value="FULL_TIME">Sempre</option>
@@ -478,13 +478,13 @@ export function PreferencesFormModal({
               onChange={(e) => handleChange("notes", e.target.value || null)}
               placeholder="Algo mais que devemos saber?"
               rows={3}
-              className="w-full px-4 py-2 border border-gray-border bg-white dark:bg-gray-900 rounded-lg focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green outline-none resize-none"
+              className="input-default resize-none"
             />
           </section>
 
           {/* Error */}
           {error && (
-            <p className="text-sm text-red-600 dark:text-red-400 bg-error-bg p-3 rounded-lg">{error}</p>
+            <p className="text-sm text-red-text bg-error-bg p-3 rounded-lg">{error}</p>
           )}
         </div>
 

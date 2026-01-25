@@ -71,7 +71,7 @@ export function GenericSuccessState({
 
   return (
     <div className="bg-surface rounded-2xl shadow-sm p-8 text-center">
-      <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className="w-16 h-16 bg-green-bg rounded-full flex items-center justify-center mx-auto mb-4">
         <IconComponent className="w-8 h-8 text-primary-green" />
       </div>
 
@@ -155,8 +155,8 @@ export function GenericErrorState({
 
   return (
     <div className="bg-surface rounded-2xl shadow-sm p-8 text-center">
-      <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-        <AlertCircle className="w-8 h-8 text-red-500" />
+      <div className="w-16 h-16 bg-red-bg rounded-full flex items-center justify-center mx-auto mb-4">
+        <AlertCircle className="w-8 h-8 text-red-text" />
       </div>
 
       <h1 className="text-2xl font-bold text-default mb-2">
@@ -198,11 +198,11 @@ export interface InlineErrorAlertProps {
 
 export function InlineErrorAlert({ error, onDismiss }: InlineErrorAlertProps) {
   return (
-    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 flex items-start gap-3">
-      <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+    <div className="bg-red-bg border border-red-border rounded-xl p-4 flex items-start gap-3">
+      <AlertCircle className="w-5 h-5 text-red-text flex-shrink-0 mt-0.5" />
       <div className="flex-1">
-        <p className="text-red-800 dark:text-red-200 font-medium">Erro</p>
-        <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+        <p className="text-red-text font-medium">Erro</p>
+        <p className="text-red-text/80 text-sm">{error}</p>
       </div>
       {onDismiss && (
         <button

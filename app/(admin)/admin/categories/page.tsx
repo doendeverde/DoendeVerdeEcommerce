@@ -118,8 +118,8 @@ export default async function AdminCategoriesPage() {
                     <td className="px-4 py-4">
                       <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${category.isActive
-                          ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400"
-                          : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                          ? "bg-green-bg text-green-text"
+                          : "bg-gray-bg text-text-secondary"
                           }`}
                       >
                         {category.isActive ? "Ativa" : "Inativa"}

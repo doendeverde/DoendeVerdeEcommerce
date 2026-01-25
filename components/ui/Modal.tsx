@@ -142,7 +142,7 @@ export function Modal({
 
         {/* Overlay de loading quando preventClose está ativo */}
         {preventClose && (
-          <div className="absolute inset-0 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm flex items-center justify-center rounded-xl">
+          <div className="absolute inset-0 bg-surface/60 backdrop-blur-sm flex items-center justify-center rounded-xl">
             <div className="flex flex-col items-center gap-3">
               <div className="w-10 h-10 border-4 border-primary-green border-t-transparent rounded-full animate-spin" />
               <p className="text-sm text-muted font-medium">

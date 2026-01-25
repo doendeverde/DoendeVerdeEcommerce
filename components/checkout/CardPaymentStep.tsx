@@ -150,18 +150,18 @@ export function CardPaymentStep({
   // Success State
   if (state === "success") {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-8 text-center">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <CheckCircle className="w-8 h-8 text-green-600" />
+      <div className="bg-surface rounded-xl shadow-sm p-8 text-center">
+        <div className="w-16 h-16 bg-green-bg rounded-full flex items-center justify-center mx-auto mb-4">
+          <CheckCircle className="w-8 h-8 text-green-text" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">
+        <h2 className="text-xl font-bold text-default mb-2">
           Pagamento Aprovado!
         </h2>
-        <p className="text-gray-600 mb-4">
+        <p className="text-muted mb-4">
           Seu pagamento foi processado com sucesso.
         </p>
         {paymentResult?.paymentId && (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted">
             ID: {paymentResult.paymentId}
           </p>
         )}
@@ -172,22 +172,22 @@ export function CardPaymentStep({
   // Awaiting Confirmation State
   if (state === "awaiting_confirmation") {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-8 text-center">
-        <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Clock className="w-8 h-8 text-yellow-600" />
+      <div className="bg-surface rounded-xl shadow-sm p-8 text-center">
+        <div className="w-16 h-16 bg-yellow-bg rounded-full flex items-center justify-center mx-auto mb-4">
+          <Clock className="w-8 h-8 text-yellow-text" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">
+        <h2 className="text-xl font-bold text-default mb-2">
           Pagamento em Processamento
         </h2>
-        <p className="text-gray-600 mb-4">
+        <p className="text-muted mb-4">
           Seu pagamento está sendo analisado. Você receberá uma confirmação em breve.
         </p>
         {paymentResult?.paymentId && (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted">
             ID: {paymentResult.paymentId}
           </p>
         )}
-        <p className="text-xs text-gray-400 mt-4">
+        <p className="text-xs text-muted mt-4">
           Não se preocupe, você não será cobrado duas vezes.
         </p>
       </div>
@@ -197,13 +197,13 @@ export function CardPaymentStep({
   // Error State (can retry)
   if (state === "error" && error) {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+      <div className="bg-surface rounded-xl shadow-sm p-6">
+        <div className="bg-red-bg border border-red-border rounded-lg p-4 mb-6">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-red-text flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium text-red-800">Pagamento não aprovado</p>
-              <p className="text-sm text-red-600 mt-1">{error}</p>
+              <p className="font-medium text-red-text">Pagamento não aprovado</p>
+              <p className="text-sm text-red-text/80 mt-1">{error}</p>
             </div>
           </div>
         </div>
@@ -229,15 +229,15 @@ export function CardPaymentStep({
 
   // Default: Show Payment Brick
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">
+    <div className="bg-surface rounded-xl shadow-sm p-6">
+      <h2 className="text-lg font-semibold text-default mb-4">
         Dados do Cartão
       </h2>
 
       {/* Payment Summary */}
-      <div className="bg-gray-50 rounded-lg p-4 mb-6">
+      <div className="bg-gray-bg rounded-lg p-4 mb-6">
         <div className="flex justify-between items-center">
-          <span className="text-gray-600">Total a pagar:</span>
+          <span className="text-muted">Total a pagar:</span>
           <span className="text-xl font-bold text-primary-green">
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",

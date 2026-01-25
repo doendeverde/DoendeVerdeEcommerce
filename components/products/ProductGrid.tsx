@@ -42,10 +42,10 @@ export function ProductGrid({ products, isLoading }: ProductGridProps) {
             />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="text-lg font-semibold text-text-primary">
           Nenhum produto encontrado
         </h3>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-sm text-muted">
           Tente ajustar os filtros ou buscar por outro termo.
         </p>
       </div>

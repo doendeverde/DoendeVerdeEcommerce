@@ -66,7 +66,7 @@ export function CheckoutProgress({ currentStep }: CheckoutProgressProps) {
   return (
     <nav
       aria-label="Progresso do checkout"
-      className="bg-white dark:bg-gray-900 rounded-xl shadow-sm"
+      className="bg-surface rounded-xl shadow-sm"
     >
       {/* 
         Layout sem linhas conectoras:

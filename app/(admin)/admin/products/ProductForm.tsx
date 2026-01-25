@@ -383,7 +383,7 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
                       <button
                         type="button"
                         onClick={() => removeImage(img.id)}
-                        className="p-2 rounded-lg bg-surface text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                        className="p-2 rounded-lg bg-surface text-red-text hover:bg-red-bg transition-colors"
                         title="Remover"
                       >
                         <X className="w-4 h-4" />

@@ -150,8 +150,8 @@ export function PixPaymentDisplay({
     return (
       <div className="bg-surface rounded-xl shadow-sm p-6">
         <div className="flex flex-col items-center text-center space-y-4">
-          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-            <AlertCircle className="w-8 h-8 text-red-500" />
+          <div className="w-16 h-16 bg-red-bg rounded-full flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-red-text" />
           </div>
 
           <h3 className="text-lg font-semibold text-default">
@@ -207,7 +207,7 @@ export function PixPaymentDisplay({
 
       {/* QR Code */}
       <div className="flex justify-center mb-6">
-        <div className="p-4 bg-white dark:bg-gray-100 border-2 border-default rounded-lg">
+        <div className="p-4 bg-white border-2 border-default rounded-lg">
           {pixData.qrCodeBase64 ? (
             <img
               src={`data:image/png;base64,${pixData.qrCodeBase64}`}
@@ -246,7 +246,7 @@ export function PixPaymentDisplay({
           <button
             onClick={handleCopy}
             className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${copied
-              ? "bg-green-100 text-green-700"
+              ? "bg-green-bg text-green-text"
               : "bg-primary-green text-white hover:bg-green-600"
               }`}
           >

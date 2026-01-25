@@ -62,8 +62,8 @@ export function OrderSummary({
           {plan.badge && (
             <span
               className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full ${plan.badge === "premium"
-                ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
-                : "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                ? "bg-purple-bg text-purple-text"
+                : "bg-green-bg text-green-text"
                 }`}
             >
               {plan.badge === "premium" ? "Premium" : "Mais popular"}

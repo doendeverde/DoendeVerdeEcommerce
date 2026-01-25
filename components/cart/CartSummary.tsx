@@ -58,7 +58,7 @@ export function CartSummary({ onCheckout }: CartSummaryProps) {
 
       {/* Warnings */}
       {hasIssues && (
-        <div className="mt-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 p-3 text-xs text-amber-700 dark:text-amber-400">
+        <div className="mt-3 rounded-lg bg-yellow-bg border border-yellow-border p-3 text-xs text-yellow-text">
           Alguns itens precisam de atenção. Verifique os alertas acima.
         </div>
       )}

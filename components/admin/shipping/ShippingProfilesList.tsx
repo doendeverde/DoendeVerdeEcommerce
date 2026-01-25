@@ -114,7 +114,7 @@ export function ShippingProfilesList() {
   if (error) {
     return (
       <div className="bg-surface rounded-lg shadow-sm p-8">
-        <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
+        <div className="flex items-center gap-3 text-red-text">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
         </div>
@@ -223,8 +223,8 @@ export function ShippingProfilesList() {
                       onClick={() => handleToggleActive(profile.id)}
                       disabled={actionLoading === profile.id}
                       className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium transition-colors ${profile.isActive
-                        ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50"
-                        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                        ? "bg-green-bg text-green-text hover:bg-green-bg-hover"
+                        : "bg-gray-bg text-text-secondary hover:bg-hover-bg"
                         }`}
                     >
                       {profile.isActive ? (

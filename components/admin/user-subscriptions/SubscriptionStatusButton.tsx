@@ -56,7 +56,7 @@ export function SubscriptionStatusButton({
         status: "ACTIVE",
         label: "Ativar",
         icon: <Play className="w-4 h-4" />,
-        className: "text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30",
+        className: "text-green-text hover:bg-green-bg",
       });
     }
 
@@ -65,7 +65,7 @@ export function SubscriptionStatusButton({
         status: "CANCELED",
         label: "Cancelar",
         icon: <XCircle className="w-4 h-4" />,
-        className: "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30",
+        className: "text-red-text hover:bg-red-bg",
       });
     }
 

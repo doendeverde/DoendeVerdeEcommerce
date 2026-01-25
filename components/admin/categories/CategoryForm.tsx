@@ -111,10 +111,10 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
           <ArrowLeft className="w-5 h-5 text-text-secondary" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold text-default">
             {mode === "create" ? "Nova Categoria" : "Editar Categoria"}
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <p className="text-muted text-sm">
             {mode === "create"
               ? "Preencha os dados para criar uma nova categoria"
               : `Editando: ${initialData?.name}`}
@@ -213,7 +213,7 @@ export default function CategoryForm({ initialData, mode }: CategoryFormProps) {
                     onChange={handleChange}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-checked:bg-green-500 transition-colors" />
+                  <div className="w-11 h-6 bg-gray-muted rounded-full peer peer-checked:bg-green-500 transition-colors" />
                   <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5" />
                 </div>
                 <span className="text-text-secondary">Categoria ativa</span>

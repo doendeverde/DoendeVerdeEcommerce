@@ -26,14 +26,14 @@ export function CategoryGrid({ categories, maxDisplay = 6 }: CategoryGridProps) 
           href={`/products?category=${category.slug}`}
           className="group flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-border bg-card-bg p-6 transition-all hover:border-primary-green hover:shadow-md"
         >
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-bg text-2xl transition-colors group-hover:bg-green-50 dark:group-hover:bg-green-900/30">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-bg text-2xl transition-colors group-hover:bg-green-bg">
             🌿
           </div>
           <span className="text-sm font-medium text-center text-text-primary group-hover:text-primary-green">
             {category.name}
           </span>
           {category.productCount !== undefined && category.productCount > 0 && (
-            <span className="inline-flex items-center justify-center rounded-full bg-gray-bg px-2 py-0.5 text-xs text-text-secondary group-hover:bg-green-50 dark:group-hover:bg-green-900/30">
+            <span className="inline-flex items-center justify-center rounded-full bg-gray-bg px-2 py-0.5 text-xs text-text-secondary group-hover:bg-green-bg">
               {category.productCount}
             </span>
           )}

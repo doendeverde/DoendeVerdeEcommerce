@@ -163,7 +163,7 @@ export function CheckoutCartSummary({
         )}
 
         {/* Divider */}
-        <div className="border-t border-default pt-3 mt-3">
+        <div className="border-t pt-3 mt-3">
           <div className="flex justify-between">
             <span className="font-semibold text-default">Total</span>
             <span className="text-xl font-bold text-default">

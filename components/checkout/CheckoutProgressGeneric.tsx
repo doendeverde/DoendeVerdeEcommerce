@@ -53,7 +53,7 @@ export function CheckoutProgressGeneric({
   return (
     <nav
       aria-label="Progresso do checkout"
-      className="bg-white dark:bg-gray-900 rounded-xl shadow-sm"
+      className="bg-surface rounded-xl shadow-sm"
     >
       {/* Layout sem linhas conectoras, com justify-between */}
       <div className="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4">

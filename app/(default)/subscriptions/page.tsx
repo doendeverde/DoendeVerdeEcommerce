@@ -64,7 +64,7 @@ export default async function SubscriptionsPage() {
       {/* Current Plan Badge - Server rendered */}
       {currentPlanSlug && (
         <div className="flex justify-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-green-100 dark:bg-green-900/40 px-4 py-2 text-sm font-medium text-green-700 dark:text-green-400">
+          <div className="inline-flex items-center gap-2 rounded-full bg-green-bg px-4 py-2 text-sm font-medium text-green-text">
             <svg
               className="h-4 w-4"
               fill="currentColor"

@@ -40,19 +40,19 @@ const planColors: Record<
     border: "border-gray-border hover:border-gray-muted",
   },
   "doende-x": {
-    icon: "bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400",
+    icon: "bg-green-bg text-green-text",
     badge: "",
     button: "bg-primary-green text-white hover:bg-green-600",
     border: "border-gray-border hover:border-primary-green",
   },
   "doende-bronze": {
-    icon: "bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400",
+    icon: "bg-green-bg text-green-text",
     badge: "bg-primary-green",
     button: "bg-primary-green text-white hover:bg-green-600",
     border: "border-primary-green",
   },
   "doende-prata": {
-    icon: "bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400",
+    icon: "bg-purple-bg text-purple-text",
     badge: "bg-primary-purple",
     button: "bg-primary-purple text-white hover:bg-purple-700",
     border: "border-primary-purple",
@@ -257,7 +257,7 @@ export function SubscriptionPlans({
 
                 {/* Discount Badge */}
                 {plan.discountPercent > 0 && (
-                  <div className="mt-1.5 sm:mt-2 inline-flex rounded-full bg-green-100 dark:bg-green-900/40 px-2 py-0.5 sm:px-2.5 text-[10px] sm:text-xs font-medium text-green-700 dark:text-green-400">
+                  <div className="mt-1.5 sm:mt-2 inline-flex rounded-full bg-green-bg px-2 py-0.5 sm:px-2.5 text-[10px] sm:text-xs font-medium text-green-text">
                     {plan.discountPercent}% de desconto permanente
                   </div>
                 )}

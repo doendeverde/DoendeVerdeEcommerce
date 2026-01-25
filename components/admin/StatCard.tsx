@@ -20,20 +20,20 @@ const variantStyles = {
     icon: "text-text-secondary",
   },
   green: {
-    bg: "bg-green-100 dark:bg-green-900/30",
-    icon: "text-green-600 dark:text-green-400",
+    bg: "bg-green-bg",
+    icon: "text-green-text",
   },
   purple: {
-    bg: "bg-purple-100 dark:bg-purple-900/30",
-    icon: "text-purple-600 dark:text-purple-400",
+    bg: "bg-purple-bg",
+    icon: "text-purple-text",
   },
   orange: {
-    bg: "bg-orange-100 dark:bg-orange-900/30",
-    icon: "text-orange-600 dark:text-orange-400",
+    bg: "bg-orange-bg",
+    icon: "text-orange-text",
   },
   red: {
-    bg: "bg-red-100 dark:bg-red-900/30",
-    icon: "text-red-600 dark:text-red-400",
+    bg: "bg-red-bg",
+    icon: "text-red-text",
   },
 };
 

@@ -328,7 +328,7 @@ export function ProductCatalog({
 
       {/* Results Count */}
       {!isLoading && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-muted">
           {pagination.total === 0
             ? 'Nenhum produto encontrado'
             : `${pagination.total} produto${pagination.total > 1 ? 's' : ''} encontrado${pagination.total > 1 ? 's' : ''}`}

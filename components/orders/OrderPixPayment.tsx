@@ -211,7 +211,7 @@ export function OrderPixPayment({
         <div
           className={cn(
             "flex items-center justify-center gap-2 py-2 px-4 rounded-lg",
-            isExpired ? "bg-red-50 text-red-600" : "bg-amber-50 text-amber-700"
+            isExpired ? "bg-red-bg text-red-text" : "bg-yellow-bg text-yellow-text"
           )}
         >
           <Clock className="w-4 h-4" />
@@ -223,7 +223,7 @@ export function OrderPixPayment({
         {/* QR Code */}
         {!isExpired && currentPixData.qrCodeBase64 && (
           <div className="flex justify-center">
-            <div className="p-3 bg-white dark:bg-gray-800 border-2 border-gray-border rounded-xl">
+            <div className="p-3 bg-card-bg border-2 border-gray-border rounded-xl">
               <img
                 src={`data:image/png;base64,${currentPixData.qrCodeBase64}`}
                 alt="QR Code PIX"
@@ -324,8 +324,8 @@ export function PixPendingBadge({ onClick, expiresAt }: PixPendingBadgeProps) {
       className={cn(
         "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
         isExpired
-          ? "bg-red-100 text-red-700 hover:bg-red-200"
-          : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+          ? "bg-red-bg text-red-text hover:bg-red-bg-hover"
+          : "bg-green-bg text-green-text hover:bg-green-bg-hover"
       )}
     >
       <QrCode className="w-4 h-4" />

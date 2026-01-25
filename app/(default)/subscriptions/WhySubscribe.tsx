@@ -56,7 +56,7 @@ export function WhySubscribe() {
               className="flex flex-col items-center rounded-xl bg-card-bg p-6 text-center shadow-sm"
             >
               <div
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400"
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-green-bg text-green-text"
                 aria-hidden="true"
               >
                 <Icon className="h-6 w-6" />

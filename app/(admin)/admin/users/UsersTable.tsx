@@ -43,8 +43,8 @@ const statusLabels: Record<UserStatus, string> = {
 };
 
 const statusStyles: Record<UserStatus, string> = {
-  ACTIVE: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400",
-  BLOCKED: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400",
+  ACTIVE: "bg-green-bg text-green-text",
+  BLOCKED: "bg-red-bg text-red-text",
 };
 
 /**

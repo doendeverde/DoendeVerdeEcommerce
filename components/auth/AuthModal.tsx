@@ -54,10 +54,10 @@ export function AuthModal() {
       <div className="space-y-6">
         {/* Header com título dinâmico */}
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl font-bold text-default">
             {view === "login" ? "Entrar na sua conta" : "Criar conta"}
           </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm text-muted">
             {view === "login"
               ? "Acesse sua conta para continuar"
               : "Preencha os dados para criar sua conta"}

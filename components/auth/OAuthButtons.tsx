@@ -58,7 +58,7 @@ export function OAuthButtons({ callbackUrl = "/dashboard", onError }: OAuthButto
         type="button"
         onClick={() => handleOAuth("google")}
         disabled={loadingGoogle || loadingGitHub}
-        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white dark:bg-gray-800 border-2 border-gray-border rounded-lg hover:bg-hover-bg hover:border-gray-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-card-bg border-2 border-gray-border rounded-lg hover:bg-hover-bg hover:border-gray-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all"
       >
         {loadingGoogle ? (
           <div className="w-5 h-5 border-2 border-gray-muted border-t-transparent rounded-full animate-spin" />

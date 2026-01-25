@@ -98,7 +98,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           )}
 
           {/* Name */}
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">
+          <h1 className="text-2xl font-bold text-default sm:text-3xl">
             {product.name}
           </h1>
 

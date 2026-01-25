@@ -40,7 +40,7 @@ export function CartItem({ item }: CartItemProps) {
   return (
     <div
       className={`flex gap-4 rounded-lg border p-3 transition-all ${isPending ? 'opacity-60' : ''
-        } ${item.isOutOfStock ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/30' : 'border-gray-border bg-card-bg'}`}
+        } ${item.isOutOfStock ? 'border-red-border bg-red-bg' : 'border-gray-border bg-card-bg'}`}
     >
       {/* Image */}
       <Link
@@ -64,21 +64,21 @@ export function CartItem({ item }: CartItemProps) {
         <Link
           href={`/products/${item.product.slug}`}
           onClick={closeDrawer}
-          className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2 hover:text-primary-green transition-colors"
+          className="text-sm font-medium text-text-primary line-clamp-2 hover:text-primary-green transition-colors"
         >
           {item.product.name}
         </Link>
 
         {/* Warnings */}
         {item.isOutOfStock && (
-          <div className="mt-1 flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+          <div className="mt-1 flex items-center gap-1 text-xs text-red-text">
             <AlertCircle className="h-3 w-3" />
             <span>Produto indisponível</span>
           </div>
         )}
 
         {item.priceChanged && !item.isOutOfStock && (
-          <div className="mt-1 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
+          <div className="mt-1 flex items-center gap-1 text-xs text-yellow-text">
             <AlertCircle className="h-3 w-3" />
             <span>Preço atualizado para R$ {item.currentPrice.toFixed(2)}</span>
           </div>
@@ -118,7 +118,7 @@ export function CartItem({ item }: CartItemProps) {
             <button
               onClick={handleRemove}
               disabled={isPending}
-              className="ml-2 flex h-7 w-7 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 disabled:opacity-50"
+              className="ml-2 flex h-7 w-7 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-red-bg hover:text-red-text disabled:opacity-50"
               aria-label="Remover item"
             >
               <Trash2 className="h-4 w-4" />
