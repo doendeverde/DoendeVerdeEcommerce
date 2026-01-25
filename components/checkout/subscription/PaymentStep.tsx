@@ -249,7 +249,7 @@ export function PaymentStep({
         - Mesmo nível de segurança (PCI compliance via MP)
       */}
       {isCardMethod && (
-        <div className="mt-6 border-t border-default pt-6">
+        <div className="mt-6 border-t pt-6">
           <div className="flex items-center gap-2 mb-4 text-sm text-muted">
             <ShieldCheck className="w-4 h-4 text-primary-green" />
             <span>Preencha os dados do cartão de forma segura</span>

@@ -12,7 +12,8 @@
 
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 import { Loader2, AlertCircle, ShieldCheck } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -62,6 +63,7 @@ export function CardPaymentBrick({
   const brickControllerRef = useRef<any>(null);
   const [status, setStatus] = useState<BrickStatus>("loading");
   const [error, setError] = useState<string | null>(null);
+  const { resolvedTheme } = useTheme();
 
   // Cleanup brick on unmount
   useEffect(() => {
@@ -113,6 +115,17 @@ export function CardPaymentBrick({
 
         const bricksBuilder = mp.bricks();
 
+        // Get current theme from next-themes
+        const isDarkMode = resolvedTheme === "dark";
+
+        // Get CSS variables from the document
+        const styles = getComputedStyle(document.documentElement);
+        const cardBg = styles.getPropertyValue('--card-bg').trim();
+        const textPrimary = styles.getPropertyValue('--text-primary').trim();
+        const textSecondary = styles.getPropertyValue('--text-secondary').trim();
+        const grayBorder = styles.getPropertyValue('--gray-border').trim();
+        const primaryGreen = styles.getPropertyValue('--primary-green').trim();
+
         // Create Card Payment Brick
         const cardPaymentBrick = await bricksBuilder.create(
           "cardPayment",
@@ -127,12 +140,16 @@ export function CardPaymentBrick({
             customization: {
               visual: {
                 style: {
-                  theme: "default",
+                  theme: isDarkMode ? "dark" : "default",
                   customVariables: {
-                    formBackgroundColor: "#ffffff",
-                    baseColor: "#16a34a", // primary-green
+                    formBackgroundColor: cardBg,
+                    baseColor: primaryGreen,
                     formPadding: "16px",
                     borderRadius: "8px",
+                    inputBackgroundColor: cardBg,
+                    inputBorderColor: grayBorder,
+                    textPrimaryColor: textPrimary,
+                    textSecondaryColor: textSecondary,
                   },
                 },
                 hideFormTitle: true,
@@ -236,7 +253,7 @@ export function CardPaymentBrick({
     return () => {
       isMounted = false;
     };
-  }, [amount, payerEmail, maxInstallments, onSubmit, onError]);
+  }, [amount, payerEmail, maxInstallments, onSubmit, onError, resolvedTheme]);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // Render
@@ -244,15 +261,15 @@ export function CardPaymentBrick({
 
   if (status === "error" && error) {
     return (
-      <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
+      <div className="p-6 bg-red-bg border border-red-border rounded-lg">
         <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="w-5 h-5 text-red-text flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-medium text-red-800">Erro no pagamento</p>
-            <p className="text-sm text-red-600 mt-1">{error}</p>
+            <p className="font-medium text-red-text">Erro no pagamento</p>
+            <p className="text-sm text-red-text/80 mt-1">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-3 text-sm text-red-700 underline hover:no-underline"
+              className="mt-3 text-sm text-red-text underline hover:no-underline"
             >
               Tentar novamente
             </button>
@@ -266,28 +283,28 @@ export function CardPaymentBrick({
     <div className="relative">
       {/* Loading State */}
       {status === "loading" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-10 rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center bg-surface/80 z-10 rounded-lg">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-6 h-6 animate-spin text-primary-green" />
-            <span className="text-sm text-gray-500">Carregando formulário seguro...</span>
+            <span className="text-sm text-muted">Carregando formulário seguro...</span>
           </div>
         </div>
       )}
 
       {/* Processing State */}
       {status === "processing" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/90 z-10 rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center bg-surface/90 z-10 rounded-lg">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-primary-green" />
-            <span className="text-sm font-medium text-gray-700">Processando pagamento...</span>
-            <span className="text-xs text-gray-500">Não feche esta página</span>
+            <span className="text-sm font-medium text-default">Processando pagamento...</span>
+            <span className="text-xs text-muted">Não feche esta página</span>
           </div>
         </div>
       )}
 
       {/* Disabled Overlay */}
       {disabled && (
-        <div className="absolute inset-0 bg-gray-100/80 z-10 rounded-lg cursor-not-allowed" />
+        <div className="absolute inset-0 bg-gray-bg/80 z-10 rounded-lg cursor-not-allowed" />
       )}
 
       {/* Brick Container */}
@@ -298,7 +315,7 @@ export function CardPaymentBrick({
       />
 
       {/* Security Badge */}
-      <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
+      <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted">
         <ShieldCheck className="w-4 h-4" />
         <span>Pagamento seguro via Mercado Pago</span>
       </div>

@@ -171,7 +171,7 @@ export function PixWaitingStep({
   // Render: Payment approved
   if (status === "approved") {
     return (
-      <div className="bg-surface rounded-xl shadow-sm p-8">
+      <div className="bg-surface rounded-xl shadow-sm p-6">
         <div className="flex flex-col items-center text-center space-y-4">
           <div className="w-20 h-20 bg-green-bg rounded-full flex items-center justify-center">
             <CheckCircle className="w-10 h-10 text-green-text" />
