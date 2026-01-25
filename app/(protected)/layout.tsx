@@ -32,9 +32,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
       {/* Main Content */}
       <main className="flex-1 flex flex-col">
         {/* Subscription Banner */}
-        <div className="container-main py-4">
-          <ConditionalSubscriptionBanner />
-        </div>
+        <ConditionalSubscriptionBanner />
 
         {/* Page Content */}
         <div className="container-main page-wrapper flex-1">

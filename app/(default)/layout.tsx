@@ -33,9 +33,7 @@ export default function DefaultLayout({ children }: DefaultLayoutProps) {
       {/* Main Content */}
       <main className="flex-1 flex flex-col">
         {/* Subscription Banner */}
-        {/* <div className="container-main py-4"> */}
         <ConditionalSubscriptionBanner />
-        {/* </div> */}
 
         {/* Page Content - Children responsibility for internal spacing */}
         <div className="container-main page-wrapper flex-1">
