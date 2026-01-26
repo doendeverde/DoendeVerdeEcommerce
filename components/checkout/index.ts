@@ -26,5 +26,8 @@ export { PendingPixAlert } from "./PendingPixAlert";
 export { ShippingCalculator } from "./ShippingCalculator";
 export { ShippingSelector } from "./ShippingSelector";
 
+// Cart Utilities
+export { ClearCartOnMount } from "./ClearCartOnMount";
+
 // Subscription Checkout Components
 export * from "./subscription";

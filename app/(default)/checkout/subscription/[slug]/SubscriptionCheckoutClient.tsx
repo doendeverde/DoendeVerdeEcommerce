@@ -87,6 +87,11 @@ export function SubscriptionCheckoutClient({ data }: SubscriptionCheckoutClientP
   const [orderId, setOrderId] = useState<string | null>(null);
   const [isRegeneratingPix, setIsRegeneratingPix] = useState(false);
 
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentStep]);
+
   // Handler para continuar com PIX pendente recuperado do backend
   const handleContinueWithPendingPix = useCallback(() => {
     if (pendingPixData) {

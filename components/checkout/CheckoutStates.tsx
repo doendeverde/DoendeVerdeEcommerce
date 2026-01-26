@@ -9,6 +9,7 @@
 
 import { useRouter } from "next/navigation";
 import { Loader2, Check, AlertCircle, Package, ShoppingBag } from "lucide-react";
+import { ClearCartOnMount } from "./ClearCartOnMount";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Processing State
@@ -71,6 +72,8 @@ export function GenericSuccessState({
 
   return (
     <div className="bg-surface rounded-2xl shadow-sm p-8 text-center">
+      {/* Limpa o carrinho automaticamente após checkout bem-sucedido */}
+      <ClearCartOnMount />
       <div className="w-16 h-16 bg-green-bg rounded-full flex items-center justify-center mx-auto mb-4">
         <IconComponent className="w-8 h-8 text-primary-green" />
       </div>

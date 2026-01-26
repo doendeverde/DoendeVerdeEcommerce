@@ -6,6 +6,14 @@
  * - Featured products from database
  * - Category quick links
  * - Search CTA
+ * 
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * CACHE STRATEGY: ISR (Incremental Static Regeneration)
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * - Revalidate a cada 5 minutos (mesma estratégia que /products)
+ * - Garante que produtos novos apareçam na home em até 5min
+ * - Mantém performance com cache + freshness automática
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
 import Link from 'next/link';
@@ -14,6 +22,9 @@ import { productService } from '@/services';
 import { ProductGrid, CategoryGrid, SearchBar, CategoryChips } from '@/components/products';
 import { GuestCTASection } from '@/components/layout/GuestCTASection';
 import type { CategoryItem, ProductFilters } from '@/types/product';
+
+// ISR: Revalidate home page every 5 minutes (same as /products)
+export const revalidate = 300;
 
 export default async function HomePage() {
   // Toggle hero section visibility

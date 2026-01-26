@@ -9,8 +9,8 @@
 
 | Categoria | Total | Concluído | Em Progresso | Pendente |
 |-----------|-------|-----------|--------------|----------|
-| Checkout | 8 | 2 | 1 | 5 |
-| Carrinho | 6 | 1 | 0 | 5 |
+| Checkout | 8 | 5 | 1 | 2 |
+| Carrinho | 6 | 2 | 0 | 4 |
 | Autenticação | 6 | 2 | 0 | 4 |
 | Assinaturas | 4 | 3 | 0 | 1 |
 | UI/UX | 9 | 1 | 0 | 8 |
@@ -46,9 +46,9 @@
 
 | # | Task | Descrição | Arquivos Relacionados |
 |---|------|-----------|----------------------|
-| 1 | Preencher email automaticamente no cartão MP | Email do cliente deve preencher automaticamente no formulário de cartão | `components/checkout/CreditCardForm.tsx` |
-| 2 | Subir scroll na tela de checkout | Ao entrar no checkout, scroll deve ir para o topo | `app/(default)/checkout/page.tsx` |
-| 3 | Bug cartão crédito → débito | Limpar dados ao trocar entre métodos de pagamento | `components/checkout/PaymentSection.tsx` |
+| ~~1~~ | ~~Preencher email automaticamente no cartão MP~~ | ✅ Já implementado - email passa via props até CardPaymentBrick | `components/checkout/CardPaymentBrick.tsx` |
+| ~~2~~ | ~~Subir scroll na tela de checkout~~ | ✅ Implementado via useEffect em ambos checkouts | `ProductCheckoutClient.tsx`, `SubscriptionCheckoutClient.tsx` |
+| ~~3~~ | ~~Bug cartão crédito → débito~~ | ✅ Reseta cardSubmitted ao trocar método | `components/checkout/subscription/PaymentStep.tsx` |
 | 4 | Atualizar status PIX via webhook | Quando webhook confirmar pagamento, atualizar status em tempo real | `app/api/webhooks/mercadopago/route.ts` |
 | 5 | Gravar tipo de frete no pedido | Salvar método, valor e prazo de entrega no pedido | `services/checkout.service.ts`, `prisma/schema.prisma` |
 
@@ -69,7 +69,7 @@
 | 3 | Recuperação de carrinho se alterar valor | Detectar alteração de preço e avisar usuário | `services/cart.service.ts` |
 | 4 | Carrinho não aparecer na tela | Ao adicionar ao carrinho, mostrar apenas popup, não abrir drawer | `components/cart/AddToCartButton.tsx` |
 | 5 | **Carrinho deslogado (guest cart)** | Permitir adicionar items ao carrinho sem login, usando localStorage. Ao logar, fazer merge do carrinho local com o do banco | `stores/cart.ts`, `services/cart.service.ts`, `hooks/useCart.ts` |
-| 6 | **Limpar carrinho após compra** | Esvaziar carrinho automaticamente após pedido finalizado com sucesso | `services/checkout.service.ts`, `stores/cart.ts` |
+| ~~6~~ | ~~**Limpar carrinho após compra**~~ | ✅ Implementado via ClearCartOnMount na página de sucesso | `components/checkout/ClearCartOnMount.tsx`, `checkout/payment/success/page.tsx` |
 
 ---
 

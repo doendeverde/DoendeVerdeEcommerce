@@ -133,6 +133,11 @@ export function PaymentStep({
   // Estado local para controlar se o Brick já submeteu
   const [cardSubmitted, setCardSubmitted] = useState(false);
 
+  // Reset cardSubmitted quando o método de pagamento muda
+  useEffect(() => {
+    setCardSubmitted(false);
+  }, [selectedMethod]);
+
   // Scroll para o topo quando iniciar processamento do pagamento
   useEffect(() => {
     if (isProcessing) {

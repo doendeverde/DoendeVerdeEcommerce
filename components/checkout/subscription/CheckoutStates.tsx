@@ -8,6 +8,7 @@
 
 import { useRouter } from "next/navigation";
 import { Loader2, Check, AlertCircle } from "lucide-react";
+import { ClearCartOnMount } from "../ClearCartOnMount";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Processing State
@@ -52,6 +53,8 @@ export function SuccessState({ planName, benefits }: SuccessStateProps) {
 
   return (
     <div className="bg-surface rounded-2xl shadow-sm p-8 text-center">
+      {/* Limpa o carrinho automaticamente após assinatura bem-sucedida */}
+      <ClearCartOnMount />
       <div className="w-16 h-16 bg-green-bg rounded-full flex items-center justify-center mx-auto mb-4">
         <Check className="w-8 h-8 text-primary-green" />
       </div>

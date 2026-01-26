@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { CheckCircle2, ArrowRight, Package } from "lucide-react";
 import Link from "next/link";
+import { ClearCartOnMount } from "@/components/checkout";
 
 interface PaymentSuccessPageProps {
   searchParams: Promise<{
@@ -49,6 +50,9 @@ async function PaymentSuccessContent({ searchParams }: PaymentSuccessPageProps) 
 
   return (
     <main className="bg-page flex items-center justify-center px-4 py-12">
+      {/* Limpa o carrinho automaticamente ao entrar na página de sucesso */}
+      <ClearCartOnMount />
+
       <div className="max-w-md w-full">
         <div className="bg-surface rounded-2xl shadow-sm p-8 text-center">
           {/* Success Icon */}
