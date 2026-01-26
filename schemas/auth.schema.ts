@@ -53,9 +53,9 @@ export const registerSchema = z
       }, 'Você deve ter 18 anos ou mais'),
     whatsapp: z
       .string()
-      .optional()
+      .min(1, 'WhatsApp é obrigatório')
       .refine(
-        (val) => !val || /^\+?[1-9]\d{10,14}$/.test(val),
+        (val) => /^\+?[1-9]\d{10,14}$/.test(val),
         'WhatsApp inválido (formato: +5511999999999)'
       ),
     acceptTerms: z

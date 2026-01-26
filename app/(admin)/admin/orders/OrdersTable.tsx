@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search, ShoppingCart, Eye } from "lucide-react";
@@ -56,6 +56,11 @@ export function OrdersTable({ orders, pagination, filters }: OrdersTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(filters.search);
+
+  // Sync local search state with filters from URL
+  useEffect(() => {
+    setSearch(filters.search);
+  }, [filters.search]);
 
   const updateFilters = (updates: Record<string, string>) => {
     const params = new URLSearchParams(searchParams.toString());

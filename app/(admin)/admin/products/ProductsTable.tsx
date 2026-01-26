@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -83,6 +83,11 @@ export function ProductsTable({
 
   const [search, setSearch] = useState(filters.search);
   const [showFilters, setShowFilters] = useState(false);
+
+  // Sync local search state with filters from URL
+  useEffect(() => {
+    setSearch(filters.search);
+  }, [filters.search]);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   // Update URL with filters

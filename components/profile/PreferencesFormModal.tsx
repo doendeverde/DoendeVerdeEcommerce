@@ -195,7 +195,7 @@ export function PreferencesFormModal({
         <div className="p-6 space-y-6">
           {/* Consumption Section */}
           <section className="space-y-4">
-            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Sobre seu consumo</h3>
+            <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Sobre seu consumo</h3>
 
             {/* Frequency */}
             <div>
@@ -264,7 +264,7 @@ export function PreferencesFormModal({
 
           {/* What You Consume */}
           <section className="space-y-4">
-            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">O que você consome?</h3>
+            <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">O que você consome?</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {CONSUMPTION_TYPES.map((item) => (
                 <label
@@ -288,7 +288,7 @@ export function PreferencesFormModal({
 
           {/* Paper Preferences */}
           <section className="space-y-4">
-            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Preferências de seda</h3>
+            <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Preferências de seda</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-text-secondary mb-2">
@@ -353,7 +353,7 @@ export function PreferencesFormModal({
 
           {/* Glass Filter */}
           <section className="space-y-4">
-            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Piteira de vidro</h3>
+            <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Piteira de vidro</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-text-secondary mb-2">
@@ -397,7 +397,7 @@ export function PreferencesFormModal({
 
           {/* Tobacco */}
           <section className="space-y-4">
-            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Tabaco</h3>
+            <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Tabaco</h3>
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-2">
                 Você usa tabaco?
@@ -419,7 +419,7 @@ export function PreferencesFormModal({
 
           {/* Interests */}
           <section className="space-y-4">
-            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Seus interesses</h3>
+            <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Seus interesses</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {INTERESTS.map((item) => (
                 <label
@@ -443,7 +443,7 @@ export function PreferencesFormModal({
 
           {/* Colors */}
           <section className="space-y-4">
-            <h3 className="font-medium text-text-primary border-b border-gray-border pb-2">Cores favoritas</h3>
+            <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Cores favoritas</h3>
             <div className="flex flex-wrap gap-2">
               {FAVORITE_COLORS.map((color) => {
                 const isSelected = form.favoriteColors.includes(color.toLowerCase());

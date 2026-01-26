@@ -10,15 +10,15 @@
 | Categoria | Total | Concluído | Em Progresso | Pendente |
 |-----------|-------|-----------|--------------|----------|
 | Checkout | 8 | 5 | 1 | 2 |
-| Carrinho | 6 | 2 | 0 | 4 |
-| Autenticação | 6 | 2 | 0 | 4 |
+| Carrinho | 6 | 3 | 0 | 3 |
+| Autenticação | 6 | 5 | 0 | 1 |
 | Assinaturas | 4 | 3 | 0 | 1 |
-| UI/UX | 9 | 1 | 0 | 8 |
+| UI/UX | 10 | 3 | 0 | 7 |
 | Admin | 4 | 2 | 0 | 2 |
 | Admin Usuários | 3 | 0 | 0 | 3 |
-| Sistema | 8 | 0 | 0 | 8 |
+| Sistema | 8 | 2 | 0 | 6 |
 | User Preferences | 11 | 0 | 0 | 11 |
-| Entrega/Frete | 3 | 0 | 0 | 3 |
+| Entrega/Frete | 3 | 1 | 0 | 2 |
 
 ---
 
@@ -65,11 +65,11 @@
 | # | Task | Descrição | Arquivos Relacionados |
 |---|------|-----------|----------------------|
 | 1 | Remover/adicionar items persistido | Operações devem ser persistidas corretamente | `stores/cart.ts`, `services/cart.service.ts` |
-| 2 | Cart validation failed - redirect | Redirecionar para cart/home quando dados inválidos | `app/(default)/checkout/page.tsx` |
+| ~~2~~ | ~~Cart validation failed - redirect~~ | ✅ Implementado - Mostra toast e redireciona para products | `app/(default)/checkout/page.tsx`, `ProductCatalog.tsx` |
 | 3 | Recuperação de carrinho se alterar valor | Detectar alteração de preço e avisar usuário | `services/cart.service.ts` |
 | 4 | Carrinho não aparecer na tela | Ao adicionar ao carrinho, mostrar apenas popup, não abrir drawer | `components/cart/AddToCartButton.tsx` |
 | 5 | **Carrinho deslogado (guest cart)** | Permitir adicionar items ao carrinho sem login, usando localStorage. Ao logar, fazer merge do carrinho local com o do banco | `stores/cart.ts`, `services/cart.service.ts`, `hooks/useCart.ts` |
-| ~~6~~ | ~~**Limpar carrinho após compra**~~ | ✅ Implementado via ClearCartOnMount na página de sucesso | `components/checkout/ClearCartOnMount.tsx`, `checkout/payment/success/page.tsx` |
+| ~~6~~ | ~~**Limpar carrinho após compra**~~ | ✅ Implementado via ClearCartOnMount na página de sucesso | `components/checkout/ClearCartOnMount.tsx`, `checkout/payment/success/page.tsx` | |
 
 ---
 
@@ -86,9 +86,9 @@
 |---|------|-----------|----------------------|
 | 1 | Recuperação de senha via email | Fluxo completo de reset password | `app/api/auth/forgot-password/route.ts` (criar) |
 | 2 | Clicar em "Entrar" deslogado abre aba errada | Deve abrir modal de login, não aba separada | `components/layout/Header.tsx` |
-| 3 | Logout redireciona para localhost:3000 | Corrigir URL de redirect após logout | `lib/auth.ts` |
+| ~~3~~ | ~~Logout redireciona para localhost:3000~~ | ✅ Corrigido - Usa window.location.origin | `components/layout/UserDropdown.tsx` |
 | 4 | Verificação de email | Fluxo de confirmação de email | `app/api/auth/verify-email/route.ts` (criar) |
-| 5 | **WhatsApp obrigatório no cadastro** | Tornar campo de WhatsApp obrigatório no registro de usuário | `schemas/auth.schema.ts`, `app/api/register/route.ts`, `components/auth/RegisterForm.tsx`, `prisma/schema.prisma` |
+| ~~5~~ | ~~**WhatsApp obrigatório no cadastro**~~ | ✅ Campo WhatsApp agora obrigatório no registro | `schemas/auth.schema.ts`, `components/auth/RegisterForm.tsx` |
 | 6 | **Corrigir recuperar senha** | Revisar e corrigir fluxo completo de recuperação de senha | `app/(auth)/forgot-password/`, `lib/auth.ts`, `lib/email.ts` |
 
 ---
@@ -120,13 +120,14 @@
 
 | # | Task | Descrição | Arquivos Relacionados |
 |---|------|-----------|----------------------|
-| 1 | Popup "mais do produto" no admin | Último item fica dentro de scroll | `components/admin/products/ProductActions.tsx` |
-| 2 | Dark mode | Implementar tema escuro completo | `app/globals.css`, `docs/THEME_SYSTEM.md` |
-| 3 | Exibição de pedidos no mobile | Ajustar layout responsivo | `app/(protected)/orders/page.tsx` |
-| 4 | Remover caminho /dashboard errado | Corrigir redirects para dashboard | `middleware.ts` |
-| 5 | Corrigir redirect para /cart | Verificar redirects após ações | `middleware.ts` |
-| 6 | Comentar código de pontuação | Ocultar features de pontos não implementadas | Vários arquivos |
-| 7 | Títulos em preferências grifados em roxo | Estilizar títulos das preferências com cor roxa padrão | `components/profile/PreferencesForm.tsx` |
+| ~~1~~ | ~~**Barras de pesquisa bugando**~~ | ✅ Corrigido debounce com refs estáveis + sync de estado | `components/products/SearchBar.tsx`, `app/(admin)/admin/*Table.tsx` |
+| 2 | Popup "mais do produto" no admin | Último item fica dentro de scroll | `components/admin/products/ProductActions.tsx` |
+| 3 | Dark mode | Implementar tema escuro completo | `app/globals.css`, `docs/THEME_SYSTEM.md` |
+| 4 | Exibição de pedidos no mobile | Ajustar layout responsivo | `app/(protected)/orders/page.tsx` |
+| 5 | Remover caminho /dashboard errado | Corrigir redirects para dashboard | `middleware.ts` |
+| 6 | Corrigir redirect para /cart | Verificar redirects após ações | `middleware.ts` |
+| 7 | Comentar código de pontuação | Ocultar features de pontos não implementadas | Vários arquivos |
+| ~~8~~ | ~~Títulos em preferências grifados em roxo~~ | ✅ Títulos estilizados com `text-primary-purple` | `components/profile/PreferencesFormModal.tsx`, `PreferencesStep.tsx` |
 
 ---
 
@@ -157,9 +158,9 @@
 | 3 | Validação HMAC Webhook MP | Verificar assinatura do webhook | `app/api/webhooks/mercadopago/route.ts` |
 | 4 | Soft Delete | Implementar exclusão lógica | `prisma/schema.prisma` |
 | 5 | Testes automatizados | Configurar Jest/Vitest | `__tests__/` (criar) |
-| 6 | Callback URL correto no login | Corrigir callbackUrl principalmente no fluxo de login | `lib/auth.ts`, `components/auth/LoginForm.tsx` |
-| 7 | Remover validação máximo 100 anos | Remover limite de 100 anos e melhorar tratativa de erro | `schemas/auth.schema.ts` |
-| 8 | Limpar carrinho após compra | Esvaziar carrinho após finalizar pedido com sucesso | `services/checkout.service.ts`, `stores/cart.ts` |
+| ~~6~~ | ~~Callback URL correto no login~~ | ✅ Corrigido - Usa prop/searchParams corretamente | `components/auth/LoginForm.tsx` |
+| ~~7~~ | ~~Remover validação máximo 100 anos~~ | ✅ Removido limite de 100 anos no campo yearsSmoking | `components/checkout/subscription/PreferencesStep.tsx` |
+| ~~8~~ | ~~Limpar carrinho após compra~~ | ✅ Esvaziar carrinho após finalizar pedido com sucesso | `components/checkout/CheckoutStates.tsx`, `ClearCartOnMount.tsx` |
 
 ---
 
@@ -230,7 +231,7 @@
 
 | # | Task | Descrição | Arquivos Relacionados |
 |---|------|-----------|----------------------|
-| 1 | Configurar transportadoras | Deixar apenas: Loggi Express, Correios SEDEX, Correios PAC | `services/shipping.service.ts` |
+| ~~1~~ | ~~Configurar transportadoras~~ | ✅ Filtrado para: Loggi Express, Correios SEDEX, Correios PAC | `services/shipping.service.ts` |
 | 2 | Frete fixo assinatura | Definir valor fixo de frete para assinaturas recorrentes | `services/subscription.service.ts` |
 | 3 | Medidas no produto | Dimensões (peso, altura, largura, comprimento) devem vir do produto, não do perfil | `prisma/schema.prisma`, `services/shipping.service.ts` |
 
@@ -259,11 +260,11 @@
 2. **Ajustar opções de momento de consumo**
 3. **Adicionar campos de marca favorita e marca que não usa**
 4. **Corrigir nomenclaturas (piteira, tamanhos)**
-5. **Títulos grifados em roxo**
+5. ~~**Títulos grifados em roxo**~~ ✅
 
 ### Sprint Frete & Entrega
 
-1. **Configurar transportadoras corretas** - Loggi, SEDEX, PAC
+1. ~~**Configurar transportadoras corretas**~~ ✅ Loggi, SEDEX, PAC
 2. **Medidas no produto** - Não no perfil de frete
 3. **Frete fixo para assinaturas**
 
@@ -277,18 +278,19 @@
 |-------|------|---------|
 | 1 | Bug PIX não aprovando em produção | Usuários não conseguem pagar |
 | 2 | Bug ao clicar em "Pagar" | Checkout quebrado |
-| 3 | Callback URL no login | Fluxo de auth quebrado |
-| 4 | Logout redireciona para localhost | UX ruim em produção |
+| ~~3~~ | ~~Callback URL no login~~ | ✅ Fluxo de auth funcionando |
+| ~~4~~ | ~~Logout redireciona para localhost~~ | ✅ Corrigido com window.location.origin |
 
 ### 🟠 ALTA (Próximos 3 dias)
 
 | Ordem | Task | Impacto |
 |-------|------|---------|
-| 1 | Preencher email automaticamente MP | Melhor UX |
-| 2 | Bug cartão → débito | Dados inconsistentes |
-| 3 | Limpar carrinho após compra | Dados residuais |
-| 4 | Cart validation redirect | Erros não tratados |
-| 5 | Scroll topo checkout | UX ruim |
+| ~~1~~ | ~~**Barras de pesquisa bugando**~~ | ✅ Corrigido - refs estáveis para debounce |
+| ~~2~~ | ~~Preencher email automaticamente MP~~ | ✅ Já implementado |
+| ~~3~~ | ~~Bug cartão → débito~~ | ✅ Dados consistentes |
+| ~~4~~ | ~~Limpar carrinho após compra~~ | ✅ Sem dados residuais |
+| ~~5~~ | ~~Cart validation redirect~~ | ✅ Erros tratados com toast |
+| ~~6~~ | ~~Scroll topo checkout~~ | ✅ UX melhorada |
 
 ### 🟡 MÉDIA (Próxima semana)
 
@@ -296,8 +298,8 @@
 |-------|------|---------|
 | 1 | Recuperação de senha | Feature essencial |
 | 2 | Carrinho deslogado (guest cart) | Conversão de vendas |
-| 3 | WhatsApp obrigatório cadastro | Dados incompletos |
-| 4 | Configurar transportadoras | Frete incorreto |
+| ~~3~~ | ~~WhatsApp obrigatório cadastro~~ | ✅ Campo agora obrigatório |
+| ~~4~~ | ~~Configurar transportadoras~~ | ✅ Filtrado para Loggi, SEDEX, PAC |
 | 5 | User Preferences - todos os ajustes | Personalização |
 
 ### 🟢 BAIXA (Próximas 2 semanas)
@@ -308,7 +310,7 @@
 | 2 | Exibição pedidos mobile | UX mobile |
 | 3 | Comentar código pontuação | Limpeza de código |
 | 4 | Popup admin scroll | Bug visual menor |
-| 5 | Títulos roxos preferências | Estética |
+| ~~5~~ | ~~Títulos roxos preferências~~ | ✅ Estilizado com primary-purple |
 
 ---
 

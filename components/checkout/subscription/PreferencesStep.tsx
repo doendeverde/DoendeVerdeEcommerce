@@ -273,7 +273,7 @@ function ConsumptionSection({
 }: SectionProps & { onMomentToggle: (moment: ConsumptionMoment, checked: boolean) => void }) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-default border-b border-default pb-2">Sobre seu consumo</h3>
+      <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Sobre seu consumo</h3>
 
       {/* Consumption Frequency */}
       <div>
@@ -329,25 +329,15 @@ function ConsumptionSection({
         <input
           type="number"
           min="0"
-          max="100"
           value={form.yearsSmoking ?? ""}
           onChange={(e) => {
             const value = e.target.value ? parseInt(e.target.value) : null;
             onChange("yearsSmoking", value);
           }}
           placeholder="Ex: 5"
-          className={`input-default ${form.yearsSmoking !== null && form.yearsSmoking > 100
-            ? "!border-red-border !bg-red-bg"
-            : ""
-            }`}
+          className="input-default"
         />
-        {form.yearsSmoking !== null && form.yearsSmoking > 100 ? (
-          <p className="text-sm text-red-600 mt-1">
-            🤣 Você nem tem 100 anos, como assim você fuma a mais de 100 anos??? Tá chapando kkkk
-          </p>
-        ) : (
-          <p className="text-xs text-muted mt-1">Máximo 100 anos</p>
-        )}
+        <p className="text-xs text-muted mt-1">Opcional - nos ajuda a personalizar sua experiência</p>
       </div>
     </div>
   );
@@ -356,7 +346,7 @@ function ConsumptionSection({
 function WhatYouConsumeSection({ form, onChange }: SectionProps) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-default border-b border-default pb-2">O que você consome?</h3>
+      <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">O que você consome?</h3>
       <div className="grid grid-cols-2 gap-2">
         {CONSUMPTION_TYPES.map((item) => (
           <label
@@ -383,7 +373,7 @@ function WhatYouConsumeSection({ form, onChange }: SectionProps) {
 function PaperPreferencesSection({ form, onChange }: SectionProps) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-default border-b border-default pb-2">Preferências de seda</h3>
+      <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Preferências de seda</h3>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -452,7 +442,7 @@ function PaperPreferencesSection({ form, onChange }: SectionProps) {
 function GlassFilterSection({ form, onChange }: SectionProps) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-default border-b border-default pb-2">Piteira de vidro</h3>
+      <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Piteira de vidro</h3>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -500,7 +490,7 @@ function GlassFilterSection({ form, onChange }: SectionProps) {
 function TobaccoSection({ form, onChange }: SectionProps) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-default border-b border-default pb-2">Tabaco</h3>
+      <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Tabaco</h3>
       <div>
         <label className="block text-sm font-medium text-muted mb-2">
           Você usa tabaco?
@@ -525,7 +515,7 @@ function TobaccoSection({ form, onChange }: SectionProps) {
 function InterestsSection({ form, onChange }: SectionProps) {
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-default border-b border-default pb-2">Seus interesses</h3>
+      <h3 className="font-medium text-primary-purple border-b border-primary-purple/30 pb-2">Seus interesses</h3>
       <div className="grid grid-cols-1 gap-2">
         {INTERESTS.map((item) => (
           <label

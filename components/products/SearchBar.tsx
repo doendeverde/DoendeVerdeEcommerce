@@ -3,12 +3,15 @@
  *
  * Campo de busca com debounce para evitar múltiplas requisições.
  * O estado local garante UX responsiva enquanto o debounce aguarda.
+ * 
+ * IMPORTANTE: Usa refs para estabilizar callbacks e evitar problemas de
+ * sincronização quando o onChange é recriado a cada render do parent.
  */
 
 'use client';
 
 import { Search, X } from 'lucide-react';
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 interface SearchBarProps {
   value: string;
@@ -29,26 +32,26 @@ export function SearchBar({
   const [localValue, setLocalValue] = useState(value);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Sync local value when external value changes (e.g., URL navigation)
+  // Stable refs to avoid stale closures in debounce
+  const onChangeRef = useRef(onChange);
+  const debounceRef = useRef(debounceMs);
+
+  // Keep refs up to date
   useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
-  // Debounced onChange handler
-  const debouncedOnChange = useCallback(
-    (newValue: string) => {
-      // Clear existing timer
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
+  useEffect(() => {
+    debounceRef.current = debounceMs;
+  }, [debounceMs]);
 
-      // Set new timer
-      debounceTimerRef.current = setTimeout(() => {
-        onChange(newValue);
-      }, debounceMs);
-    },
-    [onChange, debounceMs]
-  );
+  // Sync local value when external value changes (e.g., URL navigation)
+  // Only sync if the input is not focused to avoid overwriting user input
+  useEffect(() => {
+    if (!isFocused) {
+      setLocalValue(value);
+    }
+  }, [value, isFocused]);
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -62,7 +65,16 @@ export function SearchBar({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setLocalValue(newValue); // Immediate UI update
-    debouncedOnChange(newValue); // Debounced actual change
+
+    // Clear existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Set new timer using refs for stable callback
+    debounceTimerRef.current = setTimeout(() => {
+      onChangeRef.current(newValue);
+    }, debounceRef.current);
   };
 
   const handleClear = () => {
@@ -71,7 +83,7 @@ export function SearchBar({
       clearTimeout(debounceTimerRef.current);
     }
     setLocalValue('');
-    onChange('');
+    onChangeRef.current('');
     inputRef.current?.focus();
   };
 

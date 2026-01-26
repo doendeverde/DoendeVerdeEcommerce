@@ -19,6 +19,21 @@ interface UserDropdownProps {
 }
 
 /**
+ * Helper para obter a URL base correta para logout
+ * Usa window.location.origin para garantir que funciona em qualquer ambiente
+ */
+function getLogoutCallbackUrl(): string {
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+  return "/";
+}
+
+interface UserDropdownProps {
+  className?: string;
+}
+
+/**
  * User avatar with dropdown menu
  * Shows user info, navigation links, and logout
  */
@@ -145,7 +160,7 @@ export function UserDropdown({ className }: UserDropdownProps) {
           {/* Logout */}
           <div className="border-t border-gray-border pt-2">
             <button
-              onClick={() => signOut({ callbackUrl: "/" })}
+              onClick={() => signOut({ callbackUrl: getLogoutCallbackUrl() })}
               className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-text hover:bg-error-bg transition-colors"
             >
               <LogOut className="w-4 h-4" />

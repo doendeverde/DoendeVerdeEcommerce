@@ -37,6 +37,16 @@ const CONFIG = {
   MIN_SHIPPING_PRICE: 15.0,
   /** Usar API externa ou fallback fixo */
   USE_EXTERNAL_API: process.env.SHIPPING_USE_EXTERNAL_API === "true",
+  /**
+   * Transportadoras/Serviços permitidos
+   * Formato: "NomeTransportadora ServiceName" (case insensitive, partial match)
+   * Ex: "Loggi Express", "Correios PAC", "Correios SEDEX"
+   */
+  ALLOWED_SERVICES: [
+    { carrier: "loggi", service: "express" },      // Loggi Express
+    { carrier: "correios", service: "pac" },       // Correios PAC
+    { carrier: "correios", service: "sedex" },     // Correios SEDEX (não Mini ou outros)
+  ],
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -166,6 +176,31 @@ function addFreeShipping(options: ShippingOption[], isAdmin: boolean = false): S
   
   logSuccess(`✅ Opção de frete grátis adicionada (${label} MODE)`);
   return [freeShippingOption, ...options];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Service Filter
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Check if a shipping service is in the allowed list
+ * Uses case-insensitive partial match for flexibility
+ */
+function isAllowedService(carrierName: string, serviceName: string): boolean {
+  const carrier = carrierName.toLowerCase();
+  const service = serviceName.toLowerCase();
+  
+  return CONFIG.ALLOWED_SERVICES.some(allowed => {
+    const matchesCarrier = carrier.includes(allowed.carrier);
+    const matchesService = service.includes(allowed.service);
+    // Must match both carrier AND service
+    // Exception: if service is exactly "SEDEX", don't match "SEDEX Mini" etc
+    if (allowed.service === "sedex") {
+      // Only match "SEDEX" exactly (not SEDEX Mini, SEDEX 10, etc)
+      return matchesCarrier && (service === "sedex" || service === ".package");
+    }
+    return matchesCarrier && matchesService;
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -459,10 +494,24 @@ async function fetchMelhorEnvioQuotes(
     });
 
     // Transform to our format and filter valid options
+    // Step 1: Filter out errors and zero prices
     const validOptions = data
       .filter((item) => !item.error && parseFloat(item.price) > 0);
+    
+    // Step 2: Filter to only allowed carriers/services
+    const allowedOptions = validOptions
+      .filter((item) => isAllowedService(item.company?.name || "", item.name));
 
-    logStep(`Opções válidas após filtro: ${validOptions.length} de ${data.length}`);
+    logStep(`Opções válidas: ${validOptions.length}, Permitidas: ${allowedOptions.length} de ${data.length} total`);
+    
+    if (validOptions.length > 0 && allowedOptions.length === 0) {
+      logError("Nenhuma opção entre as permitidas (Loggi Express, Correios PAC, Correios SEDEX)", 
+        validOptions.map(item => ({
+          transportadora: item.company?.name,
+          serviço: item.name,
+        }))
+      );
+    }
     
     if (data.length > 0 && validOptions.length === 0) {
       logError("Todas as opções retornaram erro ou preço zerado", 
@@ -473,7 +522,7 @@ async function fetchMelhorEnvioQuotes(
       );
     }
 
-    return validOptions
+    return allowedOptions
       .map((item, index) => ({
         id: `melhor_envio_${item.id}`,
         carrier: item.company.name,

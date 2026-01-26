@@ -201,13 +201,13 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
 
       <div>
         <label htmlFor="whatsapp" className="block text-sm font-medium mb-1">
-          WhatsApp <span className="text-gray-500 text-xs">(opcional)</span>
+          WhatsApp *
         </label>
         <input
           id="whatsapp"
           name="whatsapp"
           type="tel"
-          placeholder="(11) 99999-9999"
+          placeholder="+5511999999999"
           value={formData.whatsapp}
           onChange={handleChange}
           className={`w-full px-3 py-2 border rounded-md bg-card-bg focus:outline-none focus:ring-2 ${errors.whatsapp
