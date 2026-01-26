@@ -23,12 +23,15 @@ console.log("━━━━━━━━━━━━━━━━━━━━━━�
 const nextConfig: NextConfig = {
   env: mercadoPagoEnv,
   images: {
+    // Aceitar imagens de qualquer host
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
+        hostname: '**',
+      },
+      {
+        protocol: 'http',
+        hostname: '**',
       },
     ],
   },

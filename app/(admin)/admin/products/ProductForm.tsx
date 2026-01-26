@@ -5,16 +5,15 @@ import { useRouter } from "next/navigation";
 import {
   Save,
   Loader2,
-  Upload,
   X,
   Plus,
   Image as ImageIcon,
-  GripVertical,
   Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProductStatus } from "@prisma/client";
 import { ShippingProfileSelector } from "@/components/admin/shipping";
+import { CloudinaryUpload } from "@/components/ui/CloudinaryUpload";
 
 interface Category {
   id: string;
@@ -134,6 +133,18 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
     setNewImageUrl("");
   };
 
+  const handleCloudinaryUpload = (url: string) => {
+    const newImage: ProductImage = {
+      id: `temp-${Date.now()}`,
+      url: url,
+      altText: null,
+      displayOrder: images.length,
+      isPrimary: images.length === 0,
+    };
+
+    setImages((prev) => [...prev, newImage]);
+  };
+
   const removeImage = (id: string) => {
     setImages((prev) => {
       const filtered = prev.filter((img) => img.id !== id);
@@ -201,7 +212,24 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Erro ao salvar produto");
+        // Log para debug no console do navegador
+        console.error("[ProductForm] Erro da API:", data);
+        console.error("[ProductForm] Payload enviado:", payload);
+
+        // Montar mensagem de erro detalhada
+        let errorMessage = data.error || "Erro ao salvar produto";
+        if (data.message) {
+          errorMessage += `: ${data.message}`;
+        }
+        if (data.details && Array.isArray(data.details)) {
+          const detailsStr = data.details
+            .map((d: any) => `${d.path?.join('.') || 'campo'}: ${d.message}`)
+            .join('; ');
+          if (detailsStr) {
+            errorMessage += ` (${detailsStr})`;
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       router.push("/admin/products");
@@ -400,25 +428,43 @@ export function ProductForm({ product, categories, isEditing }: ProductFormProps
             )}
 
             {/* Add image by URL */}
-            <div className="flex gap-2">
-              <input
-                type="url"
-                value={newImageUrl}
-                onChange={(e) => setNewImageUrl(e.target.value)}
-                placeholder="Cole a URL da imagem"
-                className="flex-1 px-3 py-2 border border-gray-border rounded-lg focus:ring-2 focus:ring-primary-purple/20 focus:border-primary-purple"
+            <div className="space-y-3">
+              {/* Upload via Cloudinary */}
+              <CloudinaryUpload
+                onUpload={handleCloudinaryUpload}
+                folder="products"
+                multiple={true}
               />
-              <button
-                type="button"
-                onClick={addImage}
-                className="px-4 py-2 bg-gray-bg text-text-primary rounded-lg hover:bg-gray-border transition-colors flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Adicionar
-              </button>
+
+              {/* Separator */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1 h-px bg-gray-border"></div>
+                <span className="text-xs text-text-secondary">ou adicione por URL</span>
+                <div className="flex-1 h-px bg-gray-border"></div>
+              </div>
+
+              {/* Add by URL */}
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                  placeholder="Cole a URL da imagem"
+                  className="flex-1 px-3 py-2 border border-gray-border rounded-lg focus:ring-2 focus:ring-primary-purple/20 focus:border-primary-purple"
+                />
+                <button
+                  type="button"
+                  onClick={addImage}
+                  disabled={!newImageUrl.trim()}
+                  className="px-4 py-2 bg-gray-bg text-text-primary rounded-lg hover:bg-gray-border transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Plus className="w-4 h-4" />
+                  Adicionar
+                </button>
+              </div>
             </div>
             <p className="text-xs text-text-secondary">
-              Adicione imagens usando URLs. A primeira imagem ou a marcada com estrela será a principal.
+              Faça upload de imagens ou cole URLs. A primeira imagem ou a marcada com estrela será a principal.
             </p>
           </div>
         </div>

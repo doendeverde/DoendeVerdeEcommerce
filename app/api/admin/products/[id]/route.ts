@@ -16,8 +16,9 @@ const updateProductSchema = z.object({
   status: z.enum(["DRAFT", "ACTIVE", "OUT_OF_STOCK", "DISCONTINUED"]).optional(),
   isPublished: z.boolean().optional(),
   categoryId: z.string().uuid().optional(),
+  shippingProfileId: z.string().uuid().nullable().optional(),
   images: z.array(z.object({
-    url: z.string().url(),
+    url: z.string().url("URL inválida"),
     altText: z.string().nullable().optional(),
     displayOrder: z.number().int().default(0),
     isPrimary: z.boolean().default(false),
@@ -94,7 +95,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
   try {
     const body = await request.json();
+    
+    // Log detalhado para debug
+    console.log(`[PUT /api/admin/products/${id}] Payload recebido:`, JSON.stringify(body, null, 2));
+    
     const validated = updateProductSchema.parse(body);
+    
+    console.log(`[PUT /api/admin/products/${id}] Dados validados:`, JSON.stringify(validated, null, 2));
 
     // Check if product exists
     const existing = await prisma.product.findUnique({
@@ -162,14 +169,19 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json(product);
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error(`[PUT /api/admin/products/${id}] Erro de validação Zod:`, JSON.stringify(error.issues, null, 2));
       return NextResponse.json(
-        { error: "Dados inválidos", details: error.issues },
+        { 
+          error: "Dados inválidos", 
+          details: error.issues,
+          message: error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ')
+        },
         { status: 400 }
       );
     }
-    console.error("Error updating product:", error);
+    console.error(`[PUT /api/admin/products/${id}] Erro ao atualizar produto:`, error);
     return NextResponse.json(
-      { error: "Erro ao atualizar produto" },
+      { error: "Erro ao atualizar produto", details: error instanceof Error ? error.message : 'Erro desconhecido' },
       { status: 500 }
     );
   }

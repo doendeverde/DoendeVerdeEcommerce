@@ -72,3 +72,7 @@ export {
   CompactPriceDisplay,
   SavingsSummary,
 } from "./PriceDisplay";
+
+// Cloudinary
+export { CloudinaryUpload } from "./CloudinaryUpload";
+export { ProductImage } from "./ProductImage";

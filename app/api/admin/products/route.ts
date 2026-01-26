@@ -16,6 +16,7 @@ const createProductSchema = z.object({
   status: z.enum(["DRAFT", "ACTIVE", "OUT_OF_STOCK", "DISCONTINUED"]).default("DRAFT"),
   isPublished: z.boolean().default(false),
   categoryId: z.string().uuid("Categoria inválida"),
+  shippingProfileId: z.string().uuid().nullable().optional(),
   images: z.array(z.object({
     url: z.string().url("URL inválida"),
     altText: z.string().nullable().optional(),
@@ -92,7 +93,13 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
+    
+    // Log detalhado para debug
+    console.log("[POST /api/admin/products] Payload recebido:", JSON.stringify(body, null, 2));
+    
     const validated = createProductSchema.parse(body);
+    
+    console.log("[POST /api/admin/products] Dados validados:", JSON.stringify(validated, null, 2));
 
     // Generate slug if not provided
     const slug = validated.slug || validated.name
@@ -147,14 +154,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error("[POST /api/admin/products] Erro de validação Zod:", JSON.stringify(error.issues, null, 2));
       return NextResponse.json(
-        { error: "Dados inválidos", details: error.issues },
+        { 
+          error: "Dados inválidos", 
+          details: error.issues,
+          message: error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ')
+        },
         { status: 400 }
       );
     }
-    console.error("Error creating product:", error);
+    console.error("[POST /api/admin/products] Erro ao criar produto:", error);
     return NextResponse.json(
-      { error: "Erro ao criar produto" },
+      { error: "Erro ao criar produto", details: error instanceof Error ? error.message : 'Erro desconhecido' },
       { status: 500 }
     );
   }
