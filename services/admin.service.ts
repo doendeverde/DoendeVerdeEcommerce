@@ -975,6 +975,30 @@ async function getUserById(id: string): Promise<UserDetail | null> {
   return user;
 }
 
+interface UserPreferencesDetail {
+  id: string;
+  yearsSmoking: number | null;
+  favoritePaperType: string | null;
+  favoritePaperSize: string | null;
+  paperFilterSize: string | null;
+  glassFilterSize: string | null;
+  glassFilterThickness: string | null;
+  favoriteColors: string[];
+  tobaccoUsage: string | null;
+  consumptionFrequency: string | null;
+  consumptionMoment: string[];
+  consumesFlower: boolean;
+  consumesSkunk: boolean;
+  consumesHash: boolean;
+  consumesExtracts: boolean;
+  consumesOilEdibles: boolean;
+  likesAccessories: boolean;
+  likesCollectibles: boolean;
+  likesPremiumItems: boolean;
+  notes: string | null;
+  updatedAt: Date;
+}
+
 interface UserFullDetail {
   id: string;
   fullName: string;
@@ -1015,6 +1039,7 @@ interface UserFullDetail {
     zipCode: string;
     isDefault: boolean;
   }[];
+  preferences: UserPreferencesDetail | null;
   totals: {
     ordersCount: number;
     totalSpent: number;
@@ -1078,6 +1103,31 @@ async function getUserFullDetails(id: string): Promise<UserFullDetail | null> {
           isDefault: true,
         },
       },
+      preferences: {
+        select: {
+          id: true,
+          yearsSmoking: true,
+          favoritePaperType: true,
+          favoritePaperSize: true,
+          paperFilterSize: true,
+          glassFilterSize: true,
+          glassFilterThickness: true,
+          favoriteColors: true,
+          tobaccoUsage: true,
+          consumptionFrequency: true,
+          consumptionMoment: true,
+          consumesFlower: true,
+          consumesSkunk: true,
+          consumesHash: true,
+          consumesExtracts: true,
+          consumesOilEdibles: true,
+          likesAccessories: true,
+          likesCollectibles: true,
+          likesPremiumItems: true,
+          notes: true,
+          updatedAt: true,
+        },
+      },
       _count: {
         select: {
           orders: true,
@@ -1127,6 +1177,7 @@ async function getUserFullDetails(id: string): Promise<UserFullDetail | null> {
       },
     })),
     addresses: user.addresses,
+    preferences: user.preferences,
     totals: {
       ordersCount: user._count.orders,
       totalSpent: totalSpent._sum?.totalAmount?.toNumber() ?? 0,

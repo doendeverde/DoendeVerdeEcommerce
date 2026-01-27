@@ -13,8 +13,7 @@ import {
   Shield,
   AlertCircle,
 } from "lucide-react";
-import { UserRoleButton } from "@/components/admin/users/UserRoleButton";
-import { UserStatusButton } from "@/components/admin/users/UserStatusButton";
+import { UserRoleButton, UserStatusButton, UserPreferencesDisplay } from "@/components/admin/users";
 
 export const dynamic = "force-dynamic";
 
@@ -150,6 +149,9 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {/* Preferências do Usuário - Importante para montagem de kits */}
+      <UserPreferencesDisplay preferences={user.preferences} />
 
       {/* Grid de Informações */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

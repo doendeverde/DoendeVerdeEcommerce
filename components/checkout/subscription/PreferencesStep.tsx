@@ -38,24 +38,24 @@ interface PreferencesStepProps {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const CONSUMPTION_MOMENTS: { value: ConsumptionMoment; label: string }[] = [
-  { value: "MORNING", label: "Manhã" },
-  { value: "AFTERNOON", label: "Tarde" },
-  { value: "NIGHT", label: "Noite" },
-  { value: "WEEKEND", label: "Final de semana" },
+  { value: "MORNING", label: "Antes/depois das refeições" },
+  { value: "AFTERNOON", label: "Antes/depois do expediente" },
+  { value: "NIGHT", label: "Para dormir" },
+  { value: "WEEKEND", label: "Para atividades do dia a dia" },
 ];
 
 const CONSUMPTION_TYPES = [
-  { field: "consumesFlower" as const, label: "Flor" },
-  { field: "consumesSkunk" as const, label: "Skunk" },
-  { field: "consumesHash" as const, label: "Hash" },
+  { field: "consumesFlower" as const, label: "Prensadinho" },
+  { field: "consumesSkunk" as const, label: "Flor/Skunk/Colom" },
+  { field: "consumesHash" as const, label: "Hash (dry, ice, meleca)" },
   { field: "consumesExtracts" as const, label: "Extratos" },
-  { field: "consumesOilEdibles" as const, label: "Óleos/Comestíveis" },
+  { field: "consumesOilEdibles" as const, label: "Óleos ou Comestíveis" },
 ];
 
 const INTERESTS = [
-  { field: "likesAccessories" as const, label: "Gosto de acessórios (dichavadores, piteiras, etc.)" },
-  { field: "likesCollectibles" as const, label: "Gosto de itens colecionáveis" },
-  { field: "likesPremiumItems" as const, label: "Prefiro itens premium" },
+  { field: "likesAccessories" as const, label: "Colecionar itens 4e20" },
+  { field: "likesCollectibles" as const, label: "Explorar novidades" },
+  { field: "likesPremiumItems" as const, label: "Ganhar itens das minhas marcas favoritas" },
 ];
 
 const FAVORITE_COLORS = ["Verde", "Preto", "Roxo", "Azul", "Vermelho", "Amarelo", "Rosa", "Branco"];
@@ -288,10 +288,10 @@ function ConsumptionSection({
           className="input-default"
         >
           <option value="">Selecione...</option>
-          <option value="OCCASIONAL">Ocasional</option>
-          <option value="WEEKLY">Semanal</option>
-          <option value="DAILY">Diário</option>
-          <option value="HEAVY">Frequente</option>
+          <option value="OCCASIONAL">Até 5 enrolados por dia</option>
+          <option value="WEEKLY">De 5 até 10 enrolados por dia</option>
+          <option value="DAILY">Acima de 10 enrolados por dia</option>
+          <option value="HEAVY">Apenas em rolês</option>
         </select>
       </div>
 
@@ -391,7 +391,7 @@ function PaperPreferencesSection({ form, onChange }: SectionProps) {
             <option value="WHITE">Branca</option>
             <option value="BROWN">Marrom</option>
             <option value="CELLULOSE">Celulose</option>
-            <option value="MIXED">Variado</option>
+            <option value="MIXED">Um pouco de cada</option>
           </select>
         </div>
 
@@ -407,18 +407,18 @@ function PaperPreferencesSection({ form, onChange }: SectionProps) {
             className="input-default"
           >
             <option value="">Selecione...</option>
-            <option value="MINI">Mini</option>
+            <option value="MINI">1 1/4 (mini size)</option>
             <option value="KING_SIZE_SLIM">King Size Slim</option>
             <option value="KING_SIZE_TRADITIONAL">King Size Tradicional</option>
-            <option value="KING_SIZE_LONG">King Size Long</option>
-            <option value="MIXED">Variado</option>
+            <option value="KING_SIZE_LONG">King Size Longa</option>
+            <option value="MIXED">Um pouco de cada</option>
           </select>
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-muted mb-2">
-          Tamanho de filtro de papel
+          Tamanho de piteira de papel
         </label>
         <select
           value={form.paperFilterSize ?? ""}
@@ -428,11 +428,11 @@ function PaperPreferencesSection({ form, onChange }: SectionProps) {
           className="input-default"
         >
           <option value="">Selecione...</option>
-          <option value="SHORT">Curto</option>
-          <option value="MEDIUM">Médio</option>
-          <option value="LONG">Longo</option>
-          <option value="ULTRA_LONG">Ultra Longo</option>
-          <option value="MIXED">Variado</option>
+          <option value="SHORT">Curta</option>
+          <option value="MEDIUM">Média</option>
+          <option value="LONG">Longa</option>
+          <option value="ULTRA_LONG">Ultra longa</option>
+          <option value="MIXED">Um pouco de cada</option>
         </select>
       </div>
     </div>
@@ -460,7 +460,7 @@ function GlassFilterSection({ form, onChange }: SectionProps) {
             <option value="SHORT">Curta (2-4cm)</option>
             <option value="MEDIUM">Média (4-6cm)</option>
             <option value="LONG">Longa (6cm+)</option>
-            <option value="MIXED">Variado</option>
+            <option value="MIXED">Um pouco de cada</option>
           </select>
         </div>
 
@@ -479,7 +479,7 @@ function GlassFilterSection({ form, onChange }: SectionProps) {
             <option value="THIN">Fina (2-4mm)</option>
             <option value="MEDIUM">Média (4-6mm)</option>
             <option value="THICK">Grossa (6mm+)</option>
-            <option value="MIXED">Variado</option>
+            <option value="MIXED">Um pouco de cada</option>
           </select>
         </div>
       </div>
@@ -503,8 +503,8 @@ function TobaccoSection({ form, onChange }: SectionProps) {
           className="input-default"
         >
           <option value="">Selecione...</option>
-          <option value="FULL_TIME">Sempre</option>
-          <option value="MIX_ONLY">Só para misturar</option>
+          <option value="FULL_TIME">Uso para tudo</option>
+          <option value="MIX_ONLY">Só para misturas</option>
           <option value="NONE">Não uso</option>
         </select>
       </div>
