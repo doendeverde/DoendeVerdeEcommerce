@@ -7,6 +7,7 @@
 
 "use client";
 
+import { useState } from "react";
 import {
   Cigarette,
   Clock,
@@ -17,6 +18,8 @@ import {
   MessageSquare,
   AlertCircle,
   Calendar,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -150,19 +153,36 @@ function getLabel(value: string | null, labels: Record<string, string>): string 
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function UserPreferencesDisplay({ preferences }: UserPreferencesDisplayProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   if (!preferences) {
     return (
-      <div className="bg-surface rounded-xl border border-default p-6">
-        <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-          <Heart className="w-5 h-5 text-primary-purple" />
-          Preferências do Usuário
-        </h2>
-        <div className="text-center py-8">
-          <AlertCircle className="w-10 h-10 text-muted mx-auto mb-2" />
-          <p className="text-text-secondary text-sm">
-            Usuário ainda não preencheu suas preferências
-          </p>
-        </div>
+      <div className="bg-surface rounded-xl border border-default overflow-hidden">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-bg/50 transition-colors"
+        >
+          <h2 className="text-xl font-semibold text-text-primary flex items-center gap-3">
+            <Heart className="w-6 h-6 text-primary-purple" />
+            Preferências do Usuário
+          </h2>
+          {isExpanded ? (
+            <ChevronUp className="w-5 h-5 text-text-secondary" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-text-secondary" />
+          )}
+        </button>
+
+        {isExpanded && (
+          <div className="px-6 pb-6">
+            <div className="text-center py-8">
+              <AlertCircle className="w-12 h-12 text-muted mx-auto mb-3" />
+              <p className="text-text-secondary text-base">
+                Usuário ainda não preencheu suas preferências
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -187,144 +207,158 @@ export function UserPreferencesDisplay({ preferences }: UserPreferencesDisplayPr
   );
 
   return (
-    <div className="bg-surface rounded-xl border border-default p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
-          <Heart className="w-5 h-5 text-primary-purple" />
+    <div className="bg-surface rounded-xl border border-default overflow-hidden">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-bg/50 transition-colors"
+      >
+        <h2 className="text-xl font-semibold text-text-primary flex items-center gap-3">
+          <Heart className="w-6 h-6 text-primary-purple" />
           Preferências do Usuário
         </h2>
-        <div className="flex items-center gap-1 text-xs text-text-secondary">
-          <Calendar className="w-3 h-3" />
-          Atualizado em {formatDate(preferences.updatedAt)}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Consumo */}
-        <PreferenceSection
-          icon={<Cigarette className="w-4 h-4" />}
-          title="Sobre o Consumo"
-          color="text-green-600"
-        >
-          <PreferenceItem
-            label="Frequência"
-            value={getLabel(preferences.consumptionFrequency, CONSUMPTION_FREQUENCY_LABELS)}
-            highlight
-          />
-          {preferences.yearsSmoking !== null && (
-            <PreferenceItem
-              label="Anos fumando"
-              value={`${preferences.yearsSmoking} ano${preferences.yearsSmoking !== 1 ? "s" : ""}`}
-            />
-          )}
-          {moments.length > 0 && (
-            <PreferenceItem label="Momentos de consumo">
-              <TagList items={moments} color="bg-green-bg text-green-text" />
-            </PreferenceItem>
-          )}
-        </PreferenceSection>
-
-        {/* O que consome */}
-        <PreferenceSection
-          icon={<Clock className="w-4 h-4" />}
-          title="O que Consome"
-          color="text-blue-600"
-        >
-          {consumptionTypes.length > 0 ? (
-            <TagList items={consumptionTypes} color="bg-blue-bg text-blue-text" />
-          ) : (
-            <span className="text-sm text-text-secondary">Não informado</span>
-          )}
-        </PreferenceSection>
-
-        {/* Seda */}
-        <PreferenceSection
-          icon={<Scroll className="w-4 h-4" />}
-          title="Preferências de Seda"
-          color="text-amber-600"
-        >
-          <PreferenceItem
-            label="Tipo de seda"
-            value={getLabel(preferences.favoritePaperType, PAPER_TYPE_LABELS)}
-          />
-          <PreferenceItem
-            label="Tamanho"
-            value={getLabel(preferences.favoritePaperSize, PAPER_SIZE_LABELS)}
-          />
-          <PreferenceItem
-            label="Tamanho piteira de papel"
-            value={getLabel(preferences.paperFilterSize, PAPER_FILTER_SIZE_LABELS)}
-          />
-        </PreferenceSection>
-
-        {/* Piteira de Vidro */}
-        <PreferenceSection
-          icon={<GlassWater className="w-4 h-4" />}
-          title="Piteira de Vidro"
-          color="text-cyan-600"
-        >
-          <PreferenceItem
-            label="Tamanho"
-            value={getLabel(preferences.glassFilterSize, GLASS_FILTER_SIZE_LABELS)}
-          />
-          <PreferenceItem
-            label="Espessura"
-            value={getLabel(preferences.glassFilterThickness, GLASS_FILTER_THICKNESS_LABELS)}
-          />
-        </PreferenceSection>
-
-        {/* Tabaco */}
-        <PreferenceSection
-          icon={<Cigarette className="w-4 h-4" />}
-          title="Uso de Tabaco"
-          color="text-orange-600"
-        >
-          <PreferenceItem
-            label="Uso"
-            value={getLabel(preferences.tobaccoUsage, TOBACCO_USAGE_LABELS)}
-            highlight={preferences.tobaccoUsage === "FULL_TIME"}
-          />
-        </PreferenceSection>
-
-        {/* Interesses */}
-        <PreferenceSection
-          icon={<Heart className="w-4 h-4" />}
-          title="Interesses"
-          color="text-pink-600"
-        >
-          {interests.length > 0 ? (
-            <TagList items={interests} color="bg-pink-bg text-pink-text" />
-          ) : (
-            <span className="text-sm text-text-secondary">Não informado</span>
-          )}
-        </PreferenceSection>
-
-        {/* Cores */}
-        {colors.length > 0 && (
-          <PreferenceSection
-            icon={<Palette className="w-4 h-4" />}
-            title="Cores Favoritas"
-            color="text-purple-600"
-          >
-            <TagList items={colors} color="bg-purple-bg text-purple-text" />
-          </PreferenceSection>
-        )}
-
-        {/* Observações */}
-        {preferences.notes && (
-          <div className="md:col-span-2">
-            <PreferenceSection
-              icon={<MessageSquare className="w-4 h-4" />}
-              title="Observações do Usuário"
-              color="text-gray-600"
-            >
-              <p className="text-sm text-text-primary bg-gray-bg p-3 rounded-lg italic">
-                &quot;{preferences.notes}&quot;
-              </p>
-            </PreferenceSection>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-sm text-text-secondary">
+            <Calendar className="w-4 h-4" />
+            Atualizado em {formatDate(preferences.updatedAt)}
           </div>
-        )}
-      </div>
+          {isExpanded ? (
+            <ChevronUp className="w-5 h-5 text-text-secondary" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-text-secondary" />
+          )}
+        </div>
+      </button>
+
+      {isExpanded && (
+        <div className="px-6 pb-6 pt-2 border-t border-default">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            {/* Consumo */}
+            <PreferenceSection
+              icon={<Cigarette className="w-5 h-5" />}
+              title="Sobre o Consumo"
+              color="text-green-600"
+            >
+              <PreferenceItem
+                label="Frequência"
+                value={getLabel(preferences.consumptionFrequency, CONSUMPTION_FREQUENCY_LABELS)}
+                highlight
+              />
+              {preferences.yearsSmoking !== null && (
+                <PreferenceItem
+                  label="Anos fumando"
+                  value={`${preferences.yearsSmoking} ano${preferences.yearsSmoking !== 1 ? "s" : ""}`}
+                />
+              )}
+              {moments.length > 0 && (
+                <PreferenceItem label="Momentos de consumo">
+                  <TagList items={moments} color="bg-green-bg text-green-text" />
+                </PreferenceItem>
+              )}
+            </PreferenceSection>
+
+            {/* O que consome */}
+            <PreferenceSection
+              icon={<Clock className="w-5 h-5" />}
+              title="O que Consome"
+              color="text-blue-600"
+            >
+              {consumptionTypes.length > 0 ? (
+                <TagList items={consumptionTypes} color="bg-blue-bg text-blue-text" />
+              ) : (
+                <span className="text-base text-text-secondary">Não informado</span>
+              )}
+            </PreferenceSection>
+
+            {/* Seda */}
+            <PreferenceSection
+              icon={<Scroll className="w-5 h-5" />}
+              title="Preferências de Seda"
+              color="text-amber-600"
+            >
+              <PreferenceItem
+                label="Tipo de seda"
+                value={getLabel(preferences.favoritePaperType, PAPER_TYPE_LABELS)}
+              />
+              <PreferenceItem
+                label="Tamanho"
+                value={getLabel(preferences.favoritePaperSize, PAPER_SIZE_LABELS)}
+              />
+              <PreferenceItem
+                label="Tamanho piteira de papel"
+                value={getLabel(preferences.paperFilterSize, PAPER_FILTER_SIZE_LABELS)}
+              />
+            </PreferenceSection>
+
+            {/* Piteira de Vidro */}
+            <PreferenceSection
+              icon={<GlassWater className="w-5 h-5" />}
+              title="Piteira de Vidro"
+              color="text-cyan-600"
+            >
+              <PreferenceItem
+                label="Tamanho"
+                value={getLabel(preferences.glassFilterSize, GLASS_FILTER_SIZE_LABELS)}
+              />
+              <PreferenceItem
+                label="Espessura"
+                value={getLabel(preferences.glassFilterThickness, GLASS_FILTER_THICKNESS_LABELS)}
+              />
+            </PreferenceSection>
+
+            {/* Tabaco */}
+            <PreferenceSection
+              icon={<Cigarette className="w-5 h-5" />}
+              title="Uso de Tabaco"
+              color="text-orange-600"
+            >
+              <PreferenceItem
+                label="Uso"
+                value={getLabel(preferences.tobaccoUsage, TOBACCO_USAGE_LABELS)}
+                highlight={preferences.tobaccoUsage === "FULL_TIME"}
+              />
+            </PreferenceSection>
+
+            {/* Interesses */}
+            <PreferenceSection
+              icon={<Heart className="w-5 h-5" />}
+              title="Interesses"
+              color="text-pink-600"
+            >
+              {interests.length > 0 ? (
+                <TagList items={interests} color="bg-pink-bg text-pink-text" />
+              ) : (
+                <span className="text-base text-text-secondary">Não informado</span>
+              )}
+            </PreferenceSection>
+
+            {/* Cores */}
+            {colors.length > 0 && (
+              <PreferenceSection
+                icon={<Palette className="w-5 h-5" />}
+                title="Cores Favoritas"
+                color="text-purple-600"
+              >
+                <TagList items={colors} color="bg-purple-bg text-purple-text" />
+              </PreferenceSection>
+            )}
+
+            {/* Observações */}
+            {preferences.notes && (
+              <div className="md:col-span-2">
+                <PreferenceSection
+                  icon={<MessageSquare className="w-5 h-5" />}
+                  title="Observações do Usuário"
+                  color="text-gray-600"
+                >
+                  <p className="text-base text-text-primary bg-gray-bg p-4 rounded-lg italic">
+                    &quot;{preferences.notes}&quot;
+                  </p>
+                </PreferenceSection>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -342,12 +376,12 @@ interface PreferenceSectionProps {
 
 function PreferenceSection({ icon, title, color, children }: PreferenceSectionProps) {
   return (
-    <div className="space-y-2">
-      <h3 className={`font-medium flex items-center gap-2 ${color}`}>
+    <div className="space-y-3">
+      <h3 className={`text-base font-semibold flex items-center gap-2 ${color}`}>
         {icon}
         {title}
       </h3>
-      <div className="pl-6 space-y-2">{children}</div>
+      <div className="pl-7 space-y-3">{children}</div>
     </div>
   );
 }
@@ -361,12 +395,12 @@ interface PreferenceItemProps {
 
 function PreferenceItem({ label, value, highlight, children }: PreferenceItemProps) {
   return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-xs text-text-secondary">{label}</span>
+    <div className="flex flex-col gap-1">
+      <span className="text-sm text-text-secondary font-medium">{label}</span>
       {children || (
         <span
-          className={`text-sm ${highlight
-            ? "text-primary-purple font-medium"
+          className={`text-base ${highlight
+            ? "text-primary-purple font-semibold"
             : value === "Não informado"
               ? "text-text-secondary italic"
               : "text-text-primary"
@@ -386,11 +420,11 @@ interface TagListProps {
 
 function TagList({ items, color }: TagListProps) {
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className="flex flex-wrap gap-2">
       {items.map((item, i) => (
         <span
           key={i}
-          className={`px-2 py-0.5 text-xs font-medium rounded-full ${color}`}
+          className={`px-3 py-1 text-sm font-medium rounded-full ${color}`}
         >
           {item}
         </span>

@@ -13,6 +13,7 @@ import {
   Shield,
   AlertCircle,
 } from "lucide-react";
+import "remixicon/fonts/remixicon.css";
 import { UserRoleButton, UserStatusButton, UserPreferencesDisplay } from "@/components/admin/users";
 import { FormattedDate } from "@/components/ui/FormattedDate";
 
@@ -182,7 +183,18 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                   <Phone className="w-4 h-4" />
                   WhatsApp
                 </span>
-                <span className="text-text-primary">{user.whatsapp}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-text-primary">{user.whatsapp}</span>
+                  <a
+                    href={`https://wa.me/55${user.whatsapp.replace(/\D/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition-colors"
+                  >
+                    <i className="ri-whatsapp-line text-sm" />
+                    Abrir
+                  </a>
+                </div>
               </div>
             )}
 
