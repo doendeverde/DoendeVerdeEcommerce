@@ -76,6 +76,14 @@ export interface CartState {
   isEmpty: boolean;
   hasOutOfStockItems: boolean;
   hasPriceChangedItems: boolean;
+  // Subscription discount info
+  subscriptionDiscount?: {
+    hasActiveSubscription: boolean;
+    discountPercent: number;
+    discountLabel: string | null;
+    discountAmount: number;
+    planName: string | null;
+  };
 }
 
 // Request types

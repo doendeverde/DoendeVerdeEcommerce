@@ -8,7 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { cartService } from '@/services';
+import { cartService, subscriptionService } from '@/services';
 import { addToCartSchema } from '@/schemas/cart.schema';
 
 export async function GET() {
@@ -26,10 +26,30 @@ export async function GET() {
     }
 
     const cart = await cartService.getCart(session.user.id);
+    
+    // Get subscription discount info
+    const discountInfo = await subscriptionService.getUserSubscriptionDiscount(session.user.id);
+    
+    // Calculate discount amount
+    const discountAmount = discountInfo.discountPercent > 0 
+      ? Math.round(cart.subtotal * (discountInfo.discountPercent / 100) * 100) / 100
+      : 0;
+    
+    // Add subscription discount info to cart
+    const cartWithDiscount = {
+      ...cart,
+      subscriptionDiscount: {
+        hasActiveSubscription: discountInfo.hasActiveSubscription,
+        discountPercent: discountInfo.discountPercent,
+        discountLabel: discountInfo.discountLabel,
+        discountAmount,
+        planName: discountInfo.planName,
+      },
+    };
 
     return NextResponse.json({
       success: true,
-      cart,
+      cart: cartWithDiscount,
     });
   } catch (error) {
     console.error('[API] Error fetching cart:', error);

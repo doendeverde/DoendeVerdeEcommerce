@@ -12,6 +12,7 @@ import { Minus, Plus, Trash2, AlertCircle } from 'lucide-react';
 import { CartItemDisplay } from '@/types/cart';
 import { useCartStore, selectIsItemPending } from '@/stores/cart';
 import { productImageProps, getSafeImageUrl, getImageSizes } from '@/lib/image-utils';
+import { formatCurrency } from '@/lib/utils';
 
 interface CartItemProps {
   item: CartItemDisplay;
@@ -80,7 +81,7 @@ export function CartItem({ item }: CartItemProps) {
         {item.priceChanged && !item.isOutOfStock && (
           <div className="mt-1 flex items-center gap-1 text-xs text-yellow-text">
             <AlertCircle className="h-3 w-3" />
-            <span>Preço atualizado para R$ {item.currentPrice.toFixed(2)}</span>
+            <span>Preço atualizado para {formatCurrency(item.currentPrice)}</span>
           </div>
         )}
 
@@ -88,7 +89,7 @@ export function CartItem({ item }: CartItemProps) {
         <div className="mt-auto flex items-end justify-between">
           {/* Price */}
           <div className="text-sm font-semibold text-text-primary">
-            R$ {item.totalPrice.toFixed(2)}
+            {formatCurrency(item.totalPrice)}
           </div>
 
           {/* Quantity Controls */}
