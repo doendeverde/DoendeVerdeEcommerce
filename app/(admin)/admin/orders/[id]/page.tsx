@@ -2,11 +2,12 @@ import { adminService } from "@/services/admin.service";
 import { ArrowLeft, Package, User, MapPin, CreditCard, Truck } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { formatCurrency, formatDateTime } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { OrderStatusUpdater } from "./OrderStatusUpdater";
 import { cn } from "@/lib/utils";
 import { PaymentStatus, ShipmentStatus, PaymentProvider } from "@prisma/client";
 import { ApprovePaymentButton } from "@/components/admin/orders/ApprovePaymentButton";
+import { FormattedDate } from "@/components/ui/FormattedDate";
 
 export const dynamic = "force-dynamic";
 
@@ -102,7 +103,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
             Pedido #{order.id.slice(0, 8)}
           </h1>
           <p className="text-sm text-text-secondary mt-1">
-            Criado em {formatDateTime(order.createdAt)}
+            Criado em <FormattedDate date={order.createdAt} format="datetime" />
           </p>
         </div>
         <OrderStatusUpdater orderId={order.id} currentStatus={order.status} />

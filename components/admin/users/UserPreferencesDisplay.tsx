@@ -366,10 +366,10 @@ function PreferenceItem({ label, value, highlight, children }: PreferenceItemPro
       {children || (
         <span
           className={`text-sm ${highlight
-              ? "text-primary-purple font-medium"
-              : value === "Não informado"
-                ? "text-text-secondary italic"
-                : "text-text-primary"
+            ? "text-primary-purple font-medium"
+            : value === "Não informado"
+              ? "text-text-secondary italic"
+              : "text-text-primary"
             }`}
         >
           {value}

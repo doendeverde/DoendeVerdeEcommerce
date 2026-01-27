@@ -20,7 +20,7 @@ export function formatCurrency(value: number): string {
 }
 
 /**
- * Format a date to Brazilian format
+ * Format a date to Brazilian format (São Paulo timezone)
  */
 export function formatDate(date: Date | string): string {
   const d = typeof date === "string" ? new Date(date) : date;
@@ -32,7 +32,7 @@ export function formatDate(date: Date | string): string {
 }
 
 /**
- * Format a date with time to Brazilian format
+ * Format a date with time to Brazilian format (São Paulo timezone)
  */
 export function formatDateTime(date: Date | string): string {
   const d = typeof date === "string" ? new Date(date) : date;

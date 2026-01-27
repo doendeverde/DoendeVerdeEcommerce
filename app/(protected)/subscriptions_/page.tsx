@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { FormattedDate } from "@/components/ui/FormattedDate";
 
 export const metadata = {
   title: "Minhas Assinaturas | Headshop",
@@ -90,15 +91,13 @@ export default async function SubscriptionsPage() {
                       <div className="flex justify-between">
                         <span className="text-gray-600">Início:</span>
                         <span className="text-gray-900">
-                          {new Date(subscription.startedAt).toLocaleDateString("pt-BR")}
+                          <FormattedDate date={subscription.startedAt} />
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Próxima cobrança:</span>
                         <span className="font-medium text-blue-600">
-                          {new Date(subscription.nextBillingAt).toLocaleDateString(
-                            "pt-BR"
-                          )}
+                          <FormattedDate date={subscription.nextBillingAt} />
                         </span>
                       </div>
                     </div>
@@ -162,9 +161,9 @@ export default async function SubscriptionsPage() {
                         {subscription.plan.name}
                       </h3>
                       <p className="text-sm text-gray-600 mt-1">
-                        {new Date(subscription.startedAt).toLocaleDateString("pt-BR")}{" "}
+                        <FormattedDate date={subscription.startedAt} />{" "}
                         - {subscription.canceledAt
-                          ? new Date(subscription.canceledAt).toLocaleDateString("pt-BR")
+                          ? <FormattedDate date={subscription.canceledAt} />
                           : "Ativa"}
                       </p>
                     </div>

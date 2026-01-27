@@ -14,6 +14,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { UserRoleButton, UserStatusButton, UserPreferencesDisplay } from "@/components/admin/users";
+import { FormattedDate } from "@/components/ui/FormattedDate";
 
 export const dynamic = "force-dynamic";
 
@@ -29,17 +30,6 @@ function formatCurrency(value: number): string {
     style: "currency",
     currency: "BRL",
   }).format(value);
-}
-
-/**
- * Formata data
- */
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(new Date(date));
 }
 
 /**
@@ -202,13 +192,13 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                   <Calendar className="w-4 h-4" />
                   Data de Nascimento
                 </span>
-                <span className="text-text-primary">{formatDate(user.birthDate)}</span>
+                <FormattedDate date={user.birthDate} className="text-text-primary" />
               </div>
             )}
 
             <div className="flex items-center justify-between py-2">
               <span className="text-text-secondary">Cadastrado em</span>
-              <span className="text-text-primary">{formatDate(user.createdAt)}</span>
+              <FormattedDate date={user.createdAt} className="text-text-primary" />
             </div>
           </div>
         </div>
@@ -292,7 +282,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                       </Link>
                     </td>
                     <td className="py-3 text-sm text-text-secondary">
-                      {formatDate(order.createdAt)}
+                      <FormattedDate date={order.createdAt} />
                     </td>
                     <td className="py-3 text-sm text-text-secondary">
                       {order.itemsCount} item(s)
@@ -350,10 +340,10 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                       <StatusBadge status={sub.status} />
                     </td>
                     <td className="py-3 text-sm text-text-secondary">
-                      {formatDate(sub.startedAt)}
+                      <FormattedDate date={sub.startedAt} />
                     </td>
                     <td className="py-3 text-sm text-text-secondary">
-                      {sub.nextBillingAt ? formatDate(sub.nextBillingAt) : "-"}
+                      <FormattedDate date={sub.nextBillingAt} fallback="-" />
                     </td>
                     <td className="py-3 text-sm text-text-primary text-right">
                       {formatCurrency(sub.plan.price)}

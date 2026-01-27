@@ -54,8 +54,8 @@ export function ProfileHeader({
               <Shield className="w-4 h-4" />
               <span
                 className={`px-2 py-0.5 rounded-full text-xs font-medium ${status === "ACTIVE"
-                    ? "bg-green-500/20 text-green-100"
-                    : "bg-red-500/20 text-red-100"
+                  ? "bg-green-500/20 text-green-100"
+                  : "bg-red-500/20 text-red-100"
                   }`}
               >
                 {status === "ACTIVE" ? "Ativo" : status}

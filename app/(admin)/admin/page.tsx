@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
+import { FormattedDate } from "@/components/ui/FormattedDate";
 
 export const dynamic = "force-dynamic";
 
@@ -137,7 +138,7 @@ export default async function AdminDashboardPage() {
                       {order.user.fullName}
                     </p>
                     <p className="text-xs text-text-secondary">
-                      {order.itemCount} item(ns) • {new Date(order.createdAt).toLocaleDateString("pt-BR")}
+                      {order.itemCount} item(ns) • <FormattedDate date={order.createdAt} />
                     </p>
                   </div>
                   <div className="flex items-center gap-3">

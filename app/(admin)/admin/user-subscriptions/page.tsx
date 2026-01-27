@@ -2,6 +2,7 @@ import { adminService } from "@/services/admin.service";
 import { Users, CreditCard, Calendar, Search } from "lucide-react";
 import Link from "next/link";
 import { SubscriptionStatusBadge, SubscriptionStatusButton } from "@/components/admin/user-subscriptions";
+import { FormattedDate } from "@/components/ui/FormattedDate";
 
 export const dynamic = "force-dynamic";
 
@@ -22,17 +23,6 @@ function formatCurrency(value: number): string {
     style: "currency",
     currency: "BRL",
   }).format(value);
-}
-
-/**
- * Formata data
- */
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(new Date(date));
 }
 
 /**
@@ -201,14 +191,12 @@ export default async function AdminUserSubscriptionsPage({ searchParams }: PageP
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2 text-sm text-text-secondary">
                         <Calendar className="w-4 h-4" />
-                        {formatDate(sub.startedAt)}
+                        <FormattedDate date={sub.startedAt} />
                       </div>
                     </td>
                     <td className="px-4 py-4">
                       {sub.nextBillingAt ? (
-                        <span className="text-sm text-text-primary">
-                          {formatDate(sub.nextBillingAt)}
-                        </span>
+                        <FormattedDate date={sub.nextBillingAt} className="text-sm text-text-primary" />
                       ) : (
                         <span className="text-sm text-text-secondary">-</span>
                       )}

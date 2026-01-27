@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { userService } from "@/services";
+import { FormattedDate } from "@/components/ui/FormattedDate";
 
 export const metadata = {
   title: "Dashboard | Headshop",
@@ -81,9 +82,7 @@ export default async function DashboardPage() {
                     {subscription.nextBillingAt && (
                       <p className="text-sm text-gray-500">
                         Próxima cobrança:{" "}
-                        {new Date(subscription.nextBillingAt).toLocaleDateString(
-                          "pt-BR"
-                        )}
+                        <FormattedDate date={subscription.nextBillingAt} />
                       </p>
                     )}
                   </div>
@@ -120,7 +119,7 @@ export default async function DashboardPage() {
                   <div>
                     <p className="font-medium text-gray-900">Pedido #{order.id.slice(0, 8)}</p>
                     <p className="text-sm text-gray-500">
-                      {new Date(order.createdAt).toLocaleDateString("pt-BR")}
+                      <FormattedDate date={order.createdAt} />
                     </p>
                   </div>
                   <div className="text-right">
