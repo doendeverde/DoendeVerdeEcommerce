@@ -67,6 +67,15 @@ async function addToCart(
     };
   }
 
+  // SOFT DELETE: Verificar se produto foi desativado
+  // O findById não filtra deletedAt para manter compatibilidade com pedidos existentes
+  if ((product as { deletedAt: Date | null }).deletedAt !== null) {
+    return {
+      success: false,
+      error: 'Este produto foi descontinuado',
+    };
+  }
+
   // Check product availability using status enum (isPublished type inference issue workaround)
   const isAvailable = (product as { status: string }).status === 'ACTIVE';
   if (!isAvailable) {

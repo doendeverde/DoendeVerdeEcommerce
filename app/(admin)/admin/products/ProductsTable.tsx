@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
 import { ProductStatus } from "@prisma/client";
+import { toast } from "sonner";
 
 interface Product {
   id: string;
@@ -29,6 +30,10 @@ interface Product {
   imageUrl: string | null;
   isLowStock: boolean;
   createdAt: Date;
+  /** Data do soft delete. null = produto ativo */
+  deletedAt: Date | null;
+  /** True se produto está soft-deleted */
+  isDeleted: boolean;
 }
 
 interface Category {
@@ -119,21 +124,24 @@ export function ProductsTable({
     updateFilters({ page: newPage.toString() });
   };
 
-  const handleDelete = async (productId: string) => {
-    if (!confirm("Tem certeza que deseja excluir este produto?")) return;
+  const handleDelete = async (productId: string, productName: string) => {
+    if (!confirm(`Deseja desativar o produto "${productName}"?\n\nO produto não será excluído permanentemente e não aparecerá mais na loja.`)) return;
 
     try {
       const res = await fetch(`/api/admin/products/${productId}`, {
         method: "DELETE",
       });
 
+      const data = await res.json();
+
       if (res.ok) {
+        toast.success(data.message || "Produto desativado com sucesso");
         router.refresh();
       } else {
-        alert("Erro ao excluir produto");
+        toast.error(data.error || "Erro ao desativar produto");
       }
     } catch {
-      alert("Erro ao excluir produto");
+      toast.error("Erro ao desativar produto");
     }
   };
 
@@ -223,7 +231,10 @@ export function ProductsTable({
                 products.map((product) => (
                   <tr
                     key={product.id}
-                    className="hover:bg-gray-bg/50 transition-colors"
+                    className={cn(
+                      "hover:bg-gray-bg/50 transition-colors",
+                      product.isDeleted && "opacity-50 bg-red-50/30"
+                    )}
                   >
                     {/* Product */}
                     <td className="px-4 py-4">
@@ -232,7 +243,10 @@ export function ProductsTable({
                           <img
                             src={product.imageUrl}
                             alt={product.name}
-                            className="w-10 h-10 rounded-lg object-cover"
+                            className={cn(
+                              "w-10 h-10 rounded-lg object-cover",
+                              product.isDeleted && "grayscale"
+                            )}
                           />
                         ) : (
                           <div className="w-10 h-10 bg-gray-bg rounded-lg flex items-center justify-center">
@@ -242,10 +256,18 @@ export function ProductsTable({
                         <div>
                           <Link
                             href={`/admin/products/${product.id}`}
-                            className="text-sm font-medium text-text-primary hover:text-primary-purple"
+                            className={cn(
+                              "text-sm font-medium hover:text-primary-purple",
+                              product.isDeleted ? "text-text-secondary line-through" : "text-text-primary"
+                            )}
                           >
                             {product.name}
                           </Link>
+                          {product.isDeleted && (
+                            <span className="ml-2 px-1.5 py-0.5 text-xs bg-red-100 text-red-600 rounded">
+                              Desativado
+                            </span>
+                          )}
                         </div>
                       </div>
                     </td>
@@ -330,16 +352,18 @@ export function ProductsTable({
                                 <Pencil className="w-4 h-4" />
                                 Editar
                               </Link>
-                              <button
-                                onClick={() => {
-                                  setActiveMenu(null);
-                                  handleDelete(product.id);
-                                }}
-                                className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                                Excluir
-                              </button>
+                              {!product.isDeleted && (
+                                <button
+                                  onClick={() => {
+                                    setActiveMenu(null);
+                                    handleDelete(product.id, product.name);
+                                  }}
+                                  className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                  Desativar
+                                </button>
+                              )}
                             </div>
                           </>
                         )}

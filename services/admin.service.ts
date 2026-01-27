@@ -45,6 +45,8 @@ export interface AdminProductFilters {
   search?: string;
   categoryId?: string;
   status?: ProductStatus;
+  /** Se true, inclui produtos soft-deleted. Padrão: false (apenas ativos) */
+  showDeleted?: boolean;
   page?: number;
   pageSize?: number;
 }
@@ -290,6 +292,10 @@ interface ProductListItem {
   categoryName: string;
   imageUrl: string | null;
   createdAt: Date;
+  /** Data do soft delete. null = produto ativo */
+  deletedAt: Date | null;
+  /** True se produto está soft-deleted */
+  isDeleted: boolean;
 }
 
 interface ProductsPaginated {
@@ -301,10 +307,16 @@ interface ProductsPaginated {
 }
 
 async function getProducts(filters: AdminProductFilters = {}): Promise<ProductsPaginated> {
-  const { search, categoryId, status, page = 1, pageSize = 20 } = filters;
+  const { search, categoryId, status, showDeleted = false, page = 1, pageSize = 20 } = filters;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {};
+
+  // SOFT DELETE: Por padrão, só mostra produtos não deletados
+  // Se showDeleted = true, mostra todos (para admin ver histórico)
+  if (!showDeleted) {
+    where.deletedAt = null;
+  }
 
   if (search) {
     where.OR = [
@@ -342,6 +354,7 @@ async function getProducts(filters: AdminProductFilters = {}): Promise<ProductsP
           orderBy: { displayOrder: "asc" },
         },
         createdAt: true,
+        deletedAt: true, // SOFT DELETE: incluir para mostrar status no admin
       },
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * pageSize,
@@ -364,6 +377,8 @@ async function getProducts(filters: AdminProductFilters = {}): Promise<ProductsP
       categoryName: p.category.name,
       imageUrl: p.images[0]?.url || null,
       createdAt: p.createdAt,
+      deletedAt: p.deletedAt,
+      isDeleted: p.deletedAt !== null,
     })),
     total,
     page,

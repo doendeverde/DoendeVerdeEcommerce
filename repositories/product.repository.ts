@@ -7,6 +7,12 @@ import type { ProductFilters } from "@/types/product";
  *
  * Isola todas as queries Prisma relacionadas a produtos.
  * Permite otimização e testes independentes da camada de negócio.
+ * 
+ * IMPORTANTE - SOFT DELETE:
+ * Todas as queries públicas DEVEM incluir `deletedAt: null` no where.
+ * Isso garante que produtos soft-deleted não apareçam em nenhuma listagem.
+ * 
+ * @see /docs/SOFT_DELETE.md para mais informações
  */
 
 // Include for product with relations
@@ -21,9 +27,21 @@ const productWithRelations = {
   },
 } satisfies Prisma.ProductInclude;
 
+/**
+ * Base where clause for public queries
+ * Garante que apenas produtos ativos e não-deletados sejam retornados
+ */
+const publicProductWhere: Prisma.ProductWhereInput = {
+  isPublished: true,
+  status: ProductStatus.ACTIVE,
+  deletedAt: null, // SOFT DELETE: exclui produtos deletados
+};
+
 export const productRepository = {
   /**
    * Find many products with filters, pagination and sorting
+   * 
+   * IMPORTANTE: Filtra automaticamente produtos soft-deleted (deletedAt != null)
    */
   async findMany(filters: ProductFilters) {
     const {
@@ -37,10 +55,9 @@ export const productRepository = {
       limit = 12,
     } = filters;
 
-    // Build where clause
+    // Build where clause - começa com filtro base (inclui deletedAt: null)
     const where: Prisma.ProductWhereInput = {
-      isPublished: true,
-      status: ProductStatus.ACTIVE,
+      ...publicProductWhere,
     };
 
     // Category filter
@@ -113,13 +130,14 @@ export const productRepository = {
 
   /**
    * Find single product by slug with all relations
+   * 
+   * IMPORTANTE: Filtra automaticamente produtos soft-deleted
    */
   async findBySlug(slug: string) {
     return prisma.product.findUnique({
       where: {
         slug,
-        isPublished: true,
-        status: ProductStatus.ACTIVE,
+        ...publicProductWhere,
       },
       include: productWithRelations,
     });
@@ -127,14 +145,15 @@ export const productRepository = {
 
   /**
    * Find related products (same category, excluding current)
+   * 
+   * IMPORTANTE: Filtra automaticamente produtos soft-deleted
    */
   async findRelated(productId: string, categoryId: string, limit = 4) {
     return prisma.product.findMany({
       where: {
         categoryId,
         id: { not: productId },
-        isPublished: true,
-        status: ProductStatus.ACTIVE,
+        ...publicProductWhere,
       },
       include: productWithRelations,
       take: limit,
@@ -144,6 +163,10 @@ export const productRepository = {
 
   /**
    * Find product by ID (for cart operations)
+   * 
+   * NOTA: Esta query NÃO filtra soft-deleted porque é usada para
+   * validar itens já existentes no carrinho/pedido.
+   * A verificação de soft-delete deve ser feita na camada de serviço.
    */
   async findById(id: string) {
     return prisma.product.findUnique({

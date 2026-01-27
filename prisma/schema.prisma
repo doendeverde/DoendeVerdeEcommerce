@@ -224,6 +224,8 @@ model Product {
   lowStockAlert        Int                   @default(5)
   loyaltyPoints        Int                   @default(0)
   status               ProductStatus         @default(ACTIVE)
+  /// Soft delete timestamp - quando preenchido, produto está "excluído"
+  deletedAt            DateTime?
   cartItems            CartItem[]
   orderItems           OrderItem[]
   category             Category              @relation(fields: [categoryId], references: [id])
@@ -242,6 +244,8 @@ model Product {
   @@index([shippingProfileId])
   @@index([slug])
   @@index([status])
+  /// Index para queries de soft delete - otimiza filtro deletedAt IS NULL
+  @@index([deletedAt])
 }
 
 model ProductImage {

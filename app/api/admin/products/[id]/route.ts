@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { adminService } from "@/services/admin.service";
 import { prisma } from "@/lib/prisma";
+import { revalidateProductPages } from "@/lib/revalidate";
 import { z } from "zod";
 
 // Schema de validação para atualização de produto
@@ -189,7 +190,19 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 /**
  * DELETE /api/admin/products/[id]
- * Soft delete de produto
+ * 
+ * SOFT DELETE de produto.
+ * 
+ * Por que SOFT DELETE?
+ * - Produtos podem ter referências em OrderItem (pedidos históricos)
+ * - Hard delete causaria erro de FK ou perda de dados
+ * - Mantém integridade do histórico de pedidos
+ * 
+ * O que acontece:
+ * 1. Marca deletedAt com timestamp atual
+ * 2. Revalida cache de páginas públicas
+ * 3. Produto deixa de aparecer em listagens/busca
+ * 4. Pedidos existentes continuam funcionando
  */
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const authResult = await requireAdmin();
@@ -205,6 +218,15 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const product = await prisma.product.findUnique({
       where: { id },
+      select: { 
+        id: true, 
+        slug: true, 
+        name: true,
+        deletedAt: true,
+        _count: {
+          select: { orderItems: true }
+        }
+      },
     });
 
     if (!product) {
@@ -214,16 +236,37 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Hard delete the product
-    await prisma.product.delete({
+    // Já está soft-deleted?
+    if (product.deletedAt) {
+      return NextResponse.json(
+        { error: "Produto já está desativado" },
+        { status: 400 }
+      );
+    }
+
+    // Soft delete: marca deletedAt ao invés de excluir
+    await prisma.product.update({
       where: { id },
+      data: { 
+        deletedAt: new Date(),
+        // Também marca como não publicado para garantir
+        isPublished: false,
+      },
     });
 
-    return NextResponse.json({ success: true });
+    // Revalidar cache das páginas que listam produtos
+    // Isso garante que o produto soft-deleted não apareça mais
+    await revalidateProductPages(product.slug);
+
+    return NextResponse.json({ 
+      success: true,
+      message: `Produto "${product.name}" desativado com sucesso`,
+      hadOrders: product._count.orderItems > 0,
+    });
   } catch (error) {
-    console.error("Error deleting product:", error);
+    console.error("[DELETE /api/admin/products] Error:", error);
     return NextResponse.json(
-      { error: "Erro ao excluir produto" },
+      { error: "Erro ao desativar produto" },
       { status: 500 }
     );
   }
