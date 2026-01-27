@@ -52,7 +52,7 @@ export function ProductImageGallery({ images, productName }: ProductImageGallery
 
       {/* Thumbnails */}
       {sortedImages.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto pb-2">
+        <div className="flex gap-3 overflow-x-auto p-2">
           {sortedImages.map((image, index) => (
             <button
               key={image.id}

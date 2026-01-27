@@ -134,7 +134,7 @@ export const productRepository = {
    * IMPORTANTE: Filtra automaticamente produtos soft-deleted
    */
   async findBySlug(slug: string) {
-    return prisma.product.findUnique({
+    return prisma.product.findFirst({
       where: {
         slug,
         ...publicProductWhere,
