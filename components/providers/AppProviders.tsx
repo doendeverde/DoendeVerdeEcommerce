@@ -11,6 +11,7 @@ import { ReactNode } from "react";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { SubscriptionProvider } from "@/components/providers/SubscriptionProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { AgeGateModal } from "@/components/layout/AgeGateModal";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { CartDrawer } from "@/components/cart";
 import { Toaster } from "sonner";
@@ -25,6 +26,7 @@ export function AppProviders({ children }: AppProvidersProps) {
       <SessionProvider>
         <SubscriptionProvider>
           {children}
+          <AgeGateModal />
           <AuthModal />
           <CartDrawer />
           <Toaster
