@@ -22,6 +22,14 @@ console.log("━━━━━━━━━━━━━━━━━━━━━━�
 
 const nextConfig: NextConfig = {
   env: mercadoPagoEnv,
+  
+  // Permitir origens de desenvolvimento (ngrok para testes locais)
+  allowedDevOrigins: [
+    "https://sugared-donald-nonaligned.ngrok-free.dev",
+    "*.ngrok-free.dev",
+    "*.ngrok.io",
+  ],
+  
   images: {
     // Aceitar imagens de qualquer host
     remotePatterns: [

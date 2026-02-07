@@ -261,3 +261,61 @@ export async function orderBelongsToUser(
   });
   return order !== null;
 }
+
+/**
+ * Create order for subscription renewal (automatically triggered by webhook)
+ * 
+ * This is called when Mercado Pago processes a recurring payment.
+ * Creates a minimal order record for accounting/reconciliation purposes.
+ */
+export async function createRenewalOrder(data: {
+  userId: string;
+  planName: string;
+  amount: number;
+  mpPaymentId: string;
+  subscriptionId: string;
+}): Promise<OrderWithRelations> {
+  console.log("[Order Repository] Creating renewal order...");
+  console.log("[Order Repository] User:", data.userId);
+  console.log("[Order Repository] Plan:", data.planName);
+  console.log("[Order Repository] Amount:", data.amount);
+  console.log("[Order Repository] MP Payment ID:", data.mpPaymentId);
+  
+  // Para renovações, criamos uma order simplificada
+  // O endereço é obtido do usuário (mais recente ou padrão)
+  const userAddress = await prisma.address.findFirst({
+    where: { userId: data.userId },
+    orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
+  });
+
+  // Cria order com dados mínimos
+  return prisma.order.create({
+    data: {
+      userId: data.userId,
+      subtotalAmount: data.amount,
+      discountAmount: 0,
+      shippingAmount: 0, // Renovação não tem frete novo
+      totalAmount: data.amount,
+      status: "PAID", // Já está pago (veio do webhook)
+      notes: `Renovação automática: ${data.planName} (Subscription ID: ${data.subscriptionId}, MP Payment: ${data.mpPaymentId})`,
+      // Cria snapshot de endereço se existir
+      ...(userAddress && {
+        addressSnapshot: {
+          create: {
+            fullName: "", // Será preenchido pelo user se necessário
+            whatsapp: "",
+            street: userAddress.street,
+            number: userAddress.number,
+            complement: userAddress.complement || undefined,
+            neighborhood: userAddress.neighborhood,
+            city: userAddress.city,
+            state: userAddress.state,
+            zipCode: userAddress.zipCode,
+            country: userAddress.country,
+          },
+        },
+      }),
+    },
+    include: orderInclude,
+  });
+}

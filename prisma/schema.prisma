@@ -404,7 +404,7 @@ model Subscription {
   nextBillingAt       DateTime
   canceledAt          DateTime?
   provider            PaymentProvider?
-  providerSubId       String?
+  providerSubId       String?             @unique // UNIQUE para prevenir race condition e duplicatas
   // Novos campos para melhor controle
   pausedAt            DateTime?           // Quando foi pausada
   cancelRequestedAt   DateTime?           // Quando solicitou cancelamento
@@ -420,6 +420,7 @@ model Subscription {
   @@index([planId])
   @@index([status])
   @@index([userId])
+  @@index([providerSubId]) // Index para buscas rápidas por providerSubId
 }
 
 model SubscriptionCycle {

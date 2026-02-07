@@ -10,3 +10,4 @@ export { UserStatusBanner } from "./UserStatusBanner";
 export { SubscriptionCTABanner } from "./SubscriptionCTABanner";
 export { SubscriptionBanner } from "./SubscriptionBanner";
 export { ConditionalSubscriptionBanner } from "./ConditionalSubscriptionBanner";
+export { AgeGateModal } from "./AgeGateModal";

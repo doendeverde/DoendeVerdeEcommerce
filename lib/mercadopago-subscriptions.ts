@@ -269,13 +269,38 @@ export async function createPreapproval(
     
     // Mensagens de erro mais descritivas
     let errorMessage = responseData?.message || `Failed to create preapproval: ${response.status}`;
+    const errorCode = responseData?.code || "";
     
-    // Erros específicos do Mercado Pago
-    if (responseData?.message?.includes("Card token service not found")) {
+    // ═══════════════════════════════════════════════════════════════════════
+    // ERROS DE CARTÃO (CC_*) - Rejeições comuns
+    // ═══════════════════════════════════════════════════════════════════════
+    if (errorCode.startsWith("cc_rejected_") || responseData?.message?.includes("CC_VAL_")) {
+      // Mapeamento de erros de cartão para mensagens amigáveis
+      const cardErrorMap: Record<string, string> = {
+        "cc_rejected_bad_filled_security_code": "Código de segurança (CVV) incorreto. Verifique os 3 dígitos no verso do cartão.",
+        "cc_rejected_bad_filled_card_number": "Número do cartão incorreto. Verifique e tente novamente.",
+        "cc_rejected_bad_filled_date": "Data de validade incorreta. Verifique mês/ano.",
+        "cc_rejected_bad_filled_other": "Dados do cartão incorretos. Verifique todas as informações.",
+        "cc_rejected_card_disabled": "Cartão desabilitado. Entre em contato com seu banco.",
+        "cc_rejected_insufficient_amount": "Saldo insuficiente. Use outro cartão ou forma de pagamento.",
+        "cc_rejected_high_risk": "Pagamento recusado por segurança. Tente outro cartão.",
+        "cc_rejected_max_attempts": "Limite de tentativas excedido. Aguarde alguns minutos.",
+        "cc_rejected_call_for_authorize": "Cartão requer autorização. Ligue para seu banco e autorize a compra.",
+        "cc_rejected_duplicated_payment": "Pagamento duplicado detectado. Verifique seu extrato.",
+        "cc_rejected_card_type_not_allowed": "Tipo de cartão não aceito para assinaturas.",
+        "cc_rejected_other_reason": "Cartão recusado. Tente outro cartão ou forma de pagamento.",
+      };
+      
+      errorMessage = cardErrorMap[errorCode] || 
+        `Cartão recusado: ${responseData?.message || errorCode}. Verifique os dados e tente novamente.`;
+    }
+    // Erros específicos do Mercado Pago (token)
+    else if (responseData?.message?.includes("Card token service not found")) {
       errorMessage = "Token de cartão inválido ou expirado. O token deve ser gerado via MercadoPago.js e usado imediatamente.";
     } else if (responseData?.message?.includes("invalid_token")) {
       errorMessage = "Token de cartão inválido. Verifique se está usando credenciais de TESTE com usuários de TESTE.";
-    } else if (response.status === 401) {
+    } else if (response.status === 401 && !errorCode.startsWith("cc_")) {
+      // 401 sem código CC_* = problema de autenticação
       errorMessage = "Access token inválido ou expirado.";
     } else if (response.status === 400 && responseData?.cause) {
       // Erros de validação do MP geralmente vêm com 'cause'
