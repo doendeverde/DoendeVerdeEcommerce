@@ -190,20 +190,43 @@ export const subscriptionRepository = {
 
   /**
    * Create a new subscription
+   * 
+   * IMPORTANTE: Se `nextBillingDate` for fornecida (do Mercado Pago),
+   * usa essa data. Caso contrário, calcula como 1 mês após o início.
+   * O Mercado Pago é a FONTE DA VERDADE para datas de cobrança.
    */
   async createSubscription(data: {
     userId: string;
     planId: string;
     provider?: "MERCADO_PAGO" | "STRIPE" | "MANUAL";
     providerSubId?: string;
+    /** Data da próxima cobrança retornada pelo Mercado Pago (next_payment_date) */
+    nextBillingDate?: string | Date;
   }) {
     const now = new Date();
     
-    // Calculate next billing date (first of next month or 30 days)
-    const nextBilling = new Date(now);
-    nextBilling.setMonth(nextBilling.getMonth() + 1);
-    nextBilling.setDate(1);
-    nextBilling.setHours(0, 0, 0, 0);
+    // PRIORIDADE: Usar data do Mercado Pago se disponível
+    let nextBilling: Date;
+    
+    if (data.nextBillingDate) {
+      // Usa a data real do Mercado Pago (fonte da verdade)
+      nextBilling = typeof data.nextBillingDate === 'string' 
+        ? new Date(data.nextBillingDate) 
+        : data.nextBillingDate;
+      console.log("[Subscription] Using MP next_payment_date:", nextBilling.toISOString());
+    } else {
+      // Fallback: calcula mesma data no próximo mês
+      nextBilling = new Date(now);
+      const originalDay = now.getDate();
+      nextBilling.setMonth(nextBilling.getMonth() + 1);
+      
+      // Ajusta para último dia do mês se necessário
+      if (nextBilling.getDate() !== originalDay) {
+        nextBilling.setDate(0);
+      }
+      nextBilling.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), 0);
+      console.log("[Subscription] Calculated fallback nextBilling:", nextBilling.toISOString());
+    }
 
     return prisma.subscription.create({
       data: {
@@ -223,6 +246,9 @@ export const subscriptionRepository = {
 
   /**
    * Create first subscription cycle
+   * 
+   * IMPORTANTE: O ciclo termina 1 mês após o início,
+   * mantendo o mesmo dia (ou último dia do mês se necessário).
    */
   async createFirstCycle(data: {
     subscriptionId: string;
@@ -230,8 +256,14 @@ export const subscriptionRepository = {
     paymentId?: string;
   }) {
     const now = new Date();
+    const originalDay = now.getDate();
     const cycleEnd = new Date(now);
     cycleEnd.setMonth(cycleEnd.getMonth() + 1);
+    
+    // Ajusta para último dia do mês se o dia não existe
+    if (cycleEnd.getDate() !== originalDay) {
+      cycleEnd.setDate(0);
+    }
 
     return prisma.subscriptionCycle.create({
       data: {
@@ -260,13 +292,22 @@ export const subscriptionRepository = {
 
   /**
    * Reactivate subscription (from CANCELED to ACTIVE)
+   * 
+   * IMPORTANTE: A próxima cobrança é calculada como 1 mês após a reativação,
+   * mantendo o mesmo dia (ou último dia do mês se necessário).
    */
   async reactivateSubscription(subscriptionId: string) {
     const now = new Date();
+    const originalDay = now.getDate();
     const nextBilling = new Date(now);
     nextBilling.setMonth(nextBilling.getMonth() + 1);
-    nextBilling.setDate(1);
-    nextBilling.setHours(0, 0, 0, 0);
+    
+    // Ajusta para último dia do mês se o dia não existe
+    if (nextBilling.getDate() !== originalDay) {
+      nextBilling.setDate(0);
+    }
+    
+    nextBilling.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), 0);
 
     return prisma.subscription.update({
       where: { id: subscriptionId },
@@ -303,11 +344,17 @@ export const subscriptionRepository = {
   /**
    * Create a renewal cycle for an existing subscription
    * Called when Mercado Pago processes a recurring payment
+   * 
+   * IMPORTANTE: Se `nextBillingDate` for fornecida (do Mercado Pago),
+   * usa essa data. Caso contrário, calcula como 1 mês após.
+   * O Mercado Pago é a FONTE DA VERDADE para datas de cobrança.
    */
   async createRenewalCycle(data: {
     subscriptionId: string;
     amount: number;
     paymentId?: string;
+    /** Data da próxima cobrança retornada pelo Mercado Pago */
+    nextBillingDate?: string | Date;
   }) {
     const subscription = await prisma.subscription.findUnique({
       where: { id: data.subscriptionId },
@@ -319,8 +366,28 @@ export const subscriptionRepository = {
     }
 
     const cycleStart = subscription.nextBillingAt || new Date();
-    const cycleEnd = new Date(cycleStart);
-    cycleEnd.setMonth(cycleEnd.getMonth() + 1);
+    
+    // Calcular cycleEnd
+    let cycleEnd: Date;
+    
+    if (data.nextBillingDate) {
+      // Usa a data real do Mercado Pago (fonte da verdade)
+      cycleEnd = typeof data.nextBillingDate === 'string' 
+        ? new Date(data.nextBillingDate) 
+        : data.nextBillingDate;
+      console.log("[Subscription] Using MP next_payment_date for cycle:", cycleEnd.toISOString());
+    } else {
+      // Fallback: calcula mesma data no próximo mês
+      const originalDay = cycleStart.getDate();
+      cycleEnd = new Date(cycleStart);
+      cycleEnd.setMonth(cycleEnd.getMonth() + 1);
+      
+      // Ajusta para último dia do mês se o dia não existe
+      if (cycleEnd.getDate() !== originalDay) {
+        cycleEnd.setDate(0);
+      }
+      console.log("[Subscription] Calculated fallback cycleEnd:", cycleEnd.toISOString());
+    }
 
     // Create new cycle
     const cycle = await prisma.subscriptionCycle.create({
@@ -334,15 +401,11 @@ export const subscriptionRepository = {
       },
     });
 
-    // Update subscription's nextBillingAt to first of next month
-    const newNextBilling = new Date(cycleEnd);
-    newNextBilling.setDate(1);
-    newNextBilling.setHours(0, 0, 0, 0);
-
+    // Update subscription's nextBillingAt
     await prisma.subscription.update({
       where: { id: data.subscriptionId },
       data: {
-        nextBillingAt: newNextBilling,
+        nextBillingAt: cycleEnd,
       },
     });
 

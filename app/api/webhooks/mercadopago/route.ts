@@ -275,20 +275,46 @@ async function processPaymentNotification(paymentId: string) {
       const planId = metadata?.planId as string || metadata?.plan_id as string;
       const userId = metadata?.userId as string || metadata?.user_id as string;
       const mpPaymentId = String(mpPayment.id);
+      const paymentMethod = mpPayment.payment_type_id; // "credit_card", "debit_card", "account_money" (PIX)
 
       console.log("[Webhook] Subscription metadata - planId:", planId, "userId:", userId);
+      console.log("[Webhook] Payment method:", paymentMethod);
 
       // ───────────────────────────────────────────────────────────────────────
-      // VERIFICAR SE É RENOVAÇÃO (já existe subscription com esse providerSubId)
+      // IDENTIFICAR SUBSCRIPTION EXISTENTE
       // ───────────────────────────────────────────────────────────────────────
-      const existingSubByProvider = await subscriptionRepository.findByProviderSubId(mpPaymentId);
+      // Para Preapproval (cartão): providerSubId é o ID do preapproval (não muda)
+      // Para PIX: providerSubId seria o mpPaymentId, mas muda a cada pagamento!
+      //           Por isso, para PIX, buscamos por userId + planId + ACTIVE
+      // ───────────────────────────────────────────────────────────────────────
       
-      if (existingSubByProvider) {
+      let existingSubscription = await subscriptionRepository.findByProviderSubId(mpPaymentId);
+      
+      // Se não encontrou por providerSubId (comum para PIX), busca por userId + planId
+      if (!existingSubscription && userId && planId) {
+        existingSubscription = await prisma.subscription.findFirst({
+          where: {
+            userId,
+            planId,
+            status: "ACTIVE",
+          },
+          include: {
+            plan: true,
+            user: { select: { id: true, email: true } },
+          },
+        });
+        
+        if (existingSubscription) {
+          console.log("[Webhook] Found existing subscription by userId + planId:", existingSubscription.id);
+        }
+      }
+      
+      if (existingSubscription) {
         // 🔄 É RENOVAÇÃO - criar novo ciclo
-        console.log("[Webhook] 🔄 RENEWAL detected for subscription:", existingSubByProvider.id);
+        console.log("[Webhook] 🔄 RENEWAL detected for subscription:", existingSubscription.id);
         
         await subscriptionRepository.createRenewalCycle({
-          subscriptionId: existingSubByProvider.id,
+          subscriptionId: existingSubscription.id,
           amount: Number(mpPayment.transaction_amount),
           paymentId: payment.id,
         });
@@ -296,29 +322,42 @@ async function processPaymentNotification(paymentId: string) {
         console.log("[Webhook] ✅ Renewal cycle created successfully");
       } else if (planId && userId) {
         // 🆕 PRIMEIRO PAGAMENTO - criar subscription
-        const hasActiveSubscription = await subscriptionRepository.userHasAnyActiveSubscription(userId);
-        console.log("[Webhook] User has existing subscription:", hasActiveSubscription);
-        
-        if (!hasActiveSubscription) {
-          console.log("[Webhook] Creating NEW subscription for user:", userId);
+        // Usa try/catch para tratar race condition (constraint unique em providerSubId)
+        try {
+          const hasActiveSubscription = await subscriptionRepository.userHasAnyActiveSubscription(userId);
+          console.log("[Webhook] User has existing subscription:", hasActiveSubscription);
           
-          const subscription = await subscriptionRepository.createSubscription({
-            userId,
-            planId,
-            provider: "MERCADO_PAGO",
-            providerSubId: mpPaymentId,
-          });
+          if (!hasActiveSubscription) {
+            console.log("[Webhook] Creating NEW subscription for user:", userId);
+            
+            const subscription = await subscriptionRepository.createSubscription({
+              userId,
+              planId,
+              provider: "MERCADO_PAGO",
+              providerSubId: mpPaymentId,
+            });
 
-          // Cria primeiro ciclo
-          await subscriptionRepository.createFirstCycle({
-            subscriptionId: subscription.id,
-            amount: Number(mpPayment.transaction_amount),
-            paymentId: payment.id,
-          });
+            // Cria primeiro ciclo
+            await subscriptionRepository.createFirstCycle({
+              subscriptionId: subscription.id,
+              amount: Number(mpPayment.transaction_amount),
+              paymentId: payment.id,
+            });
 
-          console.log("[Webhook] ✅ New subscription created successfully:", subscription.id);
-        } else {
-          console.log("[Webhook] ⚠️ User already has active subscription, skipping creation");
+            console.log("[Webhook] ✅ New subscription created successfully:", subscription.id);
+          } else {
+            console.log("[Webhook] ⚠️ User already has active subscription, skipping creation");
+          }
+        } catch (err) {
+          // Se for erro de constraint unique em providerSubId, é race condition
+          // Isso é OK - significa que outro webhook já criou a subscription
+          const error = err as Error;
+          if (error.message?.includes("Unique constraint") || error.message?.includes("unique constraint")) {
+            console.log("[Webhook] ⚠️ Race condition detected - subscription already exists (this is OK)");
+          } else {
+            // Outro erro - loga mas não falha o webhook
+            console.error("[Webhook] ❌ Error creating subscription:", error);
+          }
         }
       } else {
         console.log("[Webhook] ❌ Missing planId or userId in metadata, cannot create subscription");
@@ -528,16 +567,75 @@ async function processSubscriptionPaymentNotification(paymentId: string) {
     console.log("[Webhook] Found subscription:", subscription.id);
 
     // ───────────────────────────────────────────────────────────────────────
-    // PAGAMENTO APROVADO - CRIA CICLO DE RENOVAÇÃO
+    // PAGAMENTO APROVADO - CRIA ORDER, PAYMENT E CICLO DE RENOVAÇÃO
     // ───────────────────────────────────────────────────────────────────────
     if (status === "approved") {
-      console.log("[Webhook] 🔄 Subscription payment approved - Creating renewal cycle");
+      console.log("[Webhook] 🔄 Subscription payment approved - Creating renewal records");
       
-      // Cria novo ciclo de renovação
+      // Tenta buscar a próxima data de cobrança do Mercado Pago
+      let nextPaymentDate: string | undefined;
+      
+      // Se temos o providerSubId (ID do preapproval no MP), busca os detalhes
+      if (subscription.providerSubId) {
+        try {
+          const { getPreapproval } = await import("@/lib/mercadopago-subscriptions");
+          const mpSubscription = await getPreapproval(subscription.providerSubId);
+          nextPaymentDate = mpSubscription.next_payment_date;
+          console.log("[Webhook] Got next_payment_date from MP:", nextPaymentDate);
+        } catch (err) {
+          console.warn("[Webhook] Could not fetch preapproval details:", err);
+          // Continua sem a data do MP - usará cálculo de fallback
+        }
+      }
+      
+      // ═══════════════════════════════════════════════════════════════════════
+      // CRIAR ORDER E PAYMENT PARA RENOVAÇÃO (para conciliação contábil)
+      // ═══════════════════════════════════════════════════════════════════════
+      const renewalAmount = amount || Number(subscription.plan?.price) || 0;
+      const planName = subscription.plan?.name || "Assinatura";
+      
+      // Criar Order de renovação
+      const renewalOrder = await orderRepository.createRenewalOrder({
+        userId: subscription.userId,
+        planName,
+        amount: renewalAmount,
+        mpPaymentId: paymentId,
+        subscriptionId: subscription.id,
+      });
+      
+      console.log("[Webhook] ✅ Renewal order created:", renewalOrder.id);
+      
+      // Criar Payment record
+      const renewalPayment = await paymentRepository.createPayment({
+        orderId: renewalOrder.id,
+        provider: "MERCADO_PAGO",
+        amount: renewalAmount,
+        transactionId: paymentId,
+        payload: {
+          type: "subscription_renewal",
+          subscriptionId: subscription.id,
+          status,
+          statusDetail,
+          mpPaymentId: paymentId,
+          processedAt: new Date().toISOString(),
+        },
+      });
+      
+      // Marca como pago imediatamente (já veio aprovado do webhook)
+      await paymentRepository.markPaymentAsPaid(renewalPayment.id, paymentId, {
+        status,
+        statusDetail,
+        mpPaymentId: paymentId,
+      });
+      
+      console.log("[Webhook] ✅ Renewal payment created:", renewalPayment.id);
+      
+      // Cria novo ciclo de renovação com data do MP se disponível
       await subscriptionRepository.createRenewalCycle({
         subscriptionId: subscription.id,
-        amount: amount || Number(subscription.plan?.price) || 0,
-        // Não temos paymentId porque é pagamento automático do MP
+        amount: renewalAmount,
+        paymentId: renewalPayment.id, // AGORA TEM PAYMENT ID!
+        nextBillingDate: nextPaymentDate,
       });
       
       console.log("[Webhook] ✅ Renewal cycle created for subscription:", subscription.id);
