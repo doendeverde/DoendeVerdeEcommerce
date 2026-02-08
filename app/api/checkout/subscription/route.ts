@@ -569,7 +569,7 @@ export async function POST(request: NextRequest) {
           userId,
           planId: plan.id,
           provider: "MERCADO_PAGO",
-          providerSubId: null, // Será atualizado depois quando Preapproval for criado
+          providerSubId: undefined, // Será atualizado depois quando Preapproval for criado
           nextBillingDate: nextBillingDate,
         });
 
