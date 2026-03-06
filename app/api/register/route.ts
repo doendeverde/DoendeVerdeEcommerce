@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { registerSchema } from "@/schemas/auth.schema";
+import { registerSchema, isAdult, MINIMUM_AGE } from "@/schemas/auth.schema";
 import { hashPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/prisma";
 import { authLimiter, checkRateLimit } from "@/lib/rate-limit";
@@ -38,6 +38,19 @@ export async function POST(request: NextRequest) {
     }
 
     const { fullName, email, password, birthDate, whatsapp } = result.data;
+
+    // Double-check: rejeitar menores de idade (defense-in-depth)
+    if (!isAdult(birthDate)) {
+      return NextResponse.json(
+        {
+          success: false,
+          errors: {
+            birthDate: `Menores de ${MINIMUM_AGE} anos não podem se cadastrar.`,
+          },
+        },
+        { status: 403 }
+      );
+    }
 
     // Check if email already exists
     const existingUser = await prisma.user.findUnique({
