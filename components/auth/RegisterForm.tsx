@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { registerSchema, type RegisterInput } from "@/schemas/auth.schema";
+import { registerSchema, type RegisterInput, isAdult, getMaxBirthDate, MINIMUM_AGE } from "@/schemas/auth.schema";
 import { z } from "zod";
 import { useAuthModalStore } from "@/stores/authModal";
 import { OAuthButtons } from "./OAuthButtons";
@@ -48,6 +48,17 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+
+    // Validação em tempo real para data de nascimento (menores de 18)
+    if (name === "birthDate" && value) {
+      if (!isAdult(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          birthDate: `Menores de ${MINIMUM_AGE} anos não podem se cadastrar.`,
+        }));
+        return;
+      }
+    }
 
     // Limpar erro do campo quando usuário começar a digitar
     if (errors[name as keyof RegisterInput]) {
@@ -186,6 +197,7 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           id="birthDate"
           name="birthDate"
           type="date"
+          max={getMaxBirthDate()}
           value={formData.birthDate}
           onChange={handleChange}
           className={`w-full px-3 py-2 border rounded-md bg-card-bg focus:outline-none focus:ring-2 ${errors.birthDate
@@ -195,7 +207,12 @@ export function RegisterForm({ onSuccess, onSwitchView }: RegisterFormProps = {}
           disabled={isLoading}
         />
         {errors.birthDate && (
-          <p className="text-red-500 text-sm mt-1">{errors.birthDate}</p>
+          <div className="flex items-center gap-1.5 mt-1.5 p-2 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-md">
+            <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-red-600 dark:text-red-400 text-sm font-medium">{errors.birthDate}</p>
+          </div>
         )}
       </div>
 
